@@ -1,0 +1,14 @@
+.git
+.github
+.vscode
+.idea
+*.log
+docs
+reports
+scripts
+.pytest_cache
+*.ps1
+**/node_modules
+**/target
+**/.venv
+**/__pycache__

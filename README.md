@@ -63,10 +63,20 @@ Clone the repository and launch all tiers with health-checked auto-start:
 ```
 *Press `Ctrl+C` in the terminal to cleanly terminate all processes.*
 
-### Option 2: Docker Compose
+### Option 2: Production Docker Deployment (Cloud / VPS)
 ```bash
-docker compose up -d --build
+# 1. Clone repository
+git clone https://github.com/purnajaswanth-dev/maritime.git where-is-my-ferry
+cd where-is-my-ferry
+
+# 2. Configure environment (customize secrets if desired)
+cp .env.example .env
+
+# 3. Launch with automated deployment script (or docker compose up -d --build)
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
 ```
+*For detailed cloud provider instructions (AWS, DigitalOcean, Hetzner, GCP, Azure, SSL/HTTPS), see the [Production Deployment Guide](file:///docs/DEPLOYMENT_GUIDE.md).*
 
 ---
 
