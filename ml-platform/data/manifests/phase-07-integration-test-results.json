@@ -1,0 +1,102 @@
+[
+  {
+    "id": "SCENARIO_01_NORMAL_SEQUENTIAL",
+    "passed": true,
+    "details": "Processed real voyage steps; max jump: 1.36m"
+  },
+  {
+    "id": "SCENARIO_02_VARIABLE_INTERVALS",
+    "passed": true,
+    "details": "Handled variable 5m and 10m intervals; max jump: 1.64m"
+  },
+  {
+    "id": "SCENARIO_03_DELAYED_BURST_ARRIVAL",
+    "passed": true,
+    "details": "Burst processed without buffer overflow; final timestamp current"
+  },
+  {
+    "id": "SCENARIO_04_DUPLICATE_OBSERVATIONS",
+    "passed": true,
+    "details": "Duplicate dropped cleanly, cached response returned"
+  },
+  {
+    "id": "SCENARIO_05_OUT_OF_ORDER_TIMESTAMPS",
+    "passed": true,
+    "details": "Watermark preserved at 15:10:00Z without clock rewind"
+  },
+  {
+    "id": "SCENARIO_06_TRANSPORT_INTERRUPTION",
+    "passed": true,
+    "details": "Connection lost for 12m -> transitioned to ETAState.STALE_DATA"
+  },
+  {
+    "id": "SCENARIO_07_SUCCESSFUL_RECONNECTION",
+    "passed": true,
+    "details": "Reconnected cleanly; state restored to ESTIMATING"
+  },
+  {
+    "id": "SCENARIO_08_STALE_AIS_THRESHOLD",
+    "passed": true,
+    "details": "Staleness 660.0s flagged as STALE_DATA"
+  },
+  {
+    "id": "SCENARIO_09_RECOVERY_AFTER_STALE",
+    "passed": true,
+    "details": "State recovered to ESTIMATING; freshness 1.0s"
+  },
+  {
+    "id": "SCENARIO_10_GENUINE_SLOWDOWN",
+    "passed": true,
+    "details": "Speed 5 kts accommodated; ETA adjusted to 63.3m"
+  },
+  {
+    "id": "SCENARIO_11_STOPPING_IN_TRANSIT",
+    "passed": true,
+    "details": "Vessel stopped in open water -> DELAYED_OR_UNCERTAIN"
+  },
+  {
+    "id": "SCENARIO_12_ROUTE_DEVIATION",
+    "passed": true,
+    "details": "Distance increased -> ETA expanded from 40.0m to 57.7m"
+  },
+  {
+    "id": "SCENARIO_13_APPROACH_AND_ARRIVAL",
+    "passed": true,
+    "details": "Confirmed dock dwell; countdown terminated at 0.0m"
+  },
+  {
+    "id": "SCENARIO_14_DELAYED_POST_ARRIVAL",
+    "passed": true,
+    "details": "State remained ARRIVED; zombie countdown prevented"
+  },
+  {
+    "id": "SCENARIO_15_MISSING_TERMINAL_EVIDENCE",
+    "passed": true,
+    "details": "Safely transitioned to ETAState.ETA_UNAVAILABLE"
+  },
+  {
+    "id": "SCENARIO_16_MALFORMED_PAYLOAD",
+    "passed": true,
+    "details": "Rejected with error: MISSING_OR_INVALID_MESSAGE_ID"
+  },
+  {
+    "id": "SCENARIO_17_CLOCK_OFFSET",
+    "passed": true,
+    "details": "Handled 5m client clock offset; freshness calculated accurately"
+  },
+  {
+    "id": "SCENARIO_18_HIGH_VOLUME_BURST",
+    "passed": true,
+    "details": "100 events in 210.3ms (avg 2.10ms/event)"
+  },
+  {
+    "id": "SCENARIO_19_MODEL_INFERENCE_ERROR",
+    "passed": true,
+    "details": "Model exception caught and isolated cleanly"
+  },
+  {
+    "id": "SCENARIO_20_PROCESSOR_RESTART_RECOVERY",
+    "passed": true,
+    "details": "New instance initialized and processed next telemetry event"
+  }
+]

@@ -1,0 +1,8 @@
+stop_id,stop_name,stop_lat,stop_lon,zone_id,location_type
+BREST,Gare Maritime de Brest,48.3828,-4.4855,ZONE_BREST,0
+LE_CONQUET,Port du Conquet,48.3585,-4.7788,ZONE_CONQUET,0
+MOLENE,Port de Molene,48.3970,-4.9965,ZONE_MOLENE,0
+OUESSANT_STIFF,Port du Stiff (Ouessant),48.4632,-5.0492,ZONE_OUESSANT,0
+AUDIERNE,Port de Sainte-Evette (Audierne),48.0195,-4.5385,ZONE_AUDIERNE,0
+ILE_DE_SEIN,Port de l'Ile de Sein,48.0375,-4.8505,ZONE_SEIN,0
+CAMARET,Port de Camaret-sur-Mer,48.2780,-4.5940,ZONE_CAMARET,0

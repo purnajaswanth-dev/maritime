@@ -1,0 +1,205 @@
+{
+  "protocol": "Protocol 1 (Chronological Split)",
+  "train_period": "2015-10-01 to 2016-01-31",
+  "test_period": "2016-02-01 to 2016-03-31",
+  "sample_counts": {
+    "train_voyages": 685,
+    "test_voyages": 204,
+    "train_snapshots": 6941,
+    "test_snapshots": 2372
+  },
+  "overall_performance": {
+    "Physical_ETA_Pure": {
+      "mae_minutes": 18.23,
+      "median_ae_minutes": 8.44,
+      "rmse_minutes": 43.33,
+      "mean_bias_minutes": -0.94,
+      "percentile_50": 8.44,
+      "percentile_75": 20.87,
+      "percentile_90": 31.01,
+      "percentile_95": 45.9,
+      "percentile_99": 208.37,
+      "max_error_minutes": 373.59,
+      "pct_within_3m": 26.7,
+      "pct_within_5m": 38.4,
+      "pct_within_10m": 54.3,
+      "pct_over_15m": 34.7,
+      "pct_premature_arrival": 76.9,
+      "pct_overestimate_arrival": 23.1
+    },
+    "Physical_ETA_CurrentAugmented": {
+      "mae_minutes": 18.2,
+      "median_ae_minutes": 8.55,
+      "rmse_minutes": 43.23,
+      "mean_bias_minutes": -1.01,
+      "percentile_50": 8.55,
+      "percentile_75": 20.92,
+      "percentile_90": 30.94,
+      "percentile_95": 45.88,
+      "percentile_99": 208.37,
+      "max_error_minutes": 373.59,
+      "pct_within_3m": 26.6,
+      "pct_within_5m": 38.5,
+      "pct_within_10m": 54.2,
+      "pct_over_15m": 34.9,
+      "pct_premature_arrival": 77.3,
+      "pct_overestimate_arrival": 22.7
+    },
+    "Historical_Route_Duration_Causal": {
+      "mae_minutes": 5.55,
+      "median_ae_minutes": 2.9,
+      "rmse_minutes": 8.71,
+      "mean_bias_minutes": -1.26,
+      "percentile_50": 2.9,
+      "percentile_75": 6.23,
+      "percentile_90": 14.98,
+      "percentile_95": 23.87,
+      "percentile_99": 27.64,
+      "max_error_minutes": 31.68,
+      "pct_within_3m": 51.4,
+      "pct_within_5m": 69.1,
+      "pct_within_10m": 83.0,
+      "pct_over_15m": 9.9,
+      "pct_premature_arrival": 58.5,
+      "pct_overestimate_arrival": 41.5
+    },
+    "Tabular_Ridge_ETA": {
+      "mae_minutes": 5.2,
+      "median_ae_minutes": 3.56,
+      "rmse_minutes": 7.47,
+      "mean_bias_minutes": 0.07,
+      "percentile_50": 3.56,
+      "percentile_75": 6.76,
+      "percentile_90": 12.14,
+      "percentile_95": 16.67,
+      "percentile_99": 25.83,
+      "max_error_minutes": 34.14,
+      "pct_within_3m": 44.4,
+      "pct_within_5m": 62.9,
+      "pct_within_10m": 86.0,
+      "pct_over_15m": 6.4,
+      "pct_premature_arrival": 47.6,
+      "pct_overestimate_arrival": 52.4
+    }
+  },
+  "stability_metrics": {
+    "eval_steps": 2168,
+    "ridge_mean_abs_jump_min": 4.73,
+    "ridge_p95_jump_min": 7.82,
+    "ridge_jumps_over_5m_pct": 36.4,
+    "physical_mean_abs_jump_min": 7.99,
+    "physical_p95_jump_min": 23.62,
+    "physical_jumps_over_5m_pct": 35.8,
+    "historical_mean_abs_jump_min": 4.82,
+    "historical_p95_jump_min": 5.0,
+    "historical_jumps_over_5m_pct": 0.0
+  },
+  "corridor_slice": {
+    "AUDIERNE_ILE_DE_SEIN": {
+      "n_snapshots": 511,
+      "mae_physical": 17.75,
+      "mae_historical": 4.8,
+      "mae_ridge": 4.72
+    },
+    "BREST_LE_CONQUET": {
+      "n_snapshots": 604,
+      "mae_physical": 19.41,
+      "mae_historical": 4.85,
+      "mae_ridge": 6.26
+    },
+    "BREST_OUESSANT_STIFF": {
+      "n_snapshots": 27,
+      "mae_physical": 27.81,
+      "mae_historical": 13.54,
+      "mae_ridge": 10.81
+    },
+    "ILE_DE_SEIN_AUDIERNE": {
+      "n_snapshots": 35,
+      "mae_physical": 23.02,
+      "mae_historical": 3.24,
+      "mae_ridge": 5.91
+    },
+    "LE_CONQUET_BREST": {
+      "n_snapshots": 363,
+      "mae_physical": 6.31,
+      "mae_historical": 2.67,
+      "mae_ridge": 2.69
+    },
+    "LE_CONQUET_MOLENE": {
+      "n_snapshots": 209,
+      "mae_physical": 7.16,
+      "mae_historical": 4.55,
+      "mae_ridge": 2.8
+    },
+    "MOLENE_LE_CONQUET": {
+      "n_snapshots": 277,
+      "mae_physical": 14.81,
+      "mae_historical": 5.33,
+      "mae_ridge": 5.55
+    },
+    "MOLENE_OUESSANT_STIFF": {
+      "n_snapshots": 66,
+      "mae_physical": 15.16,
+      "mae_historical": 5.0,
+      "mae_ridge": 5.55
+    },
+    "OUESSANT_STIFF_BREST": {
+      "n_snapshots": 181,
+      "mae_physical": 54.83,
+      "mae_historical": 16.04,
+      "mae_ridge": 9.31
+    },
+    "OUESSANT_STIFF_MOLENE": {
+      "n_snapshots": 99,
+      "mae_physical": 20.88,
+      "mae_historical": 6.84,
+      "mae_ridge": 4.9
+    }
+  },
+  "horizon_slice": {
+    "<15m": {
+      "n_snapshots": 612,
+      "mae_physical": 4.11,
+      "mae_historical": 4.19,
+      "mae_ridge": 3.62
+    },
+    "15-30m": {
+      "n_snapshots": 603,
+      "mae_physical": 11.96,
+      "mae_historical": 5.18,
+      "mae_ridge": 4.34
+    },
+    "30-60m": {
+      "n_snapshots": 880,
+      "mae_physical": 20.73,
+      "mae_historical": 5.39,
+      "mae_ridge": 5.63
+    },
+    ">60m": {
+      "n_snapshots": 277,
+      "mae_physical": 55.12,
+      "mae_historical": 9.86,
+      "mae_ridge": 9.18
+    }
+  },
+  "vessel_slice": {
+    "ENEZ EUSSA 3": {
+      "n_snapshots": 1202,
+      "mae_physical": 20.8,
+      "mae_historical": 6.96,
+      "mae_ridge": 6.11
+    },
+    "ENEZ SUN 3": {
+      "n_snapshots": 546,
+      "mae_physical": 18.09,
+      "mae_historical": 4.7,
+      "mae_ridge": 4.8
+    },
+    "FROMVEUR II": {
+      "n_snapshots": 624,
+      "mae_physical": 13.39,
+      "mae_historical": 3.58,
+      "mae_ridge": 3.78
+    }
+  }
+}

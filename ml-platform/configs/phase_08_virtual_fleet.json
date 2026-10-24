@@ -1,0 +1,127 @@
+{
+  "version": "1.0.0",
+  "simulation_source_id": "virtual_maritime_sim",
+  "terminals": {
+    "BREST": {
+      "name": "Gare Maritime de Brest",
+      "lat": 48.3828,
+      "lon": -4.4855,
+      "berth_radius_m": 250.0
+    },
+    "LE_CONQUET": {
+      "name": "Port du Conquet",
+      "lat": 48.3585,
+      "lon": -4.7788,
+      "berth_radius_m": 250.0
+    },
+    "OUESSANT_STIFF": {
+      "name": "Port du Stiff (Ouessant)",
+      "lat": 48.4632,
+      "lon": -5.0492,
+      "berth_radius_m": 300.0
+    },
+    "MOLENE": {
+      "name": "Port de Molene",
+      "lat": 48.3970,
+      "lon": -4.9965,
+      "berth_radius_m": 250.0
+    },
+    "AUDIERNE": {
+      "name": "Port de Sainte-Evette (Audierne)",
+      "lat": 48.0195,
+      "lon": -4.5385,
+      "berth_radius_m": 250.0
+    },
+    "ILE_DE_SEIN": {
+      "name": "Port de l'Ile de Sein",
+      "lat": 48.0375,
+      "lon": -4.8505,
+      "berth_radius_m": 250.0
+    }
+  },
+  "vessels": [
+    {
+      "virtual_vessel_id": "V-FROMVEUR-SIM",
+      "synthetic_mmsi": 999000001,
+      "vessel_name": "SIM_FROMVEUR_EXPRESS",
+      "historical_vessel_name": "FROMVEUR II",
+      "route_id": "BREST_LE_CONQUET",
+      "corridor": "BREST_LE_CONQUET",
+      "origin_terminal": "BREST",
+      "dest_terminal": "LE_CONQUET",
+      "nominal_speed_knots": 15.0,
+      "speed_variation_knots": 1.0,
+      "planned_departure_offset_s": 0,
+      "waypoints": [
+        [48.3828, -4.4855],
+        [48.3650, -4.5100],
+        [48.3450, -4.5700],
+        [48.3300, -4.6400],
+        [48.3400, -4.7100],
+        [48.3585, -4.7788]
+      ]
+    },
+    {
+      "virtual_vessel_id": "V-AZENOR-SIM",
+      "synthetic_mmsi": 999000002,
+      "vessel_name": "SIM_AZENOR_VOYAGER",
+      "historical_vessel_name": "ANDRE COLIN",
+      "route_id": "LE_CONQUET_BREST",
+      "corridor": "LE_CONQUET_BREST",
+      "origin_terminal": "LE_CONQUET",
+      "dest_terminal": "BREST",
+      "nominal_speed_knots": 14.0,
+      "speed_variation_knots": 1.0,
+      "planned_departure_offset_s": 300,
+      "waypoints": [
+        [48.3585, -4.7788],
+        [48.3400, -4.7100],
+        [48.3300, -4.6400],
+        [48.3450, -4.5700],
+        [48.3650, -4.5100],
+        [48.3828, -4.4855]
+      ]
+    },
+    {
+      "virtual_vessel_id": "V-OUESSANT-SIM",
+      "synthetic_mmsi": 999000003,
+      "vessel_name": "SIM_IROISE_STAR",
+      "historical_vessel_name": "ENEZ EUSSA 3",
+      "route_id": "BREST_OUESSANT_STIFF",
+      "corridor": "BREST_OUESSANT_STIFF",
+      "origin_terminal": "BREST",
+      "dest_terminal": "OUESSANT_STIFF",
+      "nominal_speed_knots": 16.0,
+      "speed_variation_knots": 1.5,
+      "planned_departure_offset_s": 600,
+      "waypoints": [
+        [48.3828, -4.4855],
+        [48.3500, -4.5500],
+        [48.3300, -4.6600],
+        [48.3700, -4.8500],
+        [48.4200, -4.9700],
+        [48.4632, -5.0492]
+      ]
+    },
+    {
+      "virtual_vessel_id": "V-SEIN-SIM",
+      "synthetic_mmsi": 999000004,
+      "vessel_name": "SIM_SEIN_SHUTTLE",
+      "historical_vessel_name": "ENEZ SUN 3",
+      "route_id": "AUDIERNE_ILE_DE_SEIN",
+      "corridor": "AUDIERNE_ILE_DE_SEIN",
+      "origin_terminal": "AUDIERNE",
+      "dest_terminal": "ILE_DE_SEIN",
+      "nominal_speed_knots": 13.5,
+      "speed_variation_knots": 1.0,
+      "planned_departure_offset_s": 180,
+      "waypoints": [
+        [48.0195, -4.5385],
+        [48.0150, -4.6100],
+        [48.0250, -4.7100],
+        [48.0350, -4.7900],
+        [48.0375, -4.8505]
+      ]
+    }
+  ]
+}

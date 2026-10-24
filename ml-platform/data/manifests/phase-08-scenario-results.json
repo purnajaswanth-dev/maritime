@@ -1,0 +1,178 @@
+[
+  {
+    "id": "SCENARIO_01_NORMAL_VOYAGE",
+    "name": "Normal Scheduled Voyage",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "NONE",
+    "passed": true,
+    "details": "Replayed 6 steps smoothly in transit; final ETA: 56.36m"
+  },
+  {
+    "id": "SCENARIO_02_DELAYED_DEPARTURE",
+    "name": "Delayed Departure",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "DELAYED_DEPARTURE",
+    "passed": true,
+    "details": "Vessel held for 900s then embarked; ETA: 88.03m"
+  },
+  {
+    "id": "SCENARIO_03_GRADUAL_SPEED_REDUCTION",
+    "name": "Gradual Speed Reduction",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "SPEED_REDUCTION",
+    "passed": true,
+    "details": "Speed reduced to 5.0 kts; ETA adjusted upward from 91.44m to 91.58m"
+  },
+  {
+    "id": "SCENARIO_04_PROLONGED_HOLDING",
+    "name": "Prolonged Holding in Open Water",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "HOLDING_PATTERN",
+    "passed": true,
+    "details": "Zero speed in channel correctly transitioned to DELAYED_OR_UNCERTAIN"
+  },
+  {
+    "id": "SCENARIO_05_ROUTE_DEVIATION",
+    "name": "Route Deviation",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "ROUTE_DEVIATION",
+    "passed": true,
+    "details": "Detour applied; ETA accommodated route distance: from 91.63m to 93.62m"
+  },
+  {
+    "id": "SCENARIO_06_TEMPORARY_TELEMETRY_LOSS",
+    "name": "Temporary Telemetry Loss",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "STREAM_DROPOUT",
+    "passed": true,
+    "details": "Data gap of 720s successfully flagged as STALE_DATA"
+  },
+  {
+    "id": "SCENARIO_07_RECOVERY_AFTER_LOSS",
+    "name": "Recovery After Telemetry Loss",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "STREAM_RECOVERY",
+    "passed": true,
+    "details": "Fresh observation restored active state to ESTIMATING"
+  },
+  {
+    "id": "SCENARIO_08_DUPLICATE_DELIVERY",
+    "name": "Duplicate Event Delivery",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "DUPLICATE_PACKETS",
+    "passed": true,
+    "details": "Duplicate message dropped cleanly; identical cached response returned"
+  },
+  {
+    "id": "SCENARIO_09_OUT_OF_ORDER_DELIVERY",
+    "name": "Out-of-Order Event Delivery",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "OUT_OF_ORDER_PACKETS",
+    "passed": true,
+    "details": "Watermark held monotonic at 1772356200.0; delayed packet did not rewind clock"
+  },
+  {
+    "id": "SCENARIO_10_STALE_TELEMETRY",
+    "name": "Stale Telemetry Observation",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "STALE_OBSERVATION",
+    "passed": true,
+    "details": "Observation freshness 900.0s correctly triggered STALE_DATA"
+  },
+  {
+    "id": "SCENARIO_11_VESSEL_APPROACHING",
+    "name": "Vessel Approaching Destination",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "APPROACH_TERMINAL",
+    "passed": true,
+    "details": "Proximity < 1000m successfully transitioned to ARRIVAL_PENDING_CONFIRMATION"
+  },
+  {
+    "id": "SCENARIO_12_SUCCESSFUL_ARRIVAL",
+    "name": "Successful Simulated Arrival",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "CONFIRMED_ARRIVAL",
+    "passed": true,
+    "details": "Arrival confirmed after dock dwell; remaining ETA locked to 0.0m"
+  },
+  {
+    "id": "SCENARIO_13_LATE_EVENT_AFTER_ARRIVAL",
+    "name": "Late Event After Arrival",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "POST_ARRIVAL_PACKET",
+    "passed": true,
+    "details": "Latched arrived state strictly maintained; zombie countdown prevented"
+  },
+  {
+    "id": "SCENARIO_14_INVALID_COORDINATES",
+    "name": "Invalid Coordinates Rejection",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "INVALID_COORDINATES",
+    "passed": true,
+    "details": "Malformed latitude correctly rejected with error: INVALID_LATITUDE_OUT_OF_BOUNDS"
+  },
+  {
+    "id": "SCENARIO_15_INVALID_SPEED",
+    "name": "Invalid Speed Rejection",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "INVALID_SPEED",
+    "passed": true,
+    "details": "Excessive speed correctly rejected with error: INVALID_SOG_OUT_OF_BOUNDS"
+  },
+  {
+    "id": "SCENARIO_16_MALFORMED_PAYLOAD",
+    "name": "Malformed Payload Rejection",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "MALFORMED_PAYLOAD",
+    "passed": true,
+    "details": "Missing identifier correctly rejected with error: MISSING_OR_INVALID_MESSAGE_ID"
+  },
+  {
+    "id": "SCENARIO_17_INFERENCE_EXCEPTION",
+    "name": "Inference Exception Handling",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "INFERENCE_FAILURE",
+    "passed": true,
+    "details": "Model exception caught and isolated cleanly: RuntimeError"
+  },
+  {
+    "id": "SCENARIO_18_RUNNER_SHUTDOWN_RESTART",
+    "name": "Runner Shutdown and Restart",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "CLEAN_RESTART",
+    "passed": true,
+    "details": "Runner stopped cleanly and re-initialized without leaking resources"
+  },
+  {
+    "id": "SCENARIO_19_MULTI_VESSEL_SIMULTANEOUS",
+    "name": "Multiple Virtual Vessels Operating Simultaneously",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "MULTI_VESSEL",
+    "passed": true,
+    "details": "Concurrently simulated 4 distinct vessels without cross-talk"
+  },
+  {
+    "id": "SCENARIO_20_RAPID_BURST",
+    "name": "Rapid Burst of Events",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "RAPID_BURST",
+    "passed": true,
+    "details": "Ingested 50 events in 83.9ms (596.0 events/s)"
+  },
+  {
+    "id": "SCENARIO_21_PAUSE_RESUME",
+    "name": "Repeated Pause and Resume",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "PAUSE_RESUME",
+    "passed": true,
+    "details": "Simulation paused and resumed cleanly with no jump anomaly"
+  },
+  {
+    "id": "SCENARIO_22_CLOCK_ADVANCEMENT_COUNTDOWN",
+    "name": "Clock Advancement and Countdown Consistency",
+    "vessel_id": "V-FROMVEUR-SIM",
+    "fault_type": "CLOCK_ADVANCEMENT",
+    "passed": true,
+    "details": "Clock advanced 5m; remaining time correctly decremented from 91.63m to 86.6m"
+  }
+]

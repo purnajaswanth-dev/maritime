@@ -1,0 +1,111 @@
+{
+  "metadata": {
+    "title": "Phase 07 Streaming Latency, Stability, and Acceptance Metrics",
+    "timestamp_utc": "2026-10-16T10:26:10.848494+00:00",
+    "pipeline": "ETAStreamProcessor + VectorizedRidgeETAModel + ETAStateMachine"
+  },
+  "performance_metrics": {
+    "total_test_events_processed": 2372,
+    "total_voyages_replayed": 204,
+    "latency_metrics_ms": {
+      "mean_processing_latency_ms": 1.725,
+      "median_processing_latency_ms": 1.577,
+      "p95_processing_latency_ms": 2.194,
+      "p99_processing_latency_ms": 3.396,
+      "max_processing_latency_ms": 47.136
+    },
+    "streaming_stability_metrics": {
+      "step_count": 2168,
+      "mean_unexpected_jump_minutes": 1.71,
+      "median_unexpected_jump_minutes": 1.54,
+      "p95_unexpected_jump_minutes": 4.21,
+      "pct_unexpected_jump_over_5m": 2.3,
+      "pct_unexpected_jump_over_10m": 0.1,
+      "max_unexpected_jump_minutes": 17.24
+    },
+    "streaming_accuracy_metrics": {
+      "mae_minutes": 15.95,
+      "median_ae_minutes": 13.67,
+      "rmse_minutes": 19.89,
+      "p95_absolute_error_minutes": 37.65,
+      "pct_premature_arrival": 7.0,
+      "pct_late_arrival": 93.0
+    },
+    "lifecycle_state_distribution": {
+      "DELAYED_OR_UNCERTAIN": 75,
+      "ESTIMATING": 1987,
+      "ARRIVAL_PENDING_CONFIRMATION": 310
+    }
+  },
+  "acceptance_policy": {
+    "overall_status": "ACCEPTED_FOR_INTEGRATION_TESTING",
+    "criteria": [
+      {
+        "criterion": "Event Schema Correctness",
+        "target": "100% of valid events conform to Schema v1.0.0",
+        "result": "100% conformance",
+        "passed": true
+      },
+      {
+        "criterion": "Causal Feature Construction",
+        "target": "0 future telemetry entered features",
+        "result": "100% causal adherence",
+        "passed": true
+      },
+      {
+        "criterion": "Event Ordering & Watermark",
+        "target": "Out-of-order packets do not rewind clock watermark",
+        "result": "Passed (Scenario 5)",
+        "passed": true
+      },
+      {
+        "criterion": "Duplicate Ingestion Handling",
+        "target": "Duplicates dropped cleanly without re-inference",
+        "result": "Passed (Scenario 4)",
+        "passed": true
+      },
+      {
+        "criterion": "Countdown Consistency",
+        "target": "Authoritative predicted arrival time governs countdown",
+        "result": "Passed (UTC consistent time basis)",
+        "passed": true
+      },
+      {
+        "criterion": "Automatic Stale Data Flagging",
+        "target": "Telemetry > 600s flagged as STALE_DATA",
+        "result": "Passed (Scenario 8)",
+        "passed": true
+      },
+      {
+        "criterion": "Arrival State Latching",
+        "target": "ARRIVED stops countdown; post-arrival packets cannot restart it",
+        "result": "Passed (Scenario 13 & 14)",
+        "passed": true
+      },
+      {
+        "criterion": "Unexpected Jump Rate (> 5m)",
+        "target": "<= 5.0% of sequential updates",
+        "result": "2.3%",
+        "passed": true
+      },
+      {
+        "criterion": "Genuine Delay Responsiveness",
+        "target": "Delays and diversions pass through to ETA",
+        "result": "Passed (Scenario 10 & 12)",
+        "passed": true
+      },
+      {
+        "criterion": "End-to-End Processing Latency",
+        "target": "P95 latency <= 20.0 ms",
+        "result": "2.19 ms",
+        "passed": true
+      },
+      {
+        "criterion": "Recovery After Interruption",
+        "target": "Clean reconnection and state recovery",
+        "result": "Passed (Scenario 7 & 20)",
+        "passed": true
+      }
+    ]
+  }
+}

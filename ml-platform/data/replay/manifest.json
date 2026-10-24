@@ -1,0 +1,40 @@
+{
+  "version": "1.0.0",
+  "total_voyages": 889,
+  "train_voyages": 685,
+  "test_voyages": 204,
+  "corridor_counts": {
+    "MOLENE_LE_CONQUET": 135,
+    "LE_CONQUET_BREST": 113,
+    "BREST_OUESSANT_STIFF": 4,
+    "OUESSANT_STIFF_MOLENE": 126,
+    "BREST_LE_CONQUET": 131,
+    "LE_CONQUET_MOLENE": 146,
+    "MOLENE_OUESSANT_STIFF": 76,
+    "OUESSANT_STIFF_BREST": 17,
+    "AUDIERNE_ILE_DE_SEIN": 127,
+    "ILE_DE_SEIN_AUDIERNE": 14
+  },
+  "supported_corridors": [
+    "MOLENE_LE_CONQUET",
+    "LE_CONQUET_BREST",
+    "BREST_OUESSANT_STIFF",
+    "OUESSANT_STIFF_MOLENE",
+    "BREST_LE_CONQUET",
+    "LE_CONQUET_MOLENE",
+    "MOLENE_OUESSANT_STIFF",
+    "OUESSANT_STIFF_BREST",
+    "AUDIERNE_ILE_DE_SEIN",
+    "ILE_DE_SEIN_AUDIERNE"
+  ],
+  "files": {
+    "voyages.json": {
+      "records": 889,
+      "sha256": "509ff68be9026d09064c3a0a4a9e8ec92f1aa898a34e77ade45bac3ef3ddd153"
+    },
+    "delay_distributions.json": {
+      "corridors": 10,
+      "sha256": "9256392395c9297b04c7fb92e9be1cd58639230a669ccf9e3c0c304dc94b9074"
+    }
+  }
+}

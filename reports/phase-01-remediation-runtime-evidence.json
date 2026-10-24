@@ -1,0 +1,465 @@
+{
+  "timestamp_utc": "2026-10-16T19:06:39Z",
+  "steps": {
+    "01_initial_snapshot": {
+      "status": {
+        "simulation_available": true,
+        "run_id": "sim_run_a0ca7055",
+        "is_running": false,
+        "is_paused": false,
+        "sim_time_utc": "2026-03-01T08:00:00Z",
+        "speed_multiplier": 1.0,
+        "step_interval_s": 300.0,
+        "total_events_processed": 4,
+        "active_vessels_count": 4,
+        "active_scenario_id": null,
+        "provenance": "SIMULATED_LOCAL_MARITIME_ENGINE"
+      },
+      "vessels": [
+        {
+          "id": "V-FROMVEUR-SIM",
+          "name": "SIM_FROMVEUR_EXPRESS",
+          "lat": 48.36677,
+          "lon": -4.50756,
+          "sog": 15.6,
+          "cog": 222.4,
+          "state": "ESTIMATING",
+          "remaining_min": 93.05
+        },
+        {
+          "id": "V-AZENOR-SIM",
+          "name": "SIM_AZENOR_VOYAGER",
+          "lat": 48.35088,
+          "lon": -4.75045,
+          "sog": 14.6,
+          "cog": 112.0,
+          "state": "ESTIMATING",
+          "remaining_min": 65.21
+        },
+        {
+          "id": "V-OUESSANT-SIM",
+          "name": "SIM_IROISE_STAR",
+          "lat": 48.36849,
+          "lon": -4.51365,
+          "sog": 17.0,
+          "cog": 232.6,
+          "state": "ESTIMATING",
+          "remaining_min": 161.05
+        },
+        {
+          "id": "V-SEIN-SIM",
+          "name": "SIM_SEIN_SHUTTLE",
+          "lat": 48.01766,
+          "lon": -4.56772,
+          "sog": 14.1,
+          "cog": 264.7,
+          "state": "ESTIMATING",
+          "remaining_min": 77.51
+        }
+      ],
+      "vessel_fromveur_eta": {
+        "schema_version": "1.0.0",
+        "vessel_id": "V-FROMVEUR-SIM",
+        "vessel_name": "SIM_FROMVEUR_EXPRESS",
+        "synthetic_mmsi": 999000001,
+        "corridor": "BREST_LE_CONQUET",
+        "timestamps": {
+          "position_timestamp_utc": "2026-03-01T08:00:00Z",
+          "prediction_timestamp_utc": "2026-03-01T08:00:00Z",
+          "predicted_arrival_utc": "2026-03-01T09:33:03Z",
+          "telemetry_age_seconds": 0.0
+        },
+        "predictions": {
+          "raw_model_remaining_minutes": 93.05,
+          "displayed_remaining_minutes": 93.05,
+          "uncertainty_lower_minutes": 76.6,
+          "uncertainty_upper_minutes": 109.5,
+          "unexpected_jump_minutes": 0.0
+        },
+        "lifecycle": {
+          "eta_lifecycle_state": "ESTIMATING",
+          "reason_code": "Normal active transit progression.",
+          "is_stale": false,
+          "is_arrived": false
+        },
+        "provenance": {
+          "is_synthetic": true,
+          "model_name": "VectorizedRidgeETAModel",
+          "model_type": "L2_RIDGE_LINEAR",
+          "alpha": 10.0,
+          "weight_checksum_sha256": "e4da4af5cf8a5e7b31337ca9ae9e37740a9062ccdc584b8c3aad69deb0f6d9e9",
+          "prediction_source": "ML_MODEL_INFERENCE"
+        }
+      }
+    },
+    "02_start_response": {
+      "status": "SUCCESS",
+      "current_action": "start",
+      "is_running": true,
+      "is_paused": false,
+      "speed_multiplier": 20.0
+    },
+    "03_advancing_snapshots": [
+      {
+        "snapshot_index": 1,
+        "wall_clock_utc": "2026-10-16T19:06:42Z",
+        "sim_time_utc": "2026-03-01T08:30:00Z",
+        "total_events_processed": 28,
+        "vessels": [
+          {
+            "id": "V-FROMVEUR-SIM",
+            "name": "SIM_FROMVEUR_EXPRESS",
+            "lat": 48.33609,
+            "lon": -4.68263,
+            "sog": 14.0,
+            "cog": 282.2,
+            "state": "ESTIMATING",
+            "remaining_min": 51.36
+          },
+          {
+            "id": "V-AZENOR-SIM",
+            "name": "SIM_AZENOR_VOYAGER",
+            "lat": 48.34226,
+            "lon": -4.58278,
+            "sog": 13.0,
+            "cog": 72.1,
+            "state": "ESTIMATING",
+            "remaining_min": 25.47
+          },
+          {
+            "id": "V-OUESSANT-SIM",
+            "name": "SIM_IROISE_STAR",
+            "lat": 48.33815,
+            "lon": -4.6987,
+            "sog": 14.5,
+            "cog": 287.6,
+            "state": "ESTIMATING",
+            "remaining_min": 119.85
+          },
+          {
+            "id": "V-SEIN-SIM",
+            "name": "SIM_SEIN_SHUTTLE",
+            "lat": 48.02801,
+            "lon": -4.73404,
+            "sog": 12.5,
+            "cog": 280.6,
+            "state": "ESTIMATING",
+            "remaining_min": 36.68
+          }
+        ],
+        "fromveur_eta": {
+          "predicted_arrival_utc": "2026-03-01T09:16:21Z",
+          "estimated_remaining_minutes": 51.36,
+          "raw_model_minutes": 48.89,
+          "model_name": "VectorizedRidgeETAModel",
+          "weights_sha256": "e4da4af5cf8a5e7b31337ca9ae9e37740a9062ccdc584b8c3aad69deb0f6d9e9"
+        }
+      },
+      {
+        "snapshot_index": 2,
+        "wall_clock_utc": "2026-10-16T19:06:44Z",
+        "sim_time_utc": "2026-03-01T09:00:00Z",
+        "total_events_processed": 52,
+        "vessels": [
+          {
+            "id": "V-FROMVEUR-SIM",
+            "name": "SIM_FROMVEUR_EXPRESS",
+            "lat": 48.3585,
+            "lon": -4.7788,
+            "sog": 0.1,
+            "cog": 292.1,
+            "state": "ARRIVED",
+            "remaining_min": 0.0
+          },
+          {
+            "id": "V-AZENOR-SIM",
+            "name": "SIM_AZENOR_VOYAGER",
+            "lat": 48.3828,
+            "lon": -4.4855,
+            "sog": 0.1,
+            "cog": 42.4,
+            "state": "ARRIVED",
+            "remaining_min": 0.0
+          },
+          {
+            "id": "V-OUESSANT-SIM",
+            "name": "SIM_IROISE_STAR",
+            "lat": 48.3872,
+            "lon": -4.89128,
+            "sog": 16.5,
+            "cog": 302.2,
+            "state": "ESTIMATING",
+            "remaining_min": 69.37
+          },
+          {
+            "id": "V-SEIN-SIM",
+            "name": "SIM_SEIN_SHUTTLE",
+            "lat": 48.0375,
+            "lon": -4.8505,
+            "sog": 0.1,
+            "cog": 273.6,
+            "state": "ARRIVED",
+            "remaining_min": 0.0
+          }
+        ],
+        "fromveur_eta": {
+          "predicted_arrival_utc": "2026-03-01T08:50:00Z",
+          "estimated_remaining_minutes": 0.0,
+          "raw_model_minutes": 0.0,
+          "model_name": "VectorizedRidgeETAModel",
+          "weights_sha256": "e4da4af5cf8a5e7b31337ca9ae9e37740a9062ccdc584b8c3aad69deb0f6d9e9"
+        }
+      },
+      {
+        "snapshot_index": 3,
+        "wall_clock_utc": "2026-10-16T19:06:45Z",
+        "sim_time_utc": "2026-03-01T09:30:00Z",
+        "total_events_processed": 76,
+        "vessels": [
+          {
+            "id": "V-FROMVEUR-SIM",
+            "name": "SIM_FROMVEUR_EXPRESS",
+            "lat": 48.3585,
+            "lon": -4.7788,
+            "sog": 0.1,
+            "cog": 292.1,
+            "state": "ARRIVED",
+            "remaining_min": 0.0
+          },
+          {
+            "id": "V-AZENOR-SIM",
+            "name": "SIM_AZENOR_VOYAGER",
+            "lat": 48.3828,
+            "lon": -4.4855,
+            "sog": 0.1,
+            "cog": 42.4,
+            "state": "ARRIVED",
+            "remaining_min": 0.0
+          },
+          {
+            "id": "V-OUESSANT-SIM",
+            "name": "SIM_IROISE_STAR",
+            "lat": 48.4626,
+            "lon": -5.0481,
+            "sog": 17.0,
+            "cog": 309.5,
+            "state": "ARRIVAL_PENDING_CONFIRMATION",
+            "remaining_min": 20.24
+          },
+          {
+            "id": "V-SEIN-SIM",
+            "name": "SIM_SEIN_SHUTTLE",
+            "lat": 48.0375,
+            "lon": -4.8505,
+            "sog": 0.1,
+            "cog": 273.6,
+            "state": "ARRIVED",
+            "remaining_min": 0.0
+          }
+        ],
+        "fromveur_eta": {
+          "predicted_arrival_utc": "2026-03-01T08:50:00Z",
+          "estimated_remaining_minutes": 0.0,
+          "raw_model_minutes": 0.0,
+          "model_name": "VectorizedRidgeETAModel",
+          "weights_sha256": "e4da4af5cf8a5e7b31337ca9ae9e37740a9062ccdc584b8c3aad69deb0f6d9e9"
+        }
+      }
+    ],
+    "04_stop_response": {
+      "status": "SUCCESS",
+      "current_action": "stop",
+      "is_running": false,
+      "is_paused": false
+    },
+    "05_stopped_status": {
+      "simulation_available": true,
+      "run_id": "sim_run_a0ca7055",
+      "is_running": false,
+      "is_paused": false,
+      "sim_time_utc": "2026-03-01T09:30:00Z",
+      "speed_multiplier": 20.0,
+      "step_interval_s": 300.0,
+      "total_events_processed": 76,
+      "active_vessels_count": 4,
+      "active_scenario_id": null,
+      "provenance": "SIMULATED_LOCAL_MARITIME_ENGINE"
+    },
+    "06_sse_events_captured": 4,
+    "06_sse_sample_event": {
+      "event_type": "snapshot",
+      "data": {
+        "total_vessels": 4,
+        "timestamp_utc": "2026-03-01T08:00:00Z",
+        "vessels": [
+          {
+            "vessel_id": "V-FROMVEUR-SIM",
+            "synthetic_mmsi": 999000001,
+            "name": "SIM_FROMVEUR_EXPRESS",
+            "operator": "Penn ar Bed (Simulated Fleet)",
+            "corridor": "BREST_LE_CONQUET",
+            "origin_terminal_id": "BREST",
+            "destination_terminal_id": "LE_CONQUET",
+            "lat": 48.36677,
+            "lon": -4.50756,
+            "sog_knots": 15.6,
+            "cog_degrees": 222.4,
+            "eta_lifecycle_state": "ESTIMATING",
+            "position_timestamp_utc": "2026-03-01T08:00:00Z",
+            "prediction_timestamp_utc": "2026-03-01T08:00:00Z",
+            "predicted_arrival_utc": "2026-03-01T09:33:03Z",
+            "estimated_remaining_minutes": 93.05,
+            "telemetry_age_seconds": 0.0,
+            "is_stale": false,
+            "is_arrived": false,
+            "data_provenance": "SIMULATED_SYNTHETIC"
+          },
+          {
+            "vessel_id": "V-AZENOR-SIM",
+            "synthetic_mmsi": 999000002,
+            "name": "SIM_AZENOR_VOYAGER",
+            "operator": "Penn ar Bed (Simulated Fleet)",
+            "corridor": "LE_CONQUET_BREST",
+            "origin_terminal_id": "LE_CONQUET",
+            "destination_terminal_id": "BREST",
+            "lat": 48.35088,
+            "lon": -4.75045,
+            "sog_knots": 14.6,
+            "cog_degrees": 112.0,
+            "eta_lifecycle_state": "ESTIMATING",
+            "position_timestamp_utc": "2026-03-01T08:00:00Z",
+            "prediction_timestamp_utc": "2026-03-01T08:00:00Z",
+            "predicted_arrival_utc": "2026-03-01T09:05:12Z",
+            "estimated_remaining_minutes": 65.21,
+            "telemetry_age_seconds": 0.0,
+            "is_stale": false,
+            "is_arrived": false,
+            "data_provenance": "SIMULATED_SYNTHETIC"
+          },
+          {
+            "vessel_id": "V-OUESSANT-SIM",
+            "synthetic_mmsi": 999000003,
+            "name": "SIM_IROISE_STAR",
+            "operator": "Penn ar Bed (Simulated Fleet)",
+            "corridor": "BREST_OUESSANT_STIFF",
+            "origin_terminal_id": "BREST",
+            "destination_terminal_id": "OUESSANT_STIFF",
+            "lat": 48.36849,
+            "lon": -4.51365,
+            "sog_knots": 17.0,
+            "cog_degrees": 232.6,
+            "eta_lifecycle_state": "ESTIMATING",
+            "position_timestamp_utc": "2026-03-01T08:00:00Z",
+            "prediction_timestamp_utc": "2026-03-01T08:00:00Z",
+            "predicted_arrival_utc": "2026-03-01T10:41:03Z",
+            "estimated_remaining_minutes": 161.05,
+            "telemetry_age_seconds": 0.0,
+            "is_stale": false,
+            "is_arrived": false,
+            "data_provenance": "SIMULATED_SYNTHETIC"
+          },
+          {
+            "vessel_id": "V-SEIN-SIM",
+            "synthetic_mmsi": 999000004,
+            "name": "SIM_SEIN_SHUTTLE",
+            "operator": "Penn ar Bed (Simulated Fleet)",
+            "corridor": "AUDIERNE_ILE_DE_SEIN",
+            "origin_terminal_id": "AUDIERNE",
+            "destination_terminal_id": "ILE_DE_SEIN",
+            "lat": 48.01766,
+            "lon": -4.56772,
+            "sog_knots": 14.1,
+            "cog_degrees": 264.7,
+            "eta_lifecycle_state": "ESTIMATING",
+            "position_timestamp_utc": "2026-03-01T08:00:00Z",
+            "prediction_timestamp_utc": "2026-03-01T08:00:00Z",
+            "predicted_arrival_utc": "2026-03-01T09:17:30Z",
+            "estimated_remaining_minutes": 77.51,
+            "telemetry_age_seconds": 0.0,
+            "is_stale": false,
+            "is_arrived": false,
+            "data_provenance": "SIMULATED_SYNTHETIC"
+          }
+        ]
+      }
+    },
+    "07_stale_verification": {
+      "is_stale": true,
+      "lifecycle_state": "STALE",
+      "telemetry_age_seconds": 720.0
+    },
+    "08_arrival_verification": {
+      "is_arrived": true,
+      "lifecycle_state": "ARRIVED"
+    }
+  },
+  "verifications": {
+    "clock_advanced": {
+      "passed": true,
+      "timestamps": [
+        "2026-03-01T08:00:00Z",
+        "2026-03-01T08:30:00Z",
+        "2026-03-01T09:00:00Z",
+        "2026-03-01T09:30:00Z"
+      ]
+    },
+    "coordinates_moved": {
+      "passed": true,
+      "initial_v0": {
+        "V-FROMVEUR-SIM": [
+          48.36677,
+          -4.50756
+        ],
+        "V-AZENOR-SIM": [
+          48.35088,
+          -4.75045
+        ],
+        "V-OUESSANT-SIM": [
+          48.36849,
+          -4.51365
+        ],
+        "V-SEIN-SIM": [
+          48.01766,
+          -4.56772
+        ]
+      },
+      "final_v3": {
+        "V-FROMVEUR-SIM": [
+          48.3585,
+          -4.7788
+        ],
+        "V-AZENOR-SIM": [
+          48.3828,
+          -4.4855
+        ],
+        "V-OUESSANT-SIM": [
+          48.4626,
+          -5.0481
+        ],
+        "V-SEIN-SIM": [
+          48.0375,
+          -4.8505
+        ]
+      }
+    },
+    "model_provenance_verified": {
+      "passed": true,
+      "model_name": "VectorizedRidgeETAModel",
+      "weights_sha256": "e4da4af5cf8a5e7b31337ca9ae9e37740a9062ccdc584b8c3aad69deb0f6d9e9"
+    },
+    "sse_events_received": {
+      "passed": true,
+      "count": 4
+    },
+    "arrival_latching_verified": {
+      "passed": true
+    },
+    "stale_handling_verified": {
+      "passed": true
+    },
+    "stopped_cleanly": {
+      "passed": true
+    }
+  },
+  "all_passed": true
+}

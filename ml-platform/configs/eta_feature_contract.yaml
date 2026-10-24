@@ -1,0 +1,183 @@
+# ETA Feature Contract and Ingestion Policy for Where Is My Ferry
+# Phase 03 Technical Closure & Specification
+
+version: "1.1.0"
+date: "2026-10-16"
+status: "ACTIVE_SPECIFICATION"
+
+target:
+  name: "remaining_travel_time_minutes"
+  definition: "Time in minutes from prediction_timestamp_utc until confirmed terminal arrival"
+  formula: "(actual_arrival_timestamp_utc - prediction_timestamp_utc) / 60.0"
+  unit: "minutes"
+  data_type: "float"
+  preconditions:
+    - "departure_timestamp_utc <= prediction_timestamp_utc"
+    - "prediction_timestamp_utc < actual_arrival_timestamp_utc"
+    - "remaining_travel_time_minutes > 0.0"
+
+core_identifiers:
+  voyage_id:
+    type: "string"
+    description: "Stable unique identifier for the continuous voyage"
+    example: "VOY-FR-BREST-20151001-001"
+  vessel_id:
+    type: "integer"
+    description: "Vessel MMSI (Maritime Mobile Service Identity)"
+    example: 228017700
+  corridor_id:
+    type: "string"
+    allowed_values: ["CORRIDOR_BREST", "CORRIDOR_SALISH"]
+  prediction_timestamp_utc:
+    type: "datetime_iso8601_utc"
+    description: "Strict causal cutoff timestamp for all feature observations"
+    example: "2015-10-01T07:00:00Z"
+  origin_port_id:
+    type: "string"
+    description: "Departure port or terminal identifier"
+    example: "PORT_BREST"
+  destination_port_id:
+    type: "string"
+    description: "Intended arrival port or terminal identifier"
+    example: "PORT_LE_CONQUET"
+  actual_arrival_timestamp_utc:
+    type: "datetime_iso8601_utc"
+    description: "Verified touchdown/berth arrival timestamp (TARGET GROUND TRUTH ONLY)"
+  arrival_evidence_type:
+    type: "string"
+    allowed_values:
+      - "OBSERVED_ARRIVAL"       # Berth geofence containment with zero/dwell speed
+      - "INFERRED_PORT_ARRIVAL"  # Proximity to terminal at trajectory termination
+      - "UNVERIFIED"             # Cannot be independently verified from raw AIS
+  label_quality:
+    type: "string"
+    allowed_values:
+      - "SUPERVISED_USABLE"      # Confirmed passenger ferry, verified ports, gap <= 30 min
+      - "CANDIDATE_UNVERIFIED"   # Plausible trajectory lacking external identity/arrival verification
+      - "UNLABELLED"             # Non-ferry, open-water endpoint, or gap > 30 min
+  source_id:
+    type: "string"
+    description: "Raw source archive or table identifier"
+
+terminal_geofencing_and_arrival_heuristics:
+  terminal_representation_note: "The repository contains terminal POINT COORDINATES only (latitude, longitude from NGA Pub 150 and GTFS stops). Spatial boundary polygons are NOT available in the current assets. All circular buffers are heuristics requiring validation."
+  heuristic_parameters:
+    berth_radius_meters: 800.0   # Uncalibrated heuristic circular buffer around terminal coordinates
+    speed_cutoff_knots: 0.5      # Heuristic speed threshold indicating docking
+    dwell_duration_minutes: 3.0  # Heuristic dwell threshold
+  confidence_scores_note: "Numerical scores (e.g. 0.95 for OBSERVED_ARRIVAL, 0.80 for INFERRED_PORT_ARRIVAL) are uncalibrated engineering heuristic ranks, NOT statistical probabilities."
+  edge_case_dispositions:
+    ambiguous_multi_berth:
+      disposition: "QUARANTINED_AMBIGUOUS_BERTH"
+      action: "When multiple terminal points fall within 800m (e.g. adjacent ferry slips), voyage must be assigned to QUARANTINED_AMBIGUOUS_BERTH until slip-level polygons are defined."
+    incomplete_trajectory:
+      disposition: "UNLABELLED_INCOMPLETE"
+      action: "Trajectories ending > 800m from destination are marked UNLABELLED and excluded from supervised training."
+    intermediate_stops:
+      disposition: "SEGMENT_AT_INTERMEDIATE_STOP"
+      action: "Voyages calling at intermediate island ports (e.g. Le Conquet -> Molène -> Ouessant) must be segmented into distinct sub-voyages if dwell exceeds 5 minutes, or flagged as MULTI_LEG_VOYAGE."
+    censored_signal_loss:
+      disposition: "EXCLUDED_CENSORED"
+      action: "Pings abruptly ending mid-fairway are treated as right-censored observations and excluded from supervised ETA targets."
+
+prohibited_leakage_features:
+  - name: "actual_arrival_timestamp_utc"
+    reason: "Direct target leakage; represents ground-truth event outcome"
+  - name: "total_voyage_duration_minutes"
+    reason: "Direct target leakage; not observable until journey is finished"
+  - name: "future_track_coordinates"
+    reason: "Spatiotemporal leakage; positions occurring after prediction_timestamp_utc"
+  - name: "post_arrival_observations"
+    reason: "Causality violation"
+  - name: "future_ocean_reanalysis"
+    reason: "Temporal leakage; future current components cannot be known at t_pred"
+  - name: "retrospectively_updated_gtfs"
+    reason: "Post-hoc schedule adjustments not published at departure time"
+
+corridor_a_brest_features:
+  latitude:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Instantaneous WGS84 latitude at prediction timestamp"
+  longitude:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Instantaneous WGS84 longitude at prediction timestamp"
+  sog_knots:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Speed over ground from AIS point observation"
+  cog_degrees:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Course over ground from AIS point observation (0-360 deg)"
+  elapsed_time_minutes:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Minutes elapsed since verified departure from berth"
+  time_of_day_utc:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Fractional hour of day in UTC (0.0 to 24.0)"
+  day_of_week:
+    classification: "AVAILABLE"
+    type: "integer"
+    description: "Day of week (0=Monday, 6=Sunday)"
+  remaining_navigable_distance_nm:
+    classification: "AVAILABLE_WITH_LIMITATIONS"
+    type: "float"
+    limitation: "Requires navigable channel routing graph; straight-line distance underestimates"
+  route_id:
+    classification: "AVAILABLE_WITH_LIMITATIONS"
+    type: "string"
+    limitation: "Inferred from departure port and initial fairway trajectory if static voyage report missing"
+  uo_eastward_current_ms:
+    classification: "AVAILABLE_WITH_LIMITATIONS"
+    type: "float"
+    limitation: "Daily-mean 8km Copernicus reanalysis; does NOT resolve micro-tidal harbour currents"
+  vo_northward_current_ms:
+    classification: "AVAILABLE_WITH_LIMITATIONS"
+    type: "float"
+    limitation: "Daily-mean 8km Copernicus reanalysis; does NOT resolve micro-tidal harbour currents"
+  current_magnitude_ms:
+    classification: "AVAILABLE_WITH_LIMITATIONS"
+    type: "float"
+    limitation: "Derived scalar from daily-mean uo and vo"
+  observation_gap_minutes:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Time in minutes between current and previous AIS ping"
+
+corridor_b_salish_sea_features:
+  vessel_length_m:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Static vessel length from MarineCadastre table"
+  vessel_width_m:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Static vessel width from MarineCadastre table"
+  draft_m:
+    classification: "AVAILABLE"
+    type: "float"
+    description: "Static vessel draft from MarineCadastre table"
+  overall_track_start_time:
+    classification: "AVAILABLE_WITH_LIMITATIONS"
+    type: "datetime_iso8601_utc"
+    limitation: "Retrospective track attribute; represents entire aggregated trackline start"
+  overall_track_end_time:
+    classification: "AVAILABLE_WITH_LIMITATIONS"
+    type: "datetime_iso8601_utc"
+    limitation: "Retrospective track attribute; representing final arrival if track equals voyage"
+  intermediate_position_at_t_pred:
+    classification: "NOT_AVAILABLE"
+    reason: "No per-vertex timestamps in 2D MultiLineString geometry; cannot interpolate safely"
+  instantaneous_speed_at_t_pred:
+    classification: "NOT_AVAILABLE"
+    reason: "Instantaneous SOG not recorded in aggregated tracklines"
+  contemporaneous_ocean_currents:
+    classification: "NOT_AVAILABLE"
+    reason: "Copernicus dataset in repo is 2015-2016; 2026 ocean physics not downloaded"
+  contemporaneous_gtfs_schedules:
+    classification: "NOT_AVAILABLE"
+    reason: "BC Ferries GTFS feed in downloads is May 2026; postdates March 2026 AIS tracks"

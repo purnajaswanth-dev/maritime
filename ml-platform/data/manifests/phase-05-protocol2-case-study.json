@@ -1,0 +1,40 @@
+{
+  "protocol": "Protocol 2 (Exploratory Unseen Vessel Holdout)",
+  "limitation_note": "Statistically underpowered (N=4 vessels total). Evaluated strictly as exploratory case study.",
+  "case_a_enez_eussa_3": {
+    "mae_minutes": 6.4,
+    "median_ae_minutes": 4.97,
+    "rmse_minutes": 8.48,
+    "mean_bias_minutes": -3.35,
+    "percentile_50": 4.97,
+    "percentile_75": 9.23,
+    "percentile_90": 12.89,
+    "percentile_95": 15.82,
+    "percentile_99": 28.15,
+    "max_error_minutes": 38.86,
+    "pct_within_3m": 32.1,
+    "pct_within_5m": 50.2,
+    "pct_within_10m": 79.3,
+    "pct_over_15m": 6.2,
+    "pct_premature_arrival": 73.1,
+    "pct_overestimate_arrival": 26.9
+  },
+  "case_b_enez_sun_3_confounded": {
+    "mae_minutes": 9.48,
+    "median_ae_minutes": 7.78,
+    "rmse_minutes": 11.3,
+    "mean_bias_minutes": 3.32,
+    "percentile_50": 7.78,
+    "percentile_75": 12.46,
+    "percentile_90": 18.41,
+    "percentile_95": 21.29,
+    "percentile_99": 28.42,
+    "max_error_minutes": 38.15,
+    "pct_within_3m": 8.2,
+    "pct_within_5m": 23.1,
+    "pct_within_10m": 62.8,
+    "pct_over_15m": 16.5,
+    "pct_premature_arrival": 21.2,
+    "pct_overestimate_arrival": 78.8
+  }
+}

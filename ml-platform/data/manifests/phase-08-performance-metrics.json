@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "title": "Phase 08 Virtual Simulation Performance & Throughput Metrics",
+    "timestamp_utc": "2026-10-16T10:51:10.666718+00:00",
+    "pipeline": "VirtualAISGenerator -> VirtualFleetRunner -> ETAStreamProcessor"
+  },
+  "performance_metrics": {
+    "benchmark_sample_events": 200,
+    "total_elapsed_seconds": 0.347,
+    "throughput_events_per_second": 575.8,
+    "latency_metrics_ms": {
+      "mean_ms": 1.736,
+      "median_ms": 1.643,
+      "p95_ms": 2.097,
+      "p99_ms": 2.537,
+      "max_ms": 7.232
+    }
+  }
+}

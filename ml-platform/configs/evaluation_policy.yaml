@@ -1,0 +1,93 @@
+# Evaluation Policy and Splitting Specification for Where Is My Ferry
+# Phase 03 Technical Closure & Specification
+
+version: "1.1.0"
+date: "2026-10-16"
+status: "ACTIVE_SPECIFICATION"
+
+current_evaluation_status:
+  verdict: "GENERALIZATION_EVALUATION_BLOCKED"
+  reason: "Audit of Phase 02 candidate parquets confirmed 0 independently verified ground-truth voyages (the 5 entries in voyage_candidates.parquet were synthetic demonstration prototypes whose nominal timestamps failed raw AIS reconstruction). Generating train/test partitions or computing metrics on 0 samples is strictly prohibited."
+
+evaluation_protocols:
+  protocol_1_temporal_generalization:
+    name: "IN_DISTRIBUTION_TEMPORAL_GENERALIZATION"
+    question: "How accurately can the model predict ETAs for future voyages on routes and vessels already observed in training?"
+    status: "BLOCKED (Requires N >= 50 verified voyages)"
+    splitting_strategy: "VOYAGE_GROUPED_CHRONOLOGICAL"
+    splitting_rules:
+      - rule: "VOYAGE_GROUP_ISOLATION"
+        description: "All prediction snapshots from the same voyage_id must strictly reside in the same partition (Train, Validation, or Test). Shuffling snapshots across partitions is strictly prohibited."
+      - rule: "BOUNDARY_SPANNING_VOYAGES"
+        description: "Voyages spanning partition boundaries (e.g. departing in Train and arriving in Validation) are assigned strictly to the partition of their departure timestamp. Alternatively, boundary voyages with duration > partition boundary window may be quarantined."
+      - rule: "TEMPORAL_CUTOFF_BOUNDARIES"
+        description: "Chronological boundaries are determined by data-dependent temporal quantiles on departure_timestamp_utc (e.g. Train: earliest 70% of chronological voyages; Validation: next 15%; Test: final 15%)."
+      - rule: "HISTORICAL_BASELINE_CAUSALITY"
+        description: "Historical features (e.g., historical route median) evaluated for a prediction snapshot at t_pred must strictly exclude voyages that have not arrived by t_pred (arrival_timestamp_utc <= t_pred required)."
+
+  protocol_2_vessel_transferability:
+    name: "OUT_OF_DISTRIBUTION_VESSEL_TRANSFERABILITY"
+    question: "How accurately can the model predict ETAs when transferred to a previously unseen ferry vessel operating in the same or comparable corridor?"
+    status: "BLOCKED (Requires N >= 3 distinct verified vessels with >= 20 voyages each)"
+    splitting_strategy: "VESSEL_HELD_OUT_GROUPING"
+    splitting_rules:
+      - rule: "VESSEL_ISOLATION"
+        description: "Entire vessel MMSIs are held out from training (e.g., train on Coastal Inspiration, test on Queen of Alberni; or train on Fromveur II, test on Enez Sun 3)."
+      - rule: "NO_VESSEL_LEAKAGE"
+        description: "Zero snapshots or historical route statistics conditioned on the target vessel may be present in the training partition."
+
+reporting_requirements:
+  independent_reporting_mandatory:
+    description: "Every evaluation report must report the following counts separately; snapshot counts must never be presented as independent voyage counts."
+    required_metrics:
+      - "total_independent_voyages"
+      - "total_distinct_vessels"
+      - "total_distinct_routes"
+      - "total_prediction_snapshots"
+      - "temporal_date_range_utc"
+      - "label_quality_distribution"
+
+evaluation_metrics:
+  primary:
+    name: "MAE"
+    unit: "minutes"
+    formula: "mean(|y_true - y_pred|)"
+    interpretation: "Average error magnitude across all snapshots."
+    limitations: "Linearly penalizes all errors; does not penalize catastrophic delays disproportionately; sensitive to outliers."
+  secondary:
+    - name: "RMSE"
+      unit: "minutes"
+      formula: "sqrt(mean((y_true - y_pred)^2))"
+      interpretation: "Heavily penalizes large prediction errors."
+      limitations: "Disproportionately influenced by rare extreme harbour congestion or terminal hold events."
+    - name: "MedAE"
+      unit: "minutes"
+      formula: "median(|y_true - y_pred|)"
+      interpretation: "Typical error on central 50% of voyages; robust to heavy-tailed dwell times."
+      limitations: "Insensitive to severe under-prediction failures on delayed voyages."
+    - name: "Acc_5min"
+      unit: "percentage"
+      formula: "proportion(|y_true - y_pred| <= 5.0)"
+      interpretation: "Percentage of arrivals predicted within +/- 5 minutes."
+      limitations: "Arbitrary threshold; 5 minutes represents 33% error on a 15-min crossing, but only 4% on a 120-min crossing."
+    - name: "Acc_10min"
+      unit: "percentage"
+      formula: "proportion(|y_true - y_pred| <= 10.0)"
+      interpretation: "Percentage of arrivals predicted within +/- 10 minutes."
+      limitations: "Coarse operational tolerance."
+    - name: "MAPE"
+      unit: "percentage"
+      formula: "mean(|y_true - y_pred| / max(y_true, 1.0)) * 100"
+      interpretation: "Relative percentage error with epsilon = 1.0 min safeguard."
+      limitations: "Explodes near arrival (as y_true -> 0) without epsilon safeguard; favors over-prediction over under-prediction."
+
+minimum_dataset_requirements_to_unblock:
+  min_independent_voyages: 50  # Preliminary feasibility milestone, not full statistical sufficiency
+  min_distinct_vessels: 3
+  min_temporal_span_days: 14
+  required_label_quality: "SUPERVISED_USABLE"
+  required_arrival_evidence: ["OBSERVED_ARRIVAL"]
+
+baseline_benchmarking_gates:
+  gate_1: "Learned ML models must demonstrate lower MAE than HistoricalRouteDurationBaseline on held-out test splits."
+  gate_2: "Learned ML models must demonstrate higher Acc_5min than PhysicalETABaseline on final-approach snapshots (remaining time < 20 min)."

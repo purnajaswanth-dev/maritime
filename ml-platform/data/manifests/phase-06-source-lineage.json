@@ -1,0 +1,31 @@
+{
+  "phase": "06",
+  "phase_title": "ETA Reliability Hardening, Adversarial Replay, and Arrival Correctness",
+  "timestamp_utc": "2026-10-16T09:50:28.135088+00:00",
+  "input_artifacts": [
+    {
+      "path": "data/processed/phase_05_prediction_snapshots.parquet",
+      "sha256": "39f9f1ae9cbff17c9061460f156f0341c24dd2aab4a5ef7bff8350d48122579d"
+    },
+    {
+      "path": "data/processed/phase_05_test_predictions.parquet",
+      "sha256": "bf8a92ce544152b6aa1fac46b5f86dabc6f0459c34e1b099efe4c14e6647bb2b"
+    },
+    {
+      "path": "data/processed/verified_voyages.parquet",
+      "sha256": "43f5e018368580bc22f14656bc3c606eed1c80516d2ed09816cde4aac2d99997"
+    }
+  ],
+  "output_artifacts": [
+    "data/manifests/phase-06-evaluation-metrics.json",
+    "data/manifests/phase-06-adversarial-replay-results.json",
+    "data/manifests/phase-06-worst-error-investigation.json",
+    "reports/phase-06-eta-reliability-and-adversarial-replay.md"
+  ],
+  "code_modules": [
+    "src/models/eta_state_machine.py",
+    "src/models/adversarial_replay.py",
+    "src/models/evaluate_phase06.py",
+    "tests/test_phase06_reliability.py"
+  ]
+}

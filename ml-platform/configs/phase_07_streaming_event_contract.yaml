@@ -1,0 +1,108 @@
+# ==============================================================================
+# WHERE IS MY FERRY? - PHASE 07 STREAMING EVENT CONTRACT
+# Schema version: 1.0.0
+# Scope: Real-time & mock streaming ingestion of AIS telemetry for ferry ETA
+# ==============================================================================
+
+schema_version: "1.0.0"
+contract_name: "ferry_streaming_ais_event_contract"
+last_updated: "2026-10-16"
+status: "ACTIVE_PHASE_07"
+
+# Required & optional payload fields
+fields:
+  message_id:
+    type: "string"
+    required: true
+    description: "Unique, stable deduplication key for the telemetry packet."
+  mmsi:
+    type: "integer"
+    required: true
+    description: "Maritime Mobile Service Identity (9-digit integer)."
+  vessel_name:
+    type: "string"
+    required: true
+    description: "Vessel name string matching registered fleet."
+  event_timestamp_utc:
+    type: "string"
+    format: "date-time"
+    required: true
+    description: "Authoritative UTC timestamp when the AIS observation occurred on the vessel."
+  receipt_timestamp_utc:
+    type: "string"
+    format: "date-time"
+    required: true
+    description: "UTC timestamp when the server or ingestion gateway received the packet."
+  latitude:
+    type: "float"
+    required: true
+    minimum: -90.0
+    maximum: 90.0
+    description: "WGS84 latitude coordinate in decimal degrees."
+  longitude:
+    type: "float"
+    required: true
+    minimum: -180.0
+    maximum: 180.0
+    description: "WGS84 longitude coordinate in decimal degrees."
+  sog_knots:
+    type: "float"
+    required: true
+    minimum: 0.0
+    maximum: 60.0
+    description: "Speed Over Ground in nautical knots."
+  cog_degrees:
+    type: "float"
+    required: false
+    minimum: 0.0
+    maximum: 360.0
+    description: "Course Over Ground in degrees true."
+  heading_degrees:
+    type: "float"
+    required: false
+    minimum: 0.0
+    maximum: 360.0
+    description: "True compass heading from vessel gyro in degrees."
+  nav_status:
+    type: "integer"
+    required: false
+    minimum: 0
+    maximum: 15
+    description: "Standard AIS navigation status code (e.g. 0=Under way using engine, 5=Moored)."
+  source_id:
+    type: "string"
+    required: true
+    description: "Receiver station or simulation provenance identifier."
+  is_synthetic_fixture:
+    type: "boolean"
+    required: true
+    description: "Explicit flag: true for test-only synthetic injections; false for genuine observations."
+
+# Validation and error handling policies
+validation_policies:
+  malformed_timestamp: "REJECT_WITH_DIAGNOSTIC_LOG"
+  out_of_bounds_coordinates: "REJECT_WITH_DIAGNOSTIC_LOG"
+  duplicate_message_id: "DROP_SILENTLY_LOG_DUPLICATE"
+  out_of_order_event_time: "PROCESS_FOR_AUDIT_DO_NOT_REWIND_WATERMARK"
+  stale_data_threshold_seconds: 600.0
+  berth_arrival_radius_meters: 400.0
+  berth_dwell_speed_threshold_knots: 1.8
+  berth_dwell_confirmation_steps: 2
+
+# Output ETA response schema
+eta_response_fields:
+  schema_version: "1.0.0"
+  vessel_name: "string"
+  mmsi: "integer"
+  corridor: "string"
+  prediction_timestamp_utc: "date-time"
+  predicted_arrival_timestamp_utc: "date-time"
+  estimated_remaining_minutes: "float"
+  eta_lifecycle_state: "string"
+  latest_observation_timestamp_utc: "date-time"
+  data_freshness_seconds: "float"
+  is_stale: "boolean"
+  is_arrived: "boolean"
+  uncertainty_range_minutes: "tuple(float, float)"
+  reason_code: "string"
+  processing_latency_ms: "float"

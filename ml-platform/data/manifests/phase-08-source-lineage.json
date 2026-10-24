@@ -1,0 +1,22 @@
+{
+  "phase": "08",
+  "phase_title": "Virtual Live Maritime Simulation & End-to-End System Readiness",
+  "timestamp_utc": "2026-10-16T10:51:10.667475+00:00",
+  "input_artifacts": [
+    "configs/phase_08_virtual_fleet.json",
+    "configs/phase_08_scenarios.json",
+    "configs/phase_07_streaming_event_contract.yaml"
+  ],
+  "output_artifacts": [
+    "data/manifests/phase-08-scenario-results.json",
+    "data/manifests/phase-08-performance-metrics.json",
+    "data/manifests/phase-08-acceptance-results.json",
+    "reports/phase-08-virtual-live-simulation.md"
+  ],
+  "code_modules": [
+    "src/simulation/virtual_ais_generator.py",
+    "src/simulation/virtual_fleet_runner.py",
+    "src/streaming/mock_api_server.py",
+    "tests/test_phase08_virtual_simulation.py"
+  ]
+}

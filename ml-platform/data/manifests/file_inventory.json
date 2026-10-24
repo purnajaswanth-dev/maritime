@@ -1,0 +1,457 @@
+{
+  "audit_timestamp": "2026-10-15T22:45:00+05:30",
+  "workspace_root": "C:\\Users\\sunka\\OneDrive\\coding\\where-is-my-ferry",
+  "total_items": 45,
+  "items": [
+    {
+      "path": "backend",
+      "name": "backend",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: backend"
+    },
+    {
+      "path": "frontend",
+      "name": "frontend",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: frontend"
+    },
+    {
+      "path": "ml-platform",
+      "name": "ml-platform",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: ml-platform"
+    },
+    {
+      "path": "ml-platform\\data",
+      "name": "data",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: data"
+    },
+    {
+      "path": "ml-platform\\data\\downloads",
+      "name": "downloads",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: downloads"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\AISVesselTracks2026-03.zip",
+      "name": "AISVesselTracks2026-03.zip",
+      "type": "file",
+      "size_bytes": 1220146725,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\ais_brest_synopses_v0.8.zip",
+      "name": "ais_brest_synopses_v0.8.zip",
+      "type": "file",
+      "size_bytes": 1993633450,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\cmems_mod_glo_phy_my_0.083deg_P1D-m_1792083299167.nc",
+      "name": "cmems_mod_glo_phy_my_0.083deg_P1D-m_1792083299167.nc",
+      "type": "file",
+      "size_bytes": 665677789,
+      "extension": ".nc",
+      "detected_format": "NetCDF-4 / HDF5",
+      "category": "ocean or weather data",
+      "notes": "Copernicus Marine ocean physical reanalysis data (CMEMS GLORYS12V1 Daily Mean)"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-2353-202502041949.zip",
+      "name": "mdb-2353-202502041949.zip",
+      "type": "file",
+      "size_bytes": 3821245,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-2353-202502270025.zip",
+      "name": "mdb-2353-202502270025.zip",
+      "type": "file",
+      "size_bytes": 3821246,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-2353-202506170043.zip",
+      "name": "mdb-2353-202506170043.zip",
+      "type": "file",
+      "size_bytes": 3569641,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-2814-202508181628.zip",
+      "name": "mdb-2814-202508181628.zip",
+      "type": "file",
+      "size_bytes": 290347,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-3522-202610131556.zip",
+      "name": "mdb-3522-202610131556.zip",
+      "type": "file",
+      "size_bytes": 5960,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-649-202406071512.zip",
+      "name": "mdb-649-202406071512.zip",
+      "type": "file",
+      "size_bytes": 7085,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-690-202605270153.zip",
+      "name": "mdb-690-202605270153.zip",
+      "type": "file",
+      "size_bytes": 73159,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-690-202607240152.zip",
+      "name": "mdb-690-202607240152.zip",
+      "type": "file",
+      "size_bytes": 107960,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\downloads\\mdb-690-202608210055.zip",
+      "name": "mdb-690-202608210055.zip",
+      "type": "file",
+      "size_bytes": 110878,
+      "extension": ".zip",
+      "detected_format": "ZIP Archive (Deflated/Stored)",
+      "category": "archive",
+      "notes": "Compressed archive file containing raw or candidate datasets"
+    },
+    {
+      "path": "ml-platform\\data\\manifests",
+      "name": "manifests",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: manifests"
+    },
+    {
+      "path": "ml-platform\\data\\raw",
+      "name": "raw",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: raw"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\UpdatedPub150.csv",
+      "name": "UpdatedPub150.csv",
+      "type": "file",
+      "size_bytes": 3326893,
+      "extension": ".csv",
+      "detected_format": "Comma-Separated Values (CSV, UTF-8)",
+      "category": "port reference data",
+      "notes": "World Port Index (NGA Pub 150) tabular database"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_coastline",
+      "name": "ne_10m_coastline",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: ne_10m_coastline"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_coastline\\ne_10m_coastline.README.html",
+      "name": "ne_10m_coastline.README.html",
+      "type": "file",
+      "size_bytes": 37038,
+      "extension": ".html",
+      "detected_format": "HTML Document",
+      "category": "documentation",
+      "notes": "Dataset documentation/metadata HTML for ne_10m_coastline"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_coastline\\ne_10m_coastline.VERSION.txt",
+      "name": "ne_10m_coastline.VERSION.txt",
+      "type": "file",
+      "size_bytes": 12,
+      "extension": ".txt",
+      "detected_format": "Plain Text File",
+      "category": "documentation",
+      "notes": "Version or reference plain text metadata"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_coastline\\ne_10m_coastline.cpg",
+      "name": "ne_10m_coastline.cpg",
+      "type": "file",
+      "size_bytes": 5,
+      "extension": ".cpg",
+      "detected_format": "Character Code Page Specification",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_coastline"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_coastline\\ne_10m_coastline.dbf",
+      "name": "ne_10m_coastline.dbf",
+      "type": "file",
+      "size_bytes": 392765,
+      "extension": ".dbf",
+      "detected_format": "dBase IV Attribute Table",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_coastline"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_coastline\\ne_10m_coastline.prj",
+      "name": "ne_10m_coastline.prj",
+      "type": "file",
+      "size_bytes": 145,
+      "extension": ".prj",
+      "detected_format": "WGS 84 Coordinate Reference Specification",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_coastline"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_coastline\\ne_10m_coastline.shp",
+      "name": "ne_10m_coastline.shp",
+      "type": "file",
+      "size_bytes": 6806860,
+      "extension": ".shp",
+      "detected_format": "ESRI Shapefile (Geometry)",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_coastline"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_coastline\\ne_10m_coastline.shx",
+      "name": "ne_10m_coastline.shx",
+      "type": "file",
+      "size_bytes": 33164,
+      "extension": ".shx",
+      "detected_format": "ESRI Spatial Index",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_coastline"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_land",
+      "name": "ne_10m_land",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: ne_10m_land"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_land\\ne_10m_land.README.html",
+      "name": "ne_10m_land.README.html",
+      "type": "file",
+      "size_bytes": 37096,
+      "extension": ".html",
+      "detected_format": "HTML Document",
+      "category": "documentation",
+      "notes": "Dataset documentation/metadata HTML for ne_10m_land"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_land\\ne_10m_land.VERSION.txt",
+      "name": "ne_10m_land.VERSION.txt",
+      "type": "file",
+      "size_bytes": 7,
+      "extension": ".txt",
+      "detected_format": "Plain Text File",
+      "category": "documentation",
+      "notes": "Version or reference plain text metadata"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_land\\ne_10m_land.cpg",
+      "name": "ne_10m_land.cpg",
+      "type": "file",
+      "size_bytes": 5,
+      "extension": ".cpg",
+      "detected_format": "Character Code Page Specification",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_land"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_land\\ne_10m_land.dbf",
+      "name": "ne_10m_land.dbf",
+      "type": "file",
+      "size_bytes": 350,
+      "extension": ".dbf",
+      "detected_format": "dBase IV Attribute Table",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_land"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_land\\ne_10m_land.prj",
+      "name": "ne_10m_land.prj",
+      "type": "file",
+      "size_bytes": 145,
+      "extension": ".prj",
+      "detected_format": "WGS 84 Coordinate Reference Specification",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_land"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_land\\ne_10m_land.shp",
+      "name": "ne_10m_land.shp",
+      "type": "file",
+      "size_bytes": 7166824,
+      "extension": ".shp",
+      "detected_format": "ESRI Shapefile (Geometry)",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_land"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_land\\ne_10m_land.shx",
+      "name": "ne_10m_land.shx",
+      "type": "file",
+      "size_bytes": 188,
+      "extension": ".shx",
+      "detected_format": "ESRI Spatial Index",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_land"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_ocean",
+      "name": "ne_10m_ocean",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: ne_10m_ocean"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_ocean\\ne_10m_ocean.README.html",
+      "name": "ne_10m_ocean.README.html",
+      "type": "file",
+      "size_bytes": 37305,
+      "extension": ".html",
+      "detected_format": "HTML Document",
+      "category": "documentation",
+      "notes": "Dataset documentation/metadata HTML for ne_10m_ocean"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_ocean\\ne_10m_ocean.VERSION.txt",
+      "name": "ne_10m_ocean.VERSION.txt",
+      "type": "file",
+      "size_bytes": 7,
+      "extension": ".txt",
+      "detected_format": "Plain Text File",
+      "category": "documentation",
+      "notes": "Version or reference plain text metadata"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_ocean\\ne_10m_ocean.cpg",
+      "name": "ne_10m_ocean.cpg",
+      "type": "file",
+      "size_bytes": 5,
+      "extension": ".cpg",
+      "detected_format": "Character Code Page Specification",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_ocean"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_ocean\\ne_10m_ocean.dbf",
+      "name": "ne_10m_ocean.dbf",
+      "type": "file",
+      "size_bytes": 138,
+      "extension": ".dbf",
+      "detected_format": "dBase IV Attribute Table",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_ocean"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_ocean\\ne_10m_ocean.prj",
+      "name": "ne_10m_ocean.prj",
+      "type": "file",
+      "size_bytes": 145,
+      "extension": ".prj",
+      "detected_format": "WGS 84 Coordinate Reference Specification",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_ocean"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_ocean\\ne_10m_ocean.shp",
+      "name": "ne_10m_ocean.shp",
+      "type": "file",
+      "size_bytes": 7176064,
+      "extension": ".shp",
+      "detected_format": "ESRI Shapefile (Geometry)",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_ocean"
+    },
+    {
+      "path": "ml-platform\\data\\raw\\ne_10m_ocean\\ne_10m_ocean.shx",
+      "name": "ne_10m_ocean.shx",
+      "type": "file",
+      "size_bytes": 108,
+      "extension": ".shx",
+      "detected_format": "ESRI Spatial Index",
+      "category": "geographic dataset",
+      "notes": "Natural Earth 1:10m GIS asset component for ne_10m_ocean"
+    },
+    {
+      "path": "ml-platform\\reports",
+      "name": "reports",
+      "type": "directory",
+      "size_bytes": 0,
+      "extension": "",
+      "detected_format": "Directory",
+      "category": "container / directory",
+      "notes": "Directory container: reports"
+    }
+  ]
+}

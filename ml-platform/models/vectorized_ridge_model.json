@@ -1,0 +1,130 @@
+{
+  "schema_version": "1.0.0",
+  "metadata": {
+    "model_name": "VectorizedRidgeETAModel",
+    "model_type": "L2_RIDGE_LINEAR",
+    "alpha": 10.0,
+    "created_at_utc": "2026-10-16T18:30:00Z",
+    "description": "Frozen Ridge ETA model weights and preprocessing parameters for Brest/Iroise Sea passenger ferries."
+  },
+  "provenance": {
+    "training_snapshots_source": "data/processed/phase_05_prediction_snapshots.parquet",
+    "training_snapshots_sha256": "39f9f1ae9cbff17c9061460f156f0341c24dd2aab4a5ef7bff8350d48122579d",
+    "verified_voyages_source": "data/processed/verified_voyages.parquet",
+    "verified_voyages_sha256": "43f5e018368580bc22f14656bc3c606eed1c80516d2ed09816cde4aac2d99997",
+    "test_predictions_source": "data/processed/phase_05_test_predictions.parquet",
+    "test_predictions_sha256": "bf8a92ce544152b6aa1fac46b5f86dabc6f0459c34e1b099efe4c14e6647bb2b",
+    "split_policy": "Protocol 1 Chronological Departure Split (Strict Voyage-ID Grouped)",
+    "split_cutoff_utc": "2016-02-01T00:00:00Z",
+    "train_voyage_count": 685,
+    "train_snapshot_count": 6941,
+    "test_voyage_count": 204,
+    "test_snapshot_count": 2372,
+    "cross_split_voyage_leakage_count": 0,
+    "evaluated_test_mae_minutes": 5.2,
+    "evaluated_test_rmse_minutes": 7.47,
+    "evaluated_test_medae_minutes": 3.56
+  },
+  "feature_specification": {
+    "feature_count": 21,
+    "intercept_index": 0,
+    "feature_order": [
+      "bias",
+      "distance_to_dest_km_scaled",
+      "elapsed_time_min_scaled",
+      "sog_knots_scaled",
+      "obs_so_far_scaled",
+      "data_freshness_min_scaled",
+      "along_track_current_knots_scaled",
+      "corridor_AUDIERNE_ILE_DE_SEIN",
+      "corridor_BREST_LE_CONQUET",
+      "corridor_BREST_OUESSANT_STIFF",
+      "corridor_ILE_DE_SEIN_AUDIERNE",
+      "corridor_LE_CONQUET_BREST",
+      "corridor_LE_CONQUET_MOLENE",
+      "corridor_MOLENE_LE_CONQUET",
+      "corridor_MOLENE_OUESSANT_STIFF",
+      "corridor_OUESSANT_STIFF_BREST",
+      "corridor_OUESSANT_STIFF_MOLENE",
+      "vessel_ANDRE COLIN",
+      "vessel_ENEZ EUSSA 3",
+      "vessel_ENEZ SUN 3",
+      "vessel_FROMVEUR II"
+    ],
+    "continuous_features": [
+      "feature_distance_to_dest_m",
+      "elapsed_time_minutes",
+      "feature_sog_knots",
+      "feature_observations_so_far",
+      "data_freshness_seconds",
+      "feature_along_track_current_knots"
+    ],
+    "continuous_scaling": {
+      "mean": [
+        9.10826693560002,
+        31.711568938193345,
+        13.482241467003012,
+        60.96628727849013,
+        4.06699082745039,
+        -0.006444028238006042
+      ],
+      "std": [
+        7.7693197344087785,
+        20.984508528597324,
+        3.8847137581859945,
+        81.06595175243889,
+        6.692733090627317,
+        0.24117285081725903
+      ]
+    },
+    "categorical_encodings": {
+      "corridor_categories": [
+        "AUDIERNE_ILE_DE_SEIN",
+        "BREST_LE_CONQUET",
+        "BREST_OUESSANT_STIFF",
+        "ILE_DE_SEIN_AUDIERNE",
+        "LE_CONQUET_BREST",
+        "LE_CONQUET_MOLENE",
+        "MOLENE_LE_CONQUET",
+        "MOLENE_OUESSANT_STIFF",
+        "OUESSANT_STIFF_BREST",
+        "OUESSANT_STIFF_MOLENE"
+      ],
+      "vessel_categories": [
+        "ANDRE COLIN",
+        "ENEZ EUSSA 3",
+        "ENEZ SUN 3",
+        "FROMVEUR II"
+      ]
+    }
+  },
+  "weights": {
+    "format": "FLOAT64_ARRAY",
+    "dimension": 21,
+    "intercept": 30.220921931619362,
+    "coefficients": [
+      30.220921931619362,
+      16.226418333717433,
+      -3.73615973812519,
+      -0.8161705503996319,
+      -0.17723278125607927,
+      -3.9329206387267885,
+      -0.6794594978763967,
+      -9.609284127511684,
+      9.019223526169913,
+      11.863822520302193,
+      12.108282470229284,
+      -9.008040388188148,
+      -11.125994892288084,
+      -2.422241789166035,
+      6.599682418204585,
+      5.915718700470812,
+      -13.341168438174519,
+      -6.761173329274661,
+      2.8304156219415644,
+      2.498998342715458,
+      1.4317593647452322
+    ],
+    "weights_sha256": "e4da4af5cf8a5e7b31337ca9ae9e37740a9062ccdc584b8c3aad69deb0f6d9e9"
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "generation_timestamp": "2026-10-15T23:35:00+05:30",
+    "phase": "Phase 02: Voyage Extraction and Ground-Truth Dataset Feasibility",
+    "author": "Senior Data Engineer & ML Infrastructure Engineer",
+    "strict_policy": "Non-destructive; no synthetic voyages; explicit traceability"
+  },
+  "sources": [
+    {
+      "asset_id": "AISVesselTracks2026-03",
+      "file_path": "ml-platform/data/downloads/AISVesselTracks2026-03.zip",
+      "publisher": "MarineCadastre.gov (US Bureau of Ocean Energy Management / NOAA)",
+      "source_url": "https://marinecadastre.gov/ais/",
+      "license_status": "PUBLIC_DOMAIN (US Government Work)",
+      "commercial_use_permitted": true,
+      "coverage_space": "US Coastal Waters, [-161.62, 10.21, 146.59, 50.16]",
+      "coverage_time": "2026-03-01 to 2026-03-31",
+      "vessel_identifiers": [
+        "mmsi",
+        "vessel_name",
+        "imo",
+        "call_sign",
+        "vessel_type_name"
+      ],
+      "role_in_dataset": "US passenger ferry trajectory tracklines (March 2026)"
+    },
+    {
+      "asset_id": "ais_brest_synopses_v0.8",
+      "file_path": "ml-platform/data/downloads/ais_brest_synopses_v0.8.zip",
+      "publisher": "datAcron Project / Naval Academy Research Institute (NARI, France)",
+      "source_url": "http://datacron-project.eu/",
+      "license_status": "RESTRICTED_RESEARCH / ACADEMIC (License uncertainty preserved)",
+      "commercial_use_permitted": false,
+      "commercial_use_notes": "Retained strictly as benchmark/R&D; commercial redistribution prohibited without clearance.",
+      "coverage_space": "Brest & Iroise Sea, France [48.0N, 48.6N], [-5.2W, -4.2W]",
+      "coverage_time": "2015-10-01 to 2016-03-31",
+      "vessel_identifiers": [
+        "mmsi (numeric id only; names/types absent)"
+      ],
+      "role_in_dataset": "Collocated benchmark with Copernicus daily ocean physics"
+    },
+    {
+      "asset_id": "cmems_mod_glo_phy_my_0.083deg_P1D-m",
+      "file_path": "ml-platform/data/downloads/cmems_mod_glo_phy_my_0.083deg_P1D-m_1792083299167.nc",
+      "publisher": "Copernicus Marine Environment Monitoring Service (CMEMS / Mercator Ocean)",
+      "source_url": "https://marine.copernicus.eu/",
+      "license_status": "OPEN_ACCESS with mandatory attribution (Copernicus Marine Data Policy)",
+      "commercial_use_permitted": true,
+      "coverage_space": "North Atlantic & European Shelf [25N, 60N], [-80W, 9.92E]",
+      "coverage_time": "2015-10-01 to 2016-03-31 (Daily Mean)",
+      "role_in_dataset": "Collocated surface ocean current components (uo, vo) for Brest 2015-2016 voyages"
+    },
+    {
+      "asset_id": "GTFS_BC_Ferries",
+      "file_path": "ml-platform/data/downloads/mdb-690-*.zip",
+      "publisher": "BC Ferries / Trillium Solutions / Mobility Database",
+      "source_url": "https://mobilitydatabase.org/feeds/gtfs/mdb-690",
+      "license_status": "OPEN_SCHEDULE_DATA (Redistribution terms require review for commercial apps)",
+      "commercial_use_permitted": "UNVERIFIED",
+      "coverage_space": "British Columbia coastal waterways [48.58N, 54.30N], [-132.01W, -123.13W]",
+      "coverage_time": "May 2026 to March 2027",
+      "role_in_dataset": "Route topology and terminal reference data (rejected for March 2026 AIS trip linking due to temporal disconnect)"
+    },
+    {
+      "asset_id": "UpdatedPub150",
+      "file_path": "ml-platform/data/raw/UpdatedPub150.csv",
+      "publisher": "National Geospatial-Intelligence Agency (NGA)",
+      "source_url": "https://msi.geo.nga.mil/Publications/WPI",
+      "license_status": "PUBLIC_DOMAIN (US Government Work)",
+      "commercial_use_permitted": true,
+      "role_in_dataset": "Port reference coordinates and Ro-Ro terminal geofences"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+# Phase 04 Snapshot and Feature/Label Separation Contract
+# Where Is My Ferry? — Real-World Ground-Truth Recovery
+
+version: "1.0.0"
+date: "2026-10-16"
+status: "ACTIVE_CONTRACT"
+purpose: "Defines the exact causal schema for generating intermediate prediction snapshots from verified real-world ferry voyages."
+
+supervision_target:
+  target_name: "target_remaining_travel_time_minutes"
+  unit: "minutes"
+  data_type: "float"
+  definition: "(voyage.arr_ts_epoch_ms - prediction_ts_epoch_ms) / 60000.0"
+  preconditions:
+    - "voyage.dep_ts_epoch_ms <= prediction_ts_epoch_ms"
+    - "prediction_ts_epoch_ms < voyage.arr_ts_epoch_ms"
+    - "target_remaining_travel_time_minutes > 0.0"
+  leakage_prevention:
+    - "target_remaining_travel_time_minutes is strictly excluded from input feature tensors."
+    - "No post-prediction coordinates, speeds, headings, or weather are accessible."
+
+identifiers:
+  voyage_id:
+    type: "string"
+    description: "Unique voyage identifier (e.g., VOY-BREST-20151001-228017700-001) used for grouped cross-validation."
+  mmsi:
+    type: "integer"
+    description: "Vessel MMSI (Maritime Mobile Service Identity)"
+  vessel_name:
+    type: "string"
+    description: "Authoritative vessel name"
+  dep_terminal:
+    type: "string"
+    description: "Departure terminal name"
+  arr_terminal:
+    type: "string"
+    description: "Destination terminal name"
+
+prediction_temporal_context:
+  prediction_timestamp_utc:
+    type: "datetime_iso8601_utc"
+    description: "Strict causal cutoff timestamp for feature availability"
+  prediction_ts_epoch_ms:
+    type: "integer"
+    description: "Unix epoch in milliseconds of the prediction evaluation instant"
+  latest_observed_ts_utc:
+    type: "datetime_iso8601_utc"
+    description: "Timestamp of the most recent AIS observation received at or before prediction_timestamp_utc"
+  data_freshness_seconds:
+    type: "float"
+    description: "Lag between prediction timestamp and latest observation: (prediction_ts - latest_obs_ts) / 1000.0"
+
+causal_input_features:
+  feature_latitude:
+    type: "float"
+    description: "Observed latitude at latest_observed_ts_utc"
+    range: [-90.0, 90.0]
+  feature_longitude:
+    type: "float"
+    description: "Observed longitude at latest_observed_ts_utc"
+    range: [-180.0, 180.0]
+  feature_sog_knots:
+    type: "float"
+    description: "Instantaneous Speed Over Ground in knots at latest observation"
+    range: [0.0, 50.0]
+  feature_heading:
+    type: "float"
+    description: "Vessel heading / course over ground in degrees [0, 360)"
+  feature_distance_to_dest_m:
+    type: "float"
+    description: "Great-circle distance in meters from current observed position to destination terminal coordinates"
+  feature_observations_so_far:
+    type: "integer"
+    description: "Count of AIS kinematic observations recorded since voyage departure up to prediction cutoff"
+
+partitioning_rules:
+  group_by: "voyage_id"
+  rule: "All snapshots sharing the same voyage_id MUST be assigned to the exact same dataset partition (Train, Val, or Test). Snapshots from the same voyage must never cross partition boundaries."

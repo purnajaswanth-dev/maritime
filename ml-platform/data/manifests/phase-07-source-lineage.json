@@ -1,0 +1,29 @@
+{
+  "phase": "07",
+  "phase_title": "End-to-End Mock Streaming Integration and Live-System Reliability Testing",
+  "timestamp_utc": "2026-10-16T10:26:10.849097+00:00",
+  "input_artifacts": [
+    {
+      "path": "data/processed/phase_05_prediction_snapshots.parquet",
+      "sha256": "39f9f1ae9cbff17c9061460f156f0341c24dd2aab4a5ef7bff8350d48122579d"
+    },
+    {
+      "path": "configs/phase_07_streaming_event_contract.yaml",
+      "sha256": "28a421341a62b558a8f6289cfba7098603dea3b105daf93f5c0b4378c20fee88"
+    }
+  ],
+  "output_artifacts": [
+    "data/manifests/phase-07-integration-test-results.json",
+    "data/manifests/phase-07-latency-stability-metrics.json",
+    "data/manifests/phase-07-stream-diagnostics.jsonl",
+    "reports/phase-07-mock-streaming-integration-and-reliability.md"
+  ],
+  "code_modules": [
+    "src/streaming/event_schema.py",
+    "src/streaming/eta_stream_processor.py",
+    "src/streaming/mock_stream_runner.py",
+    "src/streaming/mock_api_server.py",
+    "src/streaming/evaluate_phase07.py",
+    "tests/test_phase07_mock_streaming.py"
+  ]
+}

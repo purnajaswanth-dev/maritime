@@ -1,0 +1,1358 @@
+{
+  "audit_timestamp": "2026-10-15T22:45:00+05:30",
+  "workspace_root": "C:\\Users\\sunka\\OneDrive\\coding\\where-is-my-ferry",
+  "total_archives": 11,
+  "archives": [
+    {
+      "archive_filename": "AISVesselTracks2026-03.zip",
+      "relative_path": "ml-platform\\data\\downloads\\AISVesselTracks2026-03.zip",
+      "archive_size_bytes": 1220146725,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 1,
+      "total_uncompressed_bytes": 4123795456,
+      "file_extensions": [
+        ".gpkg"
+      ],
+      "has_extraction_risks": true,
+      "extraction_risks": [
+        "Large uncompressed expansion: 3.84 GB"
+      ],
+      "likely_data_format": "OGC GeoPackage vessel trackline layer (AIS_Tracks_2026_03)",
+      "preliminary_classification": "AIS / vessel telemetry candidate",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "AISVesselTracks2026-03.gpkg",
+          "uncompressed_size_bytes": 4123795456,
+          "compressed_size_bytes": 1220146501,
+          "extension": ".gpkg",
+          "likely_format": "OGC GeoPackage (SQLite 3)",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "ais_brest_synopses_v0.8.zip",
+      "relative_path": "ml-platform\\data\\downloads\\ais_brest_synopses_v0.8.zip",
+      "archive_size_bytes": 1993633450,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 9,
+      "total_uncompressed_bytes": 24236795478,
+      "file_extensions": [
+        ".avsc",
+        ".csv",
+        ".json",
+        ".txt"
+      ],
+      "has_extraction_risks": true,
+      "extraction_risks": [
+        "Extreme uncompressed expansion: 22.57 GB (Zip bomb risk on unconstrained extraction)"
+      ],
+      "likely_data_format": "datAcron trajectory synopses, raw positions CSV, cleansed locations JSON/CSV",
+      "preliminary_classification": "AIS / vessel telemetry candidate",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "ais_brest_synopses_v0.8_ReadMe.txt",
+          "uncompressed_size_bytes": 12873,
+          "compressed_size_bytes": 3753,
+          "extension": ".txt",
+          "likely_format": "Plain Text",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "ais_brest_positions_raw.csv",
+          "uncompressed_size_bytes": 1815865421,
+          "compressed_size_bytes": 239726863,
+          "extension": ".csv",
+          "likely_format": "CSV Tabular",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "ais_brest_locations.json",
+          "uncompressed_size_bytes": 14810500188,
+          "compressed_size_bytes": 872923325,
+          "extension": ".json",
+          "likely_format": "JSON",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "ais_brest_locations.csv",
+          "uncompressed_size_bytes": 2592214965,
+          "compressed_size_bytes": 480983168,
+          "extension": ".csv",
+          "likely_format": "CSV Tabular",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "ais_brest_synopses.json",
+          "uncompressed_size_bytes": 4190973994,
+          "compressed_size_bytes": 248513920,
+          "extension": ".json",
+          "likely_format": "JSON",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "ais_brest_synopses.csv",
+          "uncompressed_size_bytes": 733183367,
+          "compressed_size_bytes": 142608453,
+          "extension": ".csv",
+          "likely_format": "CSV Tabular",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "ais_brest_notifications.json",
+          "uncompressed_size_bytes": 80162698,
+          "compressed_size_bytes": 5649766,
+          "extension": ".json",
+          "likely_format": "JSON",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "ais_brest_notifications.csv",
+          "uncompressed_size_bytes": 13873056,
+          "compressed_size_bytes": 3220632,
+          "extension": ".csv",
+          "likely_format": "CSV Tabular",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "critical_point.avsc",
+          "uncompressed_size_bytes": 8916,
+          "compressed_size_bytes": 1834,
+          "extension": ".avsc",
+          "likely_format": "Apache Avro Schema",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-2353-202502041949.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-2353-202502041949.zip",
+      "archive_size_bytes": 3821245,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 8,
+      "total_uncompressed_bytes": 19315939,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (Westchester County Bee-Line Bus - Route Type 3)",
+      "preliminary_classification": "Bus transit feed (verified Bee-Line Bus, not ferry)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 199,
+          "compressed_size_bytes": 147,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar.txt",
+          "uncompressed_size_bytes": 232,
+          "compressed_size_bytes": 111,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 2405,
+          "compressed_size_bytes": 379,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 3923,
+          "compressed_size_bytes": 1139,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 9900684,
+          "compressed_size_bytes": 2242275,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 8984229,
+          "compressed_size_bytes": 1492932,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 192695,
+          "compressed_size_bytes": 55860,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 231572,
+          "compressed_size_bytes": 27588,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-2353-202502270025.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-2353-202502270025.zip",
+      "archive_size_bytes": 3821246,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 8,
+      "total_uncompressed_bytes": 19315939,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (Westchester County Bee-Line Bus - Route Type 3)",
+      "preliminary_classification": "Bus transit feed (verified Bee-Line Bus, not ferry)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 199,
+          "compressed_size_bytes": 147,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar.txt",
+          "uncompressed_size_bytes": 232,
+          "compressed_size_bytes": 112,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 2405,
+          "compressed_size_bytes": 379,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 3923,
+          "compressed_size_bytes": 1139,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 9900684,
+          "compressed_size_bytes": 2242275,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 8984229,
+          "compressed_size_bytes": 1492932,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 192695,
+          "compressed_size_bytes": 55860,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 231572,
+          "compressed_size_bytes": 27588,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-2353-202506170043.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-2353-202506170043.zip",
+      "archive_size_bytes": 3569641,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 8,
+      "total_uncompressed_bytes": 18433754,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (Westchester County Bee-Line Bus - Route Type 3)",
+      "preliminary_classification": "Bus transit feed (verified Bee-Line Bus, not ferry)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 199,
+          "compressed_size_bytes": 147,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar.txt",
+          "uncompressed_size_bytes": 212,
+          "compressed_size_bytes": 110,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 72,
+          "compressed_size_bytes": 59,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 4066,
+          "compressed_size_bytes": 1178,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 8470851,
+          "compressed_size_bytes": 1943764,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 9505466,
+          "compressed_size_bytes": 1539882,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 196715,
+          "compressed_size_bytes": 56150,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 256173,
+          "compressed_size_bytes": 27537,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-2814-202508181628.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-2814-202508181628.zip",
+      "archive_size_bytes": 290347,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 7,
+      "total_uncompressed_bytes": 3350721,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (Balearia ferry operations Spain/Balearics - Route Type 4)",
+      "preliminary_classification": "Ferry schedule candidate (verified Balearia)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 1129336,
+          "compressed_size_bytes": 116350,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 169,
+          "compressed_size_bytes": 115,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 6080,
+          "compressed_size_bytes": 1220,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 2746,
+          "compressed_size_bytes": 712,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 15330,
+          "compressed_size_bytes": 2978,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 2196005,
+          "compressed_size_bytes": 167472,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 1055,
+          "compressed_size_bytes": 534,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-3522-202610131556.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-3522-202610131556.zip",
+      "archive_size_bytes": 5960,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 11,
+      "total_uncompressed_bytes": 24365,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (Los Reginas ferry operations Santander Spain - Route Type 4)",
+      "preliminary_classification": "Ferry schedule candidate (verified Los Reginas S.L.)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 185,
+          "compressed_size_bytes": 128,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar.txt",
+          "uncompressed_size_bytes": 254,
+          "compressed_size_bytes": 121,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 495,
+          "compressed_size_bytes": 143,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_attributes.txt",
+          "uncompressed_size_bytes": 201,
+          "compressed_size_bytes": 118,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_rules.txt",
+          "uncompressed_size_bytes": 113,
+          "compressed_size_bytes": 58,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "feed_info.txt",
+          "uncompressed_size_bytes": 199,
+          "compressed_size_bytes": 133,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 323,
+          "compressed_size_bytes": 181,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 8671,
+          "compressed_size_bytes": 1753,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 8708,
+          "compressed_size_bytes": 1456,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 353,
+          "compressed_size_bytes": 226,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 4863,
+          "compressed_size_bytes": 509,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-649-202406071512.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-649-202406071512.zip",
+      "archive_size_bytes": 7085,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 17,
+      "total_uncompressed_bytes": 26571,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (Port Phillip Ferries Melbourne Australia - Route Type 4)",
+      "preliminary_classification": "Ferry schedule candidate (verified Port Phillip Ferries)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 273,
+          "compressed_size_bytes": 153,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "attributions.txt",
+          "uncompressed_size_bytes": 68,
+          "compressed_size_bytes": 67,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar.txt",
+          "uncompressed_size_bytes": 1074,
+          "compressed_size_bytes": 253,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 613,
+          "compressed_size_bytes": 149,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_attributes.txt",
+          "uncompressed_size_bytes": 54,
+          "compressed_size_bytes": 54,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_rules.txt",
+          "uncompressed_size_bytes": 9,
+          "compressed_size_bytes": 9,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "feed_info.txt",
+          "uncompressed_size_bytes": 195,
+          "compressed_size_bytes": 135,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "frequencies.txt",
+          "uncompressed_size_bytes": 42,
+          "compressed_size_bytes": 39,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "levels.txt",
+          "uncompressed_size_bytes": 33,
+          "compressed_size_bytes": 25,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "pathways.txt",
+          "uncompressed_size_bytes": 66,
+          "compressed_size_bytes": 53,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 645,
+          "compressed_size_bytes": 211,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 19260,
+          "compressed_size_bytes": 3087,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 2039,
+          "compressed_size_bytes": 458,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 399,
+          "compressed_size_bytes": 219,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "transfers.txt",
+          "uncompressed_size_bytes": 39,
+          "compressed_size_bytes": 32,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "translations.txt",
+          "uncompressed_size_bytes": 54,
+          "compressed_size_bytes": 51,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 1708,
+          "compressed_size_bytes": 336,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-690-202605270153.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-690-202605270153.zip",
+      "archive_size_bytes": 73159,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 24,
+      "total_uncompressed_bytes": 440387,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (BC Ferries British Columbia Canada - Route Type 4)",
+      "preliminary_classification": "Ferry schedule candidate (verified BC Ferries)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "areas.txt",
+          "uncompressed_size_bytes": 12,
+          "compressed_size_bytes": 14,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 97177,
+          "compressed_size_bytes": 40723,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 236,
+          "compressed_size_bytes": 149,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar.txt",
+          "uncompressed_size_bytes": 30357,
+          "compressed_size_bytes": 1900,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_attributes.txt",
+          "uncompressed_size_bytes": 4504,
+          "compressed_size_bytes": 894,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 47606,
+          "compressed_size_bytes": 2871,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "directions.txt",
+          "uncompressed_size_bytes": 571,
+          "compressed_size_bytes": 166,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_attributes.txt",
+          "uncompressed_size_bytes": 81,
+          "compressed_size_bytes": 67,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_rules.txt",
+          "uncompressed_size_bytes": 54,
+          "compressed_size_bytes": 47,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "farezone_attributes.txt",
+          "uncompressed_size_bytes": 18,
+          "compressed_size_bytes": 17,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "feed_info.txt",
+          "uncompressed_size_bytes": 347,
+          "compressed_size_bytes": 198,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "frequencies.txt",
+          "uncompressed_size_bytes": 53,
+          "compressed_size_bytes": 46,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 3862,
+          "compressed_size_bytes": 1141,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "runcut.txt",
+          "uncompressed_size_bytes": 104,
+          "compressed_size_bytes": 68,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_attributes.txt",
+          "uncompressed_size_bytes": 2772,
+          "compressed_size_bytes": 813,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 153067,
+          "compressed_size_bytes": 12931,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 9089,
+          "compressed_size_bytes": 3119,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "timetable_stop_order.txt",
+          "uncompressed_size_bytes": 62,
+          "compressed_size_bytes": 52,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "timetables.txt",
+          "uncompressed_size_bytes": 170,
+          "compressed_size_bytes": 102,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "transfers.txt",
+          "uncompressed_size_bytes": 400,
+          "compressed_size_bytes": 153,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 89407,
+          "compressed_size_bytes": 4712,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "linked_datasets.txt",
+          "uncompressed_size_bytes": 117,
+          "compressed_size_bytes": 82,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "location_groups.txt",
+          "uncompressed_size_bytes": 50,
+          "compressed_size_bytes": 31,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "booking_rules.txt",
+          "uncompressed_size_bytes": 271,
+          "compressed_size_bytes": 123,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-690-202607240152.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-690-202607240152.zip",
+      "archive_size_bytes": 107960,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 24,
+      "total_uncompressed_bytes": 623943,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (BC Ferries British Columbia Canada - Route Type 4)",
+      "preliminary_classification": "Ferry schedule candidate (verified BC Ferries)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "areas.txt",
+          "uncompressed_size_bytes": 12,
+          "compressed_size_bytes": 14,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 133535,
+          "compressed_size_bytes": 54467,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 236,
+          "compressed_size_bytes": 149,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar.txt",
+          "uncompressed_size_bytes": 38036,
+          "compressed_size_bytes": 2079,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_attributes.txt",
+          "uncompressed_size_bytes": 4017,
+          "compressed_size_bytes": 864,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 56156,
+          "compressed_size_bytes": 3217,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "directions.txt",
+          "uncompressed_size_bytes": 681,
+          "compressed_size_bytes": 185,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_attributes.txt",
+          "uncompressed_size_bytes": 81,
+          "compressed_size_bytes": 67,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_rules.txt",
+          "uncompressed_size_bytes": 54,
+          "compressed_size_bytes": 47,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "farezone_attributes.txt",
+          "uncompressed_size_bytes": 18,
+          "compressed_size_bytes": 17,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "feed_info.txt",
+          "uncompressed_size_bytes": 347,
+          "compressed_size_bytes": 196,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "frequencies.txt",
+          "uncompressed_size_bytes": 53,
+          "compressed_size_bytes": 46,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 3862,
+          "compressed_size_bytes": 1141,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "runcut.txt",
+          "uncompressed_size_bytes": 4100,
+          "compressed_size_bytes": 925,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_attributes.txt",
+          "uncompressed_size_bytes": 2772,
+          "compressed_size_bytes": 735,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 234833,
+          "compressed_size_bytes": 30212,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 9089,
+          "compressed_size_bytes": 3119,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "timetable_stop_order.txt",
+          "uncompressed_size_bytes": 62,
+          "compressed_size_bytes": 52,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "timetables.txt",
+          "uncompressed_size_bytes": 170,
+          "compressed_size_bytes": 102,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "transfers.txt",
+          "uncompressed_size_bytes": 400,
+          "compressed_size_bytes": 153,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 134991,
+          "compressed_size_bytes": 7233,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "linked_datasets.txt",
+          "uncompressed_size_bytes": 117,
+          "compressed_size_bytes": 82,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "location_groups.txt",
+          "uncompressed_size_bytes": 50,
+          "compressed_size_bytes": 31,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "booking_rules.txt",
+          "uncompressed_size_bytes": 271,
+          "compressed_size_bytes": 123,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-690-202608210055.zip",
+      "relative_path": "ml-platform\\data\\downloads\\mdb-690-202608210055.zip",
+      "archive_size_bytes": 110878,
+      "zip_integrity_status": "INTEGRITY_OK",
+      "member_count": 24,
+      "total_uncompressed_bytes": 646687,
+      "file_extensions": [
+        ".txt"
+      ],
+      "has_extraction_risks": false,
+      "extraction_risks": [
+        "None detected"
+      ],
+      "likely_data_format": "GTFS Feed (BC Ferries British Columbia Canada - Route Type 4)",
+      "preliminary_classification": "Ferry schedule candidate (verified BC Ferries)",
+      "extraction_status": "NOT EXTRACTED",
+      "members": [
+        {
+          "filename": "areas.txt",
+          "uncompressed_size_bytes": 12,
+          "compressed_size_bytes": 14,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "shapes.txt",
+          "uncompressed_size_bytes": 136486,
+          "compressed_size_bytes": 55548,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "agency.txt",
+          "uncompressed_size_bytes": 236,
+          "compressed_size_bytes": 149,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar.txt",
+          "uncompressed_size_bytes": 40079,
+          "compressed_size_bytes": 2166,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_attributes.txt",
+          "uncompressed_size_bytes": 4398,
+          "compressed_size_bytes": 908,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "calendar_dates.txt",
+          "uncompressed_size_bytes": 59375,
+          "compressed_size_bytes": 3375,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "directions.txt",
+          "uncompressed_size_bytes": 717,
+          "compressed_size_bytes": 191,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_attributes.txt",
+          "uncompressed_size_bytes": 81,
+          "compressed_size_bytes": 67,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "fare_rules.txt",
+          "uncompressed_size_bytes": 54,
+          "compressed_size_bytes": 47,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "farezone_attributes.txt",
+          "uncompressed_size_bytes": 18,
+          "compressed_size_bytes": 17,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "feed_info.txt",
+          "uncompressed_size_bytes": 347,
+          "compressed_size_bytes": 196,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "frequencies.txt",
+          "uncompressed_size_bytes": 53,
+          "compressed_size_bytes": 46,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "routes.txt",
+          "uncompressed_size_bytes": 3862,
+          "compressed_size_bytes": 1141,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "runcut.txt",
+          "uncompressed_size_bytes": 4106,
+          "compressed_size_bytes": 925,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_attributes.txt",
+          "uncompressed_size_bytes": 2772,
+          "compressed_size_bytes": 735,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stop_times.txt",
+          "uncompressed_size_bytes": 243721,
+          "compressed_size_bytes": 31445,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "stops.txt",
+          "uncompressed_size_bytes": 9089,
+          "compressed_size_bytes": 3119,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "timetable_stop_order.txt",
+          "uncompressed_size_bytes": 62,
+          "compressed_size_bytes": 52,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "timetables.txt",
+          "uncompressed_size_bytes": 170,
+          "compressed_size_bytes": 102,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "transfers.txt",
+          "uncompressed_size_bytes": 400,
+          "compressed_size_bytes": 153,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "trips.txt",
+          "uncompressed_size_bytes": 140211,
+          "compressed_size_bytes": 7542,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "linked_datasets.txt",
+          "uncompressed_size_bytes": 117,
+          "compressed_size_bytes": 82,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "location_groups.txt",
+          "uncompressed_size_bytes": 50,
+          "compressed_size_bytes": 31,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        },
+        {
+          "filename": "booking_rules.txt",
+          "uncompressed_size_bytes": 271,
+          "compressed_size_bytes": 123,
+          "extension": ".txt",
+          "likely_format": "GTFS Feed Text File",
+          "is_suspicious_path": false
+        }
+      ]
+    }
+  ]
+}

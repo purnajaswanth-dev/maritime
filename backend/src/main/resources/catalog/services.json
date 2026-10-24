@@ -1,0 +1,672 @@
+[
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_BRE_CNQ_0830",
+    "route_id": "R_BRE_CNQ",
+    "route_name": "Brest - Le Conquet",
+    "origin_terminal_id": "BREST",
+    "dest_terminal_id": "LE_CONQUET",
+    "corridor": "BREST_LE_CONQUET",
+    "departure_time": "08:30:00",
+    "arrival_time": "09:40:00",
+    "duration_minutes": 70.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-FROMVEUR-SIM",
+    "vessel_name": "SIM_FROMVEUR_EXPRESS",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_BRE_CNQ_1200",
+    "route_id": "R_BRE_CNQ",
+    "route_name": "Brest - Le Conquet",
+    "origin_terminal_id": "BREST",
+    "dest_terminal_id": "LE_CONQUET",
+    "corridor": "BREST_LE_CONQUET",
+    "departure_time": "12:00:00",
+    "arrival_time": "13:10:00",
+    "duration_minutes": 70.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-FROMVEUR-SIM",
+    "vessel_name": "SIM_FROMVEUR_EXPRESS",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_BRE_CNQ_1630",
+    "route_id": "R_BRE_CNQ",
+    "route_name": "Brest - Le Conquet",
+    "origin_terminal_id": "BREST",
+    "dest_terminal_id": "LE_CONQUET",
+    "corridor": "BREST_LE_CONQUET",
+    "departure_time": "16:30:00",
+    "arrival_time": "17:40:00",
+    "duration_minutes": 70.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-FROMVEUR-SIM",
+    "vessel_name": "SIM_FROMVEUR_EXPRESS",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_CNQ_BRE_1000",
+    "route_id": "R_CNQ_BRE",
+    "route_name": "Le Conquet - Brest",
+    "origin_terminal_id": "LE_CONQUET",
+    "dest_terminal_id": "BREST",
+    "corridor": "LE_CONQUET_BREST",
+    "departure_time": "10:00:00",
+    "arrival_time": "11:10:00",
+    "duration_minutes": 70.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-AZENOR-SIM",
+    "vessel_name": "SIM_AZENOR_VOYAGER",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_CNQ_BRE_1400",
+    "route_id": "R_CNQ_BRE",
+    "route_name": "Le Conquet - Brest",
+    "origin_terminal_id": "LE_CONQUET",
+    "dest_terminal_id": "BREST",
+    "corridor": "LE_CONQUET_BREST",
+    "departure_time": "14:00:00",
+    "arrival_time": "15:10:00",
+    "duration_minutes": 70.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-AZENOR-SIM",
+    "vessel_name": "SIM_AZENOR_VOYAGER",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_CNQ_BRE_1800",
+    "route_id": "R_CNQ_BRE",
+    "route_name": "Le Conquet - Brest",
+    "origin_terminal_id": "LE_CONQUET",
+    "dest_terminal_id": "BREST",
+    "corridor": "LE_CONQUET_BREST",
+    "departure_time": "18:00:00",
+    "arrival_time": "19:10:00",
+    "duration_minutes": 70.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-AZENOR-SIM",
+    "vessel_name": "SIM_AZENOR_VOYAGER",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_BRE_OUE_0830",
+    "route_id": "R_BRE_OUE",
+    "route_name": "Brest - Ouessant",
+    "origin_terminal_id": "BREST",
+    "dest_terminal_id": "OUESSANT_STIFF",
+    "corridor": "BREST_OUESSANT_STIFF",
+    "departure_time": "08:30:00",
+    "arrival_time": "10:45:00",
+    "duration_minutes": 135.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-OUESSANT-SIM",
+    "vessel_name": "SIM_IROISE_STAR",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_BRE_OUE_1430",
+    "route_id": "R_BRE_OUE",
+    "route_name": "Brest - Ouessant",
+    "origin_terminal_id": "BREST",
+    "dest_terminal_id": "OUESSANT_STIFF",
+    "corridor": "BREST_OUESSANT_STIFF",
+    "departure_time": "14:30:00",
+    "arrival_time": "16:45:00",
+    "duration_minutes": 135.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-OUESSANT-SIM",
+    "vessel_name": "SIM_IROISE_STAR",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_OUE_BRE_1100",
+    "route_id": "R_OUE_BRE",
+    "route_name": "Ouessant - Brest",
+    "origin_terminal_id": "OUESSANT_STIFF",
+    "dest_terminal_id": "BREST",
+    "corridor": "OUESSANT_STIFF_BREST",
+    "departure_time": "11:00:00",
+    "arrival_time": "13:15:00",
+    "duration_minutes": 135.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_OUE_BRE_1700",
+    "route_id": "R_OUE_BRE",
+    "route_name": "Ouessant - Brest",
+    "origin_terminal_id": "OUESSANT_STIFF",
+    "dest_terminal_id": "BREST",
+    "corridor": "OUESSANT_STIFF_BREST",
+    "departure_time": "17:00:00",
+    "arrival_time": "19:15:00",
+    "duration_minutes": 135.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_AUD_SEI_0930",
+    "route_id": "R_AUD_SEI",
+    "route_name": "Audierne - Ile de Sein",
+    "origin_terminal_id": "AUDIERNE",
+    "dest_terminal_id": "ILE_DE_SEIN",
+    "corridor": "AUDIERNE_ILE_DE_SEIN",
+    "departure_time": "09:30:00",
+    "arrival_time": "10:30:00",
+    "duration_minutes": 60.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-SEIN-SIM",
+    "vessel_name": "SIM_SEIN_SHUTTLE",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_AUD_SEI_1600",
+    "route_id": "R_AUD_SEI",
+    "route_name": "Audierne - Ile de Sein",
+    "origin_terminal_id": "AUDIERNE",
+    "dest_terminal_id": "ILE_DE_SEIN",
+    "corridor": "AUDIERNE_ILE_DE_SEIN",
+    "departure_time": "16:00:00",
+    "arrival_time": "17:00:00",
+    "duration_minutes": 60.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": "V-SEIN-SIM",
+    "vessel_name": "SIM_SEIN_SHUTTLE",
+    "tracking_supported": true
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_SEI_AUD_1100",
+    "route_id": "R_SEI_AUD",
+    "route_name": "Ile de Sein - Audierne",
+    "origin_terminal_id": "ILE_DE_SEIN",
+    "dest_terminal_id": "AUDIERNE",
+    "corridor": "ILE_DE_SEIN_AUDIERNE",
+    "departure_time": "11:00:00",
+    "arrival_time": "12:00:00",
+    "duration_minutes": 60.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_SEI_AUD_1730",
+    "route_id": "R_SEI_AUD",
+    "route_name": "Ile de Sein - Audierne",
+    "origin_terminal_id": "ILE_DE_SEIN",
+    "dest_terminal_id": "AUDIERNE",
+    "corridor": "ILE_DE_SEIN_AUDIERNE",
+    "departure_time": "17:30:00",
+    "arrival_time": "18:30:00",
+    "duration_minutes": 60.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_CNQ_MOL_0945",
+    "route_id": "R_CNQ_MOL",
+    "route_name": "Le Conquet - Molene",
+    "origin_terminal_id": "LE_CONQUET",
+    "dest_terminal_id": "MOLENE",
+    "corridor": "LE_CONQUET_MOLENE",
+    "departure_time": "09:45:00",
+    "arrival_time": "10:15:00",
+    "duration_minutes": 30.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_MOL_CNQ_1545",
+    "route_id": "R_MOL_CNQ",
+    "route_name": "Molene - Le Conquet",
+    "origin_terminal_id": "MOLENE",
+    "dest_terminal_id": "LE_CONQUET",
+    "corridor": "MOLENE_LE_CONQUET",
+    "departure_time": "15:45:00",
+    "arrival_time": "16:15:00",
+    "duration_minutes": 30.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_MOL_OUE_1020",
+    "route_id": "R_MOL_OUE",
+    "route_name": "Molene - Ouessant",
+    "origin_terminal_id": "MOLENE",
+    "dest_terminal_id": "OUESSANT_STIFF",
+    "corridor": "MOLENE_OUESSANT_STIFF",
+    "departure_time": "10:20:00",
+    "arrival_time": "10:50:00",
+    "duration_minutes": 30.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "DAILY_YEAR_ROUND",
+    "trip_id": "TRIP_OUE_MOL_1630",
+    "route_id": "R_OUE_MOL",
+    "route_name": "Ouessant - Molene",
+    "origin_terminal_id": "OUESSANT_STIFF",
+    "dest_terminal_id": "MOLENE",
+    "corridor": "OUESSANT_STIFF_MOLENE",
+    "departure_time": "16:30:00",
+    "arrival_time": "17:00:00",
+    "duration_minutes": 30.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260101",
+      "end_date": "20261231"
+    },
+    "calendar_exceptions": [
+      {
+        "date": "20261225",
+        "exception_type": "REMOVED"
+      }
+    ],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "SUMMER_ONLY",
+    "trip_id": "TRIP_BRE_CAM_1000",
+    "route_id": "R_BRE_CAM",
+    "route_name": "Brest - Camaret",
+    "origin_terminal_id": "BREST",
+    "dest_terminal_id": "CAMARET",
+    "corridor": "BREST_CAMARET",
+    "departure_time": "10:00:00",
+    "arrival_time": "10:50:00",
+    "duration_minutes": 50.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260615",
+      "end_date": "20260915"
+    },
+    "calendar_exceptions": [],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  },
+  {
+    "service_id": "SUMMER_ONLY",
+    "trip_id": "TRIP_CAM_BRE_1730",
+    "route_id": "R_CAM_BRE",
+    "route_name": "Camaret - Brest",
+    "origin_terminal_id": "CAMARET",
+    "dest_terminal_id": "BREST",
+    "corridor": "CAMARET_BREST",
+    "departure_time": "17:30:00",
+    "arrival_time": "18:20:00",
+    "duration_minutes": 50.0,
+    "days_of_week": {
+      "monday": true,
+      "tuesday": true,
+      "wednesday": true,
+      "thursday": true,
+      "friday": true,
+      "saturday": true,
+      "sunday": true
+    },
+    "season_validity": {
+      "start_date": "20260615",
+      "end_date": "20260915"
+    },
+    "calendar_exceptions": [],
+    "vessel_id": null,
+    "vessel_name": null,
+    "tracking_supported": false
+  }
+]

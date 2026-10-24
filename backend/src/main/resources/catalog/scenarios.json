@@ -1,0 +1,233 @@
+{
+  "version": "1.0.0",
+  "scenarios": [
+    {
+      "id": "SCENARIO_01_NORMAL_VOYAGE",
+      "name": "Normal Scheduled Voyage",
+      "description": "Nominal departure, cruising, and continuous causal ETA prediction with smooth transitions.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 12,
+      "step_interval_s": 300,
+      "fault_type": "NONE",
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_02_DELAYED_DEPARTURE",
+      "name": "Delayed Departure",
+      "description": "Vessel held at origin berth for 15 minutes past planned departure before embarking.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 8,
+      "step_interval_s": 300,
+      "fault_type": "DELAYED_DEPARTURE",
+      "delay_seconds": 900,
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_03_GRADUAL_SPEED_REDUCTION",
+      "name": "Gradual Speed Reduction",
+      "description": "Cruising speed decreases from 15.0 kts to 5.0 kts over successive intervals, legitimately increasing ETA.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 8,
+      "step_interval_s": 300,
+      "fault_type": "SPEED_REDUCTION",
+      "target_speed_knots": 5.0,
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_04_PROLONGED_HOLDING",
+      "name": "Prolonged Holding in Open Water",
+      "description": "Vessel drops to 0.1 kts in open channel away from terminals, triggering uncertainty state.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 6,
+      "step_interval_s": 300,
+      "fault_type": "HOLDING_PATTERN",
+      "expected_state": "DELAYED_OR_UNCERTAIN"
+    },
+    {
+      "id": "SCENARIO_05_ROUTE_DEVIATION",
+      "name": "Route Deviation",
+      "description": "Vessel detours north of shipping channel, increasing distance to destination and expanding ETA.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 6,
+      "step_interval_s": 300,
+      "fault_type": "ROUTE_DEVIATION",
+      "lat_offset": 0.08,
+      "lon_offset": -0.05,
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_06_TEMPORARY_TELEMETRY_LOSS",
+      "name": "Temporary Telemetry Loss",
+      "description": "Stream ceases for 12 minutes (720 seconds), exceeding the 600s staleness threshold.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 5,
+      "step_interval_s": 300,
+      "fault_type": "STREAM_DROPOUT",
+      "gap_seconds": 720,
+      "expected_state": "STALE_DATA"
+    },
+    {
+      "id": "SCENARIO_07_RECOVERY_AFTER_LOSS",
+      "name": "Recovery After Telemetry Loss",
+      "description": "Following a 12m data gap, fresh telemetry arrives and immediately restores active estimation.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 6,
+      "step_interval_s": 300,
+      "fault_type": "STREAM_RECOVERY",
+      "gap_seconds": 720,
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_08_DUPLICATE_DELIVERY",
+      "name": "Duplicate Event Delivery",
+      "description": "Duplicate messages with identical message IDs ingested; processor drops duplicate without re-inference.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 4,
+      "step_interval_s": 300,
+      "fault_type": "DUPLICATE_PACKETS",
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_09_OUT_OF_ORDER_DELIVERY",
+      "name": "Out-of-Order Event Delivery",
+      "description": "Delayed packet with earlier timestamp arrives after newer packet; clock watermark remains intact.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 5,
+      "step_interval_s": 300,
+      "fault_type": "OUT_OF_ORDER_PACKETS",
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_10_STALE_TELEMETRY",
+      "name": "Stale Telemetry Observation",
+      "description": "Incoming packet carries observation timestamp 15 minutes older than current server receipt time.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 4,
+      "step_interval_s": 300,
+      "fault_type": "STALE_OBSERVATION",
+      "stale_seconds": 900,
+      "expected_state": "STALE_DATA"
+    },
+    {
+      "id": "SCENARIO_11_VESSEL_APPROACHING",
+      "name": "Vessel Approaching Destination",
+      "description": "Vessel reaches within 1,000m of destination terminal; state transitions to arrival pending confirmation.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 8,
+      "step_interval_s": 300,
+      "fault_type": "APPROACH_TERMINAL",
+      "expected_state": "ARRIVAL_PENDING_CONFIRMATION"
+    },
+    {
+      "id": "SCENARIO_12_SUCCESSFUL_ARRIVAL",
+      "name": "Successful Simulated Arrival",
+      "description": "Vessel docks within berth zone (< 250m, < 1.0 kt for 3 steps); arrival latched and countdown locked at 0.0m.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 10,
+      "step_interval_s": 300,
+      "fault_type": "CONFIRMED_ARRIVAL",
+      "expected_state": "ARRIVED"
+    },
+    {
+      "id": "SCENARIO_13_LATE_EVENT_AFTER_ARRIVAL",
+      "name": "Late Event After Arrival",
+      "description": "Delayed in-transit packet received after arrival is confirmed; latched arrived state strictly preserved.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 11,
+      "step_interval_s": 300,
+      "fault_type": "POST_ARRIVAL_PACKET",
+      "expected_state": "ARRIVED"
+    },
+    {
+      "id": "SCENARIO_14_INVALID_COORDINATES",
+      "name": "Invalid Coordinates Rejection",
+      "description": "Event with latitude > 90.0 degrees rejected with 400 schema error without crashing runner.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 3,
+      "step_interval_s": 300,
+      "fault_type": "INVALID_COORDINATES",
+      "bad_lat": 105.0,
+      "expected_error": "INVALID_LATITUDE_OUT_OF_BOUNDS"
+    },
+    {
+      "id": "SCENARIO_15_INVALID_SPEED",
+      "name": "Invalid Speed Rejection",
+      "description": "Event with speed > 60 knots rejected as physically impossible for passenger ferry.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 3,
+      "step_interval_s": 300,
+      "fault_type": "INVALID_SPEED",
+      "bad_sog": 85.0,
+      "expected_error": "INVALID_SOG_OUT_OF_BOUNDS"
+    },
+    {
+      "id": "SCENARIO_16_MALFORMED_PAYLOAD",
+      "name": "Malformed Payload Rejection",
+      "description": "Payload missing required message_id or corrupted types rejected gracefully.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 3,
+      "step_interval_s": 300,
+      "fault_type": "MALFORMED_PAYLOAD",
+      "expected_error": "MISSING_OR_INVALID_MESSAGE_ID"
+    },
+    {
+      "id": "SCENARIO_17_INFERENCE_EXCEPTION",
+      "name": "Inference Exception Handling",
+      "description": "Simulated runtime model inference failure trapped cleanly; safe fallback status returned.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 4,
+      "step_interval_s": 300,
+      "fault_type": "INFERENCE_FAILURE",
+      "expected_state": "ETA_UNAVAILABLE"
+    },
+    {
+      "id": "SCENARIO_18_RUNNER_SHUTDOWN_RESTART",
+      "name": "Runner Shutdown and Restart",
+      "description": "Simulation runner stopped cleanly, state assessed, and reinitialized without file or process leak.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 6,
+      "step_interval_s": 300,
+      "fault_type": "CLEAN_RESTART",
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_19_MULTI_VESSEL_SIMULTANEOUS",
+      "name": "Multiple Virtual Vessels Operating Simultaneously",
+      "description": "4 virtual vessels moving concurrently on independent routes without cross-vessel state contamination.",
+      "vessel_ids": ["V-FROMVEUR-SIM", "V-AZENOR-SIM", "V-OUESSANT-SIM", "V-SEIN-SIM"],
+      "duration_steps": 8,
+      "step_interval_s": 300,
+      "fault_type": "MULTI_VESSEL",
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_20_RAPID_BURST",
+      "name": "Rapid Burst of Events",
+      "description": "50 events delivered back-to-back within 200 ms; verified high throughput and buffer stability.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "burst_count": 50,
+      "fault_type": "RAPID_BURST",
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_21_PAUSE_RESUME",
+      "name": "Repeated Pause and Resume",
+      "description": "Runner paused mid-voyage, clock held frozen, then resumed seamlessly without jump penalty.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 6,
+      "step_interval_s": 300,
+      "fault_type": "PAUSE_RESUME",
+      "expected_state": "ESTIMATING"
+    },
+    {
+      "id": "SCENARIO_22_CLOCK_ADVANCEMENT_COUNTDOWN",
+      "name": "Clock Advancement and Countdown Consistency",
+      "description": "Simulated clock advances; derived countdown matches predicted arrival timestamp minus elapsed time.",
+      "vessel_id": "V-FROMVEUR-SIM",
+      "duration_steps": 6,
+      "step_interval_s": 300,
+      "fault_type": "CLOCK_ADVANCEMENT",
+      "expected_state": "ESTIMATING"
+    }
+  ]
+}

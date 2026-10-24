@@ -1,0 +1,13 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_color,route_text_color
+R_BRE_CNQ,PAB,BRE-CNQ,Brest - Le Conquet,Liaison Brest Le Conquet,4,14B8A6,FFFFFF
+R_CNQ_BRE,PAB,CNQ-BRE,Le Conquet - Brest,Liaison Le Conquet Brest,4,14B8A6,FFFFFF
+R_BRE_OUE,PAB,BRE-OUE,Brest - Ouessant,Liaison Brest Ouessant Stiff,4,0D3045,FFFFFF
+R_OUE_BRE,PAB,OUE-BRE,Ouessant - Brest,Liaison Ouessant Stiff Brest,4,0D3045,FFFFFF
+R_CNQ_MOL,PAB,CNQ-MOL,Le Conquet - Molene,Liaison Le Conquet Molene,4,14B8A6,FFFFFF
+R_MOL_CNQ,PAB,MOL-CNQ,Molene - Le Conquet,Liaison Molene Le Conquet,4,14B8A6,FFFFFF
+R_MOL_OUE,PAB,MOL-OUE,Molene - Ouessant,Liaison Molene Ouessant,4,0D3045,FFFFFF
+R_OUE_MOL,PAB,OUE-MOL,Ouessant - Molene,Liaison Ouessant Molene,4,0D3045,FFFFFF
+R_AUD_SEI,PAB,AUD-SEI,Audierne - Ile de Sein,Liaison Audierne Sainte-Evette - Ile de Sein,4,14B8A6,FFFFFF
+R_SEI_AUD,PAB,SEI-AUD,Ile de Sein - Audierne,Liaison Ile de Sein - Audierne Sainte-Evette,4,14B8A6,FFFFFF
+R_BRE_CAM,PAB,BRE-CAM,Brest - Camaret,Liaison estivale Brest - Camaret,4,0D3045,FFFFFF
+R_CAM_BRE,PAB,CAM-BRE,Camaret - Brest,Liaison estivale Camaret - Brest,4,0D3045,FFFFFF

@@ -1,0 +1,108 @@
+{
+  "phase": "04",
+  "description": "Raw AIS Trajectory Segmentation and Ground-Truth Recovery",
+  "timestamp_utc": "2026-10-16T08:35:48Z",
+  "source_archive": {
+    "path": "data/downloads/ais_brest_synopses_v0.8.zip",
+    "size_bytes": 1993633450,
+    "sha256": "d8b3180106828e2ef18d34977fd8e290bb50a1ef9200bfcd49b7b838b5728a2d",
+    "member_file": "ais_brest_synopses.csv"
+  },
+  "segmentation_parameters": {
+    "max_telemetry_gap_minutes": 45.0,
+    "min_observations": 5,
+    "underway_speed_threshold_knots": 3.0,
+    "berth_speed_threshold_knots": 3.0,
+    "geofence_radii_m": {
+      "BREST": 800.0,
+      "LE_CONQUET": 600.0,
+      "MOLENE": 500.0,
+      "OUESSANT_STIFF": 800.0,
+      "AUDIERNE": 600.0,
+      "ILE_DE_SEIN": 500.0,
+      "CAMARET": 600.0
+    }
+  },
+  "execution_summary": {
+    "runtime_seconds": 7.98,
+    "total_candidates_audited": 1364,
+    "verified_voyages_count": 889,
+    "uncertain_voyages_count": 475,
+    "verified_by_vessel": {
+      "FROMVEUR II": 603,
+      "ENEZ SUN 3": 141,
+      "ENEZ EUSSA 3": 138,
+      "ANDRE COLIN": 7
+    },
+    "verified_by_corridor": [
+      {
+        "dep_terminal": "AUDIERNE",
+        "arr_terminal": "ILE_DE_SEIN",
+        "count": 127
+      },
+      {
+        "dep_terminal": "BREST",
+        "arr_terminal": "LE_CONQUET",
+        "count": 131
+      },
+      {
+        "dep_terminal": "BREST",
+        "arr_terminal": "OUESSANT_STIFF",
+        "count": 4
+      },
+      {
+        "dep_terminal": "ILE_DE_SEIN",
+        "arr_terminal": "AUDIERNE",
+        "count": 14
+      },
+      {
+        "dep_terminal": "LE_CONQUET",
+        "arr_terminal": "BREST",
+        "count": 113
+      },
+      {
+        "dep_terminal": "LE_CONQUET",
+        "arr_terminal": "MOLENE",
+        "count": 146
+      },
+      {
+        "dep_terminal": "MOLENE",
+        "arr_terminal": "LE_CONQUET",
+        "count": 135
+      },
+      {
+        "dep_terminal": "MOLENE",
+        "arr_terminal": "OUESSANT_STIFF",
+        "count": 76
+      },
+      {
+        "dep_terminal": "OUESSANT_STIFF",
+        "arr_terminal": "BREST",
+        "count": 17
+      },
+      {
+        "dep_terminal": "OUESSANT_STIFF",
+        "arr_terminal": "MOLENE",
+        "count": 126
+      }
+    ]
+  },
+  "output_artifacts": [
+    {
+      "path": "data/interim/phase_04_candidate_voyage_audit.parquet",
+      "row_count": 1364,
+      "size_bytes": 137428
+    },
+    {
+      "path": "data/processed/verified_voyages.parquet",
+      "row_count": 889,
+      "size_bytes": 90208
+    }
+  ],
+  "data_preservation_attestation": {
+    "original_archives_unmodified": true,
+    "historical_phase_02_artifacts_unmodified": true,
+    "no_synthetic_records_in_verified": true,
+    "no_interpolated_observations": true
+  }
+}

@@ -1,0 +1,86 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: where_is_my_ferry_db
+    environment:
+      POSTGRES_DB: where_is_my_ferry
+      POSTGRES_USER: ferry_user
+      POSTGRES_PASSWORD: ferry_secret_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ferry_user -d where_is_my_ferry"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - ferry_network
+
+  ml-platform:
+    build:
+      context: ./ml-platform
+      dockerfile: Dockerfile
+    container_name: where_is_my_ferry_ml
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PORT=8000
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - ferry_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: where_is_my_ferry_backend
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/where_is_my_ferry
+      - SPRING_DATASOURCE_USERNAME=ferry_user
+      - SPRING_DATASOURCE_PASSWORD=ferry_secret_password
+      - FERRY_SIMULATION_DAEMON_URL=http://ml-platform:8000
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ml-platform:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - ferry_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: where_is_my_ferry_frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - ferry_network
+
+volumes:
+  postgres_data:
+
+networks:
+  ferry_network:
+    driver: bridge

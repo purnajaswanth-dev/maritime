@@ -1,0 +1,68 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache & bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Testing and Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Temporary extraction and generated datasets
+data/temp/
+data/downloads/
+data/raw/
+data/processed/*
+!data/processed/verified_voyages.parquet
+data/interim/*
+!data/interim/*.parquet
+models/*
+!models/vectorized_ridge_model.json
+checkpoints/
+
+# Streaming diagnostic traces (large continuous append logs)
+*.jsonl
+data/manifests/*.jsonl
+
+# Large data binaries
+*.zip
+*.tar.gz
+*.nc
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

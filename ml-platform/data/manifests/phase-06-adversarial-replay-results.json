@@ -1,0 +1,146 @@
+[
+  {
+    "scenario_id": "SCENARIO_01_NORMAL_STEADY_SPEED",
+    "provenance": "Real observed voyage VOY-BREST-20160202-227002630-001 (6 consecutive 5m steps)",
+    "description": "Cruising in open water at steady ~14-16 knots; countdown should tick down smoothly.",
+    "expected_behaviour": "State is ESTIMATING; unexpected jump magnitude < 3.0 min across all steps.",
+    "observed_behaviour": "Max unexpected jump: 0.69 min; all states ESTIMATING.",
+    "passed": true,
+    "step_count": 6,
+    "sample_snapshots": [
+      {
+        "prediction_timestamp_utc": "2016-02-02T09:08:17Z",
+        "voyage_id": "VOY-BREST-20160202-227002630-001",
+        "vessel_name": "ENEZ EUSSA 3",
+        "corridor": "LE_CONQUET_BREST",
+        "state": "ESTIMATING",
+        "raw_remaining_minutes": 36.47,
+        "displayed_remaining_minutes": 36.47,
+        "predicted_arrival_timestamp_utc": "2016-02-02T09:44:44Z",
+        "data_freshness_seconds": 132.0,
+        "unexpected_jump_minutes": 0.0,
+        "uncertainty_lower_minutes": 26.6,
+        "uncertainty_upper_minutes": 46.34,
+        "is_stale": false,
+        "is_arrived": false,
+        "state_reason": "Normal active transit progression."
+      },
+      {
+        "prediction_timestamp_utc": "2016-02-02T09:13:17Z",
+        "voyage_id": "VOY-BREST-20160202-227002630-001",
+        "vessel_name": "ENEZ EUSSA 3",
+        "corridor": "LE_CONQUET_BREST",
+        "state": "ESTIMATING",
+        "raw_remaining_minutes": 31.25,
+        "displayed_remaining_minutes": 31.36,
+        "predicted_arrival_timestamp_utc": "2016-02-02T09:44:38Z",
+        "data_freshness_seconds": 51.0,
+        "unexpected_jump_minutes": 0.11,
+        "uncertainty_lower_minutes": 21.49,
+        "uncertainty_upper_minutes": 41.23,
+        "is_stale": false,
+        "is_arrived": false,
+        "state_reason": "Normal active transit progression."
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_02_GRADUAL_ACCEL_DECEL",
+    "provenance": "Real observed voyage VOY-BREST-20160203-228017700-001",
+    "description": "Vessel accelerates from 5 knots exiting harbor to 15 knots in channel.",
+    "expected_behaviour": "Model absorbs acceleration smoothly without explosive countdown swings (< 4.0 min jump).",
+    "observed_behaviour": "Max unexpected jump: 0.67 min.",
+    "passed": true,
+    "step_count": 6
+  },
+  {
+    "scenario_id": "SCENARIO_03_TERMINAL_APPROACH_AND_ARRIVAL",
+    "provenance": "Real observed voyage VOY-BREST-20160202-227002630-001 terminal approach",
+    "description": "Vessel approaches within 350m of berth, docks, and confirms arrival dwell.",
+    "expected_behaviour": "Transitions to ARRIVAL_PENDING_CONFIRMATION then ARRIVED; displayed countdown terminates at 0.0m.",
+    "observed_behaviour": "Final state: ETAState.ARRIVED, displayed remaining: 0.0m.",
+    "passed": true,
+    "step_count": 4
+  },
+  {
+    "scenario_id": "SCENARIO_04_LONG_VALID_OBSERVATION_INTERVAL",
+    "provenance": "Controlled 15-minute interval test fixture",
+    "description": "15-minute gap between updates; clock advances 15m, distance shrinks proportionally.",
+    "expected_behaviour": "Calculates dt = 15m dynamically; unexpected jump magnitude <= 1.0 min.",
+    "observed_behaviour": "Unexpected jump: 0.40 min, state: ETAState.ESTIMATING.",
+    "passed": true,
+    "step_count": 2
+  },
+  {
+    "scenario_id": "SCENARIO_05_MISSING_OR_STALE_AIS",
+    "provenance": "Controlled stale telemetry test fixture",
+    "description": "Telemetry age reaches 900s (> 600s threshold).",
+    "expected_behaviour": "Transitions automatically to STALE_DATA; is_stale=True flagged explicitly.",
+    "observed_behaviour": "State: ETAState.STALE_DATA, is_stale: True, freshness: 900.0s.",
+    "passed": true,
+    "step_count": 2
+  },
+  {
+    "scenario_id": "SCENARIO_06_NOISY_ANOMALOUS_SPEED",
+    "provenance": "Synthesized momentary GPS speed burst fixture",
+    "description": "Instantaneous SOG spikes to 38 knots for 1 step while distance changes normally.",
+    "expected_behaviour": "Filter damps downward jump; displayed ETA remains stable (> 18m) instead of collapsing.",
+    "observed_behaviour": "Raw ETA: 16.0m -> Displayed ETA: 20.5m (jump: 4.50m).",
+    "passed": true,
+    "step_count": 2
+  },
+  {
+    "scenario_id": "SCENARIO_07_TEMPORARY_STOPS_DURING_VOYAGE",
+    "provenance": "Real observed stop event in voyage VOY-BREST-20160209-228017700-001",
+    "description": "Vessel remains stationary (SOG 0.0 kt) in open water (dist 10.4km).",
+    "expected_behaviour": "Transitions to DELAYED_OR_UNCERTAIN; alerts passenger of delay.",
+    "observed_behaviour": "State: ETAState.DELAYED_OR_UNCERTAIN, Reason: Vessel stationary (SOG 0.0 kts) in open water (10.4 km to dest)..",
+    "passed": true,
+    "step_count": 2
+  },
+  {
+    "scenario_id": "SCENARIO_08_GENUINE_ROUTE_DEVIATION",
+    "provenance": "Controlled diversion test fixture",
+    "description": "Vessel diverts from route; distance to destination increases from 10.0km to 12.5km.",
+    "expected_behaviour": "Displayed ETA increases to reflect real delay; monotonicity is NOT artificially enforced.",
+    "observed_behaviour": "Previous ETA: 25.0m -> New ETA: 32.0m (increased by 7.00m).",
+    "passed": true,
+    "step_count": 2
+  },
+  {
+    "scenario_id": "SCENARIO_09_OUT_OF_ORDER_OR_DUPLICATE",
+    "provenance": "Out-of-order packet simulation fixture",
+    "description": "Delayed packet timestamped 14:02 arrives after packet timestamped 14:05.",
+    "expected_behaviour": "State machine monotonically tracks latest observation timestamp; does not rewind.",
+    "observed_behaviour": "Latest observation timestamp preserved at 2016-02-12T14:05:00Z.",
+    "passed": true,
+    "step_count": 2
+  },
+  {
+    "scenario_id": "SCENARIO_10_ABRUPT_OPERATIONAL_DELAY",
+    "provenance": "Real heavy-weather voyage VOY-BREST-20160319-227003050-006 in Fromveur Passage",
+    "description": "Vessel slowed by adverse tidal current; duration extended by 35 minutes.",
+    "expected_behaviour": "Model responds to slowdown and updates ETA dynamically without freezing.",
+    "observed_behaviour": "Maximum unexpected adjustment during slow passage: 2.58 min.",
+    "passed": true,
+    "step_count": 5
+  },
+  {
+    "scenario_id": "SCENARIO_11_POST_ARRIVAL_DELAYED_MESSAGES",
+    "provenance": "Post-arrival delayed message arrival fixture",
+    "description": "Late in-transit telemetry received 5 minutes after arrival confirmation.",
+    "expected_behaviour": "Confirmed ARRIVED state is latching; countdown does not resume.",
+    "observed_behaviour": "State remained: ETAState.ARRIVED, displayed remaining: 0.0m.",
+    "passed": true,
+    "step_count": 2
+  },
+  {
+    "scenario_id": "SCENARIO_12_MISSING_TERMINAL_EVIDENCE",
+    "provenance": "Missing observation open-water endpoint fixture",
+    "description": "Vessel trajectory terminates abruptly with no arrival evidence or telemetry.",
+    "expected_behaviour": "Transitions safely to ETA_UNAVAILABLE; does not falsely claim arrival.",
+    "observed_behaviour": "State: ETAState.ETA_UNAVAILABLE, Reason: No telemetry observations available for vessel..",
+    "passed": true,
+    "step_count": 1
+  }
+]

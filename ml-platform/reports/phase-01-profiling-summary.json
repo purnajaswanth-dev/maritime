@@ -1,0 +1,475 @@
+{
+  "copernicus_netcdf": {
+    "filename": "cmems_mod_glo_phy_my_0.083deg_P1D-m_1792083299167.nc",
+    "file_size_bytes": 665677789,
+    "global_attributes": {
+      "Conventions": "CF-1.11",
+      "title": "daily mean fields from Global Ocean Physics Analysis and Forecast updated Daily",
+      "institution": "MERCATOR OCEAN",
+      "source": "MERCATOR GLORYS12V1",
+      "history": "2023/06/01 16:20:05 MERCATOR OCEAN Netcdf creation",
+      "references": "http://www.mercator-ocean.fr",
+      "comment": "CMEMS product",
+      "subset:source": "ARCO data downloaded from the Marine Data Store using the MyOcean Data Portal",
+      "subset:productId": "GLOBAL_MULTIYEAR_PHY_001_030",
+      "subset:datasetId": "cmems_mod_glo_phy_my_0.083deg_P1D-m_202311",
+      "subset:date": "2026-10-15T16:54:59.169Z"
+    },
+    "dimensions": {
+      "time": 183,
+      "depth": 1,
+      "latitude": 421,
+      "longitude": 1080
+    },
+    "coordinates": {
+      "time": {
+        "dtype": "datetime64[ns]",
+        "size": 183,
+        "attrs": {
+          "standard_name": "time",
+          "long_name": "Time",
+          "axis": "T"
+        }
+      },
+      "depth": {
+        "dtype": "float32",
+        "size": 1,
+        "attrs": {
+          "standard_name": "depth",
+          "long_name": "Depth",
+          "units": "m",
+          "unit_long": "Meters",
+          "axis": "Z",
+          "positive": "down"
+        }
+      },
+      "latitude": {
+        "dtype": "float32",
+        "size": 421,
+        "attrs": {
+          "standard_name": "latitude",
+          "long_name": "Latitude",
+          "units": "degrees_north",
+          "unit_long": "Degrees North",
+          "axis": "Y"
+        }
+      },
+      "longitude": {
+        "dtype": "float32",
+        "size": 1080,
+        "attrs": {
+          "standard_name": "longitude",
+          "long_name": "Longitude",
+          "units": "degrees_east",
+          "unit_long": "Degrees East",
+          "axis": "X"
+        }
+      }
+    },
+    "time_coverage": {
+      "time_min": "2015-10-01T00:00:00.000000000",
+      "time_max": "2016-03-31T00:00:00.000000000",
+      "time_steps": 183,
+      "frequency": "P1D (Daily)"
+    },
+    "spatial_bounds": {
+      "lat_min": 25.0,
+      "lat_max": 60.0,
+      "lat_resolution_deg": 0.08333396911621094,
+      "lon_min": -79.99999237060547,
+      "lon_max": 9.916677474975586,
+      "lon_resolution_deg": 0.0833282470703125
+    },
+    "depth_info": {
+      "levels_count": 1,
+      "surface_level_m": 0.49402499198913574,
+      "max_depth_m": 0.49402499198913574,
+      "depth_levels_m": [
+        0.49402499198913574
+      ]
+    },
+    "data_variables": {
+      "uo": {
+        "dims": [
+          "time",
+          "depth",
+          "latitude",
+          "longitude"
+        ],
+        "dtype": "float32",
+        "standard_name": "eastward_sea_water_velocity",
+        "long_name": "Eastward velocity",
+        "units": "m s-1",
+        "_FillValue": "NaN"
+      },
+      "vo": {
+        "dims": [
+          "time",
+          "depth",
+          "latitude",
+          "longitude"
+        ],
+        "dtype": "float32",
+        "standard_name": "northward_sea_water_velocity",
+        "long_name": "Northward velocity",
+        "units": "m s-1",
+        "_FillValue": "NaN"
+      }
+    },
+    "contains_uo_vo_currents": true
+  },
+  "gtfs_feeds": [
+    {
+      "archive_filename": "mdb-2353-202502041949.zip",
+      "agency_names": [
+        "Bee-Line Bus"
+      ],
+      "agency_urls": [
+        "http://transportation.westchestergov.com/bee-line-bus"
+      ],
+      "timezones": [
+        "America/New_York"
+      ],
+      "route_types": [
+        "3"
+      ],
+      "is_ferry_feed": false,
+      "is_bus_feed": true,
+      "route_count": 57,
+      "stop_count": 2788,
+      "trip_count": 4175,
+      "geographic_bounds": {
+        "min_lat": 40.74128,
+        "min_lon": -73.989067,
+        "max_lat": 41.421923,
+        "max_lon": -73.659724
+      },
+      "date_range": {
+        "min_date": "20240903",
+        "max_date": "20250316"
+      },
+      "has_feed_info": false,
+      "feed_info": null,
+      "attributions": null
+    },
+    {
+      "archive_filename": "mdb-2353-202502270025.zip",
+      "agency_names": [
+        "Bee-Line Bus"
+      ],
+      "agency_urls": [
+        "http://transportation.westchestergov.com/bee-line-bus"
+      ],
+      "timezones": [
+        "America/New_York"
+      ],
+      "route_types": [
+        "3"
+      ],
+      "is_ferry_feed": false,
+      "is_bus_feed": true,
+      "route_count": 57,
+      "stop_count": 2788,
+      "trip_count": 4175,
+      "geographic_bounds": {
+        "min_lat": 40.74128,
+        "min_lon": -73.989067,
+        "max_lat": 41.421923,
+        "max_lon": -73.659724
+      },
+      "date_range": {
+        "min_date": "20240903",
+        "max_date": "20250615"
+      },
+      "has_feed_info": false,
+      "feed_info": null,
+      "attributions": null
+    },
+    {
+      "archive_filename": "mdb-2353-202506170043.zip",
+      "agency_names": [
+        "Bee-Line Bus"
+      ],
+      "agency_urls": [
+        "http://transportation.westchestergov.com/bee-line-bus"
+      ],
+      "timezones": [
+        "America/New_York"
+      ],
+      "route_types": [
+        "3"
+      ],
+      "is_ferry_feed": false,
+      "is_bus_feed": true,
+      "route_count": 59,
+      "stop_count": 2803,
+      "trip_count": 4182,
+      "geographic_bounds": {
+        "min_lat": 40.74128,
+        "min_lon": -73.989067,
+        "max_lat": 41.421923,
+        "max_lon": -73.659724
+      },
+      "date_range": {
+        "min_date": "20250616",
+        "max_date": "20250831"
+      },
+      "has_feed_info": false,
+      "feed_info": null,
+      "attributions": null
+    },
+    {
+      "archive_filename": "mdb-2814-202508181628.zip",
+      "agency_names": [
+        "Balearia"
+      ],
+      "agency_urls": [
+        "https://www.balearia.com/"
+      ],
+      "timezones": [
+        "Europe/Madrid"
+      ],
+      "route_types": [
+        "4"
+      ],
+      "is_ferry_feed": true,
+      "is_bus_feed": false,
+      "route_count": 44,
+      "stop_count": 19,
+      "trip_count": 24242,
+      "geographic_bounds": {
+        "min_lat": 28.139391,
+        "min_lon": -16.241201,
+        "max_lat": 41.374301,
+        "max_lon": 3.827007
+      },
+      "date_range": {
+        "min_date": "20240617",
+        "max_date": "20300101"
+      },
+      "has_feed_info": false,
+      "feed_info": null,
+      "attributions": null
+    },
+    {
+      "archive_filename": "mdb-3522-202610131556.zip",
+      "agency_names": [
+        "Los Reginas S.L."
+      ],
+      "agency_urls": [
+        "https://www.losreginas.com"
+      ],
+      "timezones": [
+        "Europe/Madrid"
+      ],
+      "route_types": [
+        "4"
+      ],
+      "is_ferry_feed": true,
+      "is_bus_feed": false,
+      "route_count": 2,
+      "stop_count": 4,
+      "trip_count": 84,
+      "geographic_bounds": {
+        "min_lat": 43.4489115,
+        "min_lon": -3.8015269,
+        "max_lat": 43.4615195,
+        "max_lon": -3.7464004
+      },
+      "date_range": {
+        "min_date": "20260601",
+        "max_date": "20270930"
+      },
+      "has_feed_info": true,
+      "feed_info": {
+        "feed_publisher_name": "Los Reginas",
+        "feed_publisher_url": "https://www.losreginas.com/",
+        "feed_lang": "es",
+        "feed_start_date": "20260601",
+        "feed_end_date": "20270930",
+        "feed_version": "2026.10",
+        "feed_contact_email": "info@losreginas.es"
+      },
+      "attributions": null
+    },
+    {
+      "archive_filename": "mdb-649-202406071512.zip",
+      "agency_names": [
+        "Port Phillip Ferries"
+      ],
+      "agency_urls": [
+        "https://www.portphillipferries.com.au/"
+      ],
+      "timezones": [
+        "Australia/Melbourne"
+      ],
+      "route_types": [
+        "4"
+      ],
+      "is_ferry_feed": true,
+      "is_bus_feed": false,
+      "route_count": 5,
+      "stop_count": 3,
+      "trip_count": 27,
+      "geographic_bounds": {
+        "min_lat": -38.143121714184204,
+        "min_lon": 144.36218577889218,
+        "max_lat": -37.816966822906075,
+        "max_lon": 144.9450472321603
+      },
+      "date_range": {
+        "min_date": "20220401",
+        "max_date": "20221231"
+      },
+      "has_feed_info": true,
+      "feed_info": {
+        "feed_publisher_name": "Port Philip Ferries",
+        "feed_publisher_url": "https://www.portphillipferries.com.au/",
+        "feed_lang": "en",
+        "default_lang": "en",
+        "feed_start_date": "20220401",
+        "feed_end_date": "20221231",
+        "feed_version": "4.00"
+      },
+      "attributions": [
+        {
+          "organization_name": "Port Philip Ferries",
+          "is_producer": "1",
+          "is_operator": "1"
+        }
+      ]
+    },
+    {
+      "archive_filename": "mdb-690-202605270153.zip",
+      "agency_names": [
+        "BC Ferries"
+      ],
+      "agency_urls": [
+        "https://www.bcferries.com/"
+      ],
+      "timezones": [
+        "America/Los_Angeles"
+      ],
+      "route_types": [
+        "4"
+      ],
+      "is_ferry_feed": true,
+      "is_bus_feed": false,
+      "route_count": 23,
+      "stop_count": 96,
+      "trip_count": 872,
+      "geographic_bounds": {
+        "min_lat": 48.57720958267382,
+        "min_lon": -132.010339,
+        "max_lat": 54.297784571788924,
+        "max_lon": -123.12942224916
+      },
+      "date_range": {
+        "min_date": "20000101",
+        "max_date": "20500101"
+      },
+      "has_feed_info": true,
+      "feed_info": {
+        "feed_publisher_url": "http://www.trilliumtransit.com",
+        "feed_publisher_name": "Trillium Solutions, Inc.",
+        "feed_lang": "en",
+        "feed_version": "UTC: 13-May-2026 06:12",
+        "feed_license": "",
+        "feed_contact_email": "support+bcferries-bc-ca@trilliumtransit.com",
+        "feed_contact_url": "http://support.trilliumtransit.com",
+        "feed_start_date": "20260512",
+        "feed_end_date": "20270331",
+        "feed_id": "bcferries-bc-ca"
+      },
+      "attributions": null
+    },
+    {
+      "archive_filename": "mdb-690-202607240152.zip",
+      "agency_names": [
+        "BC Ferries"
+      ],
+      "agency_urls": [
+        "https://www.bcferries.com/"
+      ],
+      "timezones": [
+        "America/Los_Angeles"
+      ],
+      "route_types": [
+        "4"
+      ],
+      "is_ferry_feed": true,
+      "is_bus_feed": false,
+      "route_count": 23,
+      "stop_count": 96,
+      "trip_count": 1342,
+      "geographic_bounds": {
+        "min_lat": 48.57720958267382,
+        "min_lon": -132.010339,
+        "max_lat": 54.297784571788924,
+        "max_lon": -123.12942224916
+      },
+      "date_range": {
+        "min_date": "20000101",
+        "max_date": "20500101"
+      },
+      "has_feed_info": true,
+      "feed_info": {
+        "feed_publisher_url": "http://www.trilliumtransit.com",
+        "feed_publisher_name": "Trillium Solutions, Inc.",
+        "feed_lang": "en",
+        "feed_version": "UTC: 22-Jul-2026 06:53",
+        "feed_license": "",
+        "feed_contact_email": "support+bcferries-bc-ca@trilliumtransit.com",
+        "feed_contact_url": "http://support.trilliumtransit.com",
+        "feed_start_date": "20260721",
+        "feed_end_date": "20270506",
+        "feed_id": "bcferries-bc-ca"
+      },
+      "attributions": null
+    },
+    {
+      "archive_filename": "mdb-690-202608210055.zip",
+      "agency_names": [
+        "BC Ferries"
+      ],
+      "agency_urls": [
+        "https://www.bcferries.com/"
+      ],
+      "timezones": [
+        "America/Los_Angeles"
+      ],
+      "route_types": [
+        "4"
+      ],
+      "is_ferry_feed": true,
+      "is_bus_feed": false,
+      "route_count": 23,
+      "stop_count": 96,
+      "trip_count": 1394,
+      "geographic_bounds": {
+        "min_lat": 48.57720958267382,
+        "min_lon": -132.010339,
+        "max_lat": 54.297784571788924,
+        "max_lon": -123.12942224916
+      },
+      "date_range": {
+        "min_date": "20000101",
+        "max_date": "20500101"
+      },
+      "has_feed_info": true,
+      "feed_info": {
+        "feed_publisher_url": "http://www.trilliumtransit.com",
+        "feed_publisher_name": "Trillium Solutions, Inc.",
+        "feed_lang": "en",
+        "feed_version": "UTC: 20-Aug-2026 17:58",
+        "feed_license": "",
+        "feed_contact_email": "support+bcferries-bc-ca@trilliumtransit.com",
+        "feed_contact_url": "http://support.trilliumtransit.com",
+        "feed_start_date": "20260820",
+        "feed_end_date": "20270331",
+        "feed_id": "bcferries-bc-ca"
+      },
+      "attributions": null
+    }
+  ]
+}
