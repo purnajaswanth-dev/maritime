@@ -9,6 +9,15 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class BackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BackendApplication.class, args);
+        try {
+            SpringApplication.run(BackendApplication.class, args);
+        } catch (Throwable t) {
+            System.err.println("=================================================");
+            System.err.println("FATAL APPLICATION STARTUP ERROR:");
+            System.err.println(t.getMessage());
+            System.err.println("=================================================");
+            t.printStackTrace(System.err);
+            throw t;
+        }
     }
 }

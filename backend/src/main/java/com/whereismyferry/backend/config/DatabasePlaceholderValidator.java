@@ -19,51 +19,21 @@ public class DatabasePlaceholderValidator implements EnvironmentPostProcessor, O
 
     @Override
     public int getOrder() {
-        // Run after ConfigDataEnvironmentPostProcessor so application.properties is loaded
-        return Ordered.LOWEST_PRECEDENCE;
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        // 1. Automatically adapt Cloud / Render DATABASE_URL if present
+        // 1. Check DATABASE_URL (standard for Render, Heroku, Railway, Fly.io)
         String databaseUrl = environment.getProperty("DATABASE_URL");
         if (databaseUrl != null && !databaseUrl.isBlank()) {
-            try {
-                String normalized = databaseUrl;
-                if (normalized.startsWith("postgres://")) {
-                    normalized = "postgresql://" + normalized.substring("postgres://".length());
-                }
-
-                URI uri = new URI(normalized);
-                String userInfo = uri.getUserInfo();
-                String host = uri.getHost();
-                int port = uri.getPort() == -1 ? 5432 : uri.getPort();
-                String path = uri.getPath();
-                String query = uri.getQuery();
-
-                Map<String, Object> props = new HashMap<>();
-                if (userInfo != null && userInfo.contains(":")) {
-                    String[] parts = userInfo.split(":", 2);
-                    props.put("spring.datasource.username", parts[0]);
-                    props.put("spring.datasource.password", parts[1]);
-                }
-
-                String cleanJdbcUrl = "jdbc:postgresql://" + host + ":" + port + path + (query != null ? "?" + query : "");
-                props.put("spring.datasource.url", cleanJdbcUrl);
-
-                environment.getPropertySources().addFirst(new MapPropertySource("render-database-url", props));
-                log.info("Successfully adapted Render/Cloud DATABASE_URL to JDBC: {}", cleanJdbcUrl.replaceAll(":[^/@]+@", ":***@"));
-            } catch (Exception e) {
-                log.warn("Failed to parse DATABASE_URL environment variable: {}", e.getMessage());
-            }
+            parseAndApplyUrl(databaseUrl, environment, "render-database-url");
         }
 
-        // 2. Automatically fix missing jdbc: prefix if passed directly
+        // 2. Check spring.datasource.url if provided as a raw postgresql:// URI
         String currentUrl = environment.getProperty("spring.datasource.url", "");
-        if (currentUrl.startsWith("postgresql://") && !currentUrl.startsWith("jdbc:postgresql://")) {
-            Map<String, Object> fixProps = new HashMap<>();
-            fixProps.put("spring.datasource.url", "jdbc:" + currentUrl);
-            environment.getPropertySources().addFirst(new MapPropertySource("jdbc-prefix-fix", fixProps));
+        if (currentUrl.contains("@") || (currentUrl.startsWith("postgresql://") && !currentUrl.startsWith("jdbc:postgresql://"))) {
+            parseAndApplyUrl(currentUrl, environment, "spring-datasource-url-fix");
         }
 
         // 3. Automatically adapt Render PORT environment variable
@@ -96,6 +66,46 @@ public class DatabasePlaceholderValidator implements EnvironmentPostProcessor, O
         }
         if (jwtSecret != null && jwtSecret.contains("CHANGE_ME_TO_A_LONG_RANDOM_SECRET")) {
             throw new IllegalStateException("CONFIGURATION ERROR: Please configure 'app.jwt.secret' in backend/src/main/resources/application.properties with a secret at least 32 bytes long.");
+        }
+    }
+
+    private void parseAndApplyUrl(String rawUrl, ConfigurableEnvironment environment, String sourceName) {
+        try {
+            String normalized = rawUrl.trim();
+            if (normalized.startsWith("jdbc:postgresql://")) {
+                normalized = "postgresql://" + normalized.substring("jdbc:postgresql://".length());
+            } else if (normalized.startsWith("postgres://")) {
+                normalized = "postgresql://" + normalized.substring("postgres://".length());
+            } else if (!normalized.startsWith("postgresql://")) {
+                return;
+            }
+
+            URI uri = new URI(normalized);
+            String userInfo = uri.getUserInfo();
+            String host = uri.getHost();
+            int port = uri.getPort() == -1 ? 5432 : uri.getPort();
+            String path = uri.getPath();
+            String query = uri.getQuery();
+
+            Map<String, Object> props = new HashMap<>();
+            if (userInfo != null && userInfo.contains(":")) {
+                String[] parts = userInfo.split(":", 2);
+                props.put("spring.datasource.username", parts[0]);
+                props.put("spring.datasource.password", parts[1]);
+            }
+
+            String cleanJdbcUrl = "jdbc:postgresql://" + host + ":" + port + (path != null ? path : "");
+            if (query != null && !query.isBlank()) {
+                cleanJdbcUrl += "?" + query;
+            } else if (host != null && !host.equals("localhost") && !host.equals("127.0.0.1") && !host.equals("postgres")) {
+                cleanJdbcUrl += "?sslmode=require";
+            }
+
+            props.put("spring.datasource.url", cleanJdbcUrl);
+            environment.getPropertySources().addFirst(new MapPropertySource(sourceName, props));
+            log.info("Successfully configured datasource from {}: {}", sourceName, cleanJdbcUrl.replaceAll(":[^/@]+@", ":***@"));
+        } catch (Exception e) {
+            log.warn("Failed to parse datasource URL: {}", e.getMessage());
         }
     }
 }
