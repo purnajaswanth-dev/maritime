@@ -4,7 +4,8 @@
  * request queuing during token renewal, and RFC 7807 problem details parsing.
  */
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+const rawBase = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+const BASE_URL = rawBase.endsWith('/api/v1') ? rawBase : `${rawBase.replace(/\/$/, '')}/api/v1`;
 
 export interface ProblemDetails {
   type?: string;

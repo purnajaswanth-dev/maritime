@@ -69,7 +69,12 @@ function mapRawVessel(raw: any): VesselLiveTelemetry {
   };
 }
 
-export function useVesselStream(streamUrl = '/api/v1/stream/vessels'): UseVesselStreamResult {
+const rawStreamBase = import.meta.env.VITE_API_BASE_URL || '';
+const DEFAULT_STREAM_URL = rawStreamBase
+  ? `${rawStreamBase.replace(/\/api\/v1\/?$/, '').replace(/\/$/, '')}/api/v1/stream/vessels`
+  : '/api/v1/stream/vessels';
+
+export function useVesselStream(streamUrl = DEFAULT_STREAM_URL): UseVesselStreamResult {
   const [vessels, setVessels] = useState<VesselLiveTelemetry[]>([]);
   const [selectedVesselId, setSelectedVesselId] = useState<string | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<'Live' | 'Reconnecting' | 'Stale'>('Live');

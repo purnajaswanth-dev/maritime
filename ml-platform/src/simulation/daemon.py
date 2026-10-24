@@ -713,14 +713,17 @@ def get_accuracy():
 # -----------------------------------------------------------------------------
 
 def run_daemon(host: str = "127.0.0.1", port: int = 8000):
-    """Starts Uvicorn server bound strictly to loopback interface."""
+    """Starts Uvicorn server bound strictly to loopback interface, with opt-in container networking support."""
     import uvicorn
 
-    if host not in ("127.0.0.1", "localhost"):
+    if os.getenv("ALLOW_CONTAINER_BIND") == "1":
+        host = os.getenv("HOST", "0.0.0.0")
+        port = int(os.getenv("PORT", str(port)))
+    elif host not in ("127.0.0.1", "localhost"):
         raise ValueError(f"SECURITY VIOLATION: Internal daemon may only bind to 127.0.0.1, not '{host}'!")
 
     os.environ.setdefault("AUTO_START_SIMULATION", "1")
-    print(f"Starting Where Is My Ferry? Internal Maritime Daemon on http://{host}:{port} (Loopback Only)...")
+    print(f"Starting Where Is My Ferry? Internal Maritime Daemon on http://{host}:{port}...")
     uvicorn.run(app, host=host, port=port, reload=False, log_level="info")
 
 

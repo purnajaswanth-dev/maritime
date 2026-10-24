@@ -6,7 +6,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.Profiles;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabasePlaceholderValidator implements EnvironmentPostProcessor, Ordered {
 
@@ -20,7 +25,56 @@ public class DatabasePlaceholderValidator implements EnvironmentPostProcessor, O
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        // Skip validation during automated tests (test profile or when running H2 datasource)
+        // 1. Automatically adapt Cloud / Render DATABASE_URL if present
+        String databaseUrl = environment.getProperty("DATABASE_URL");
+        if (databaseUrl != null && !databaseUrl.isBlank()) {
+            try {
+                String normalized = databaseUrl;
+                if (normalized.startsWith("postgres://")) {
+                    normalized = "postgresql://" + normalized.substring("postgres://".length());
+                }
+
+                URI uri = new URI(normalized);
+                String userInfo = uri.getUserInfo();
+                String host = uri.getHost();
+                int port = uri.getPort() == -1 ? 5432 : uri.getPort();
+                String path = uri.getPath();
+                String query = uri.getQuery();
+
+                Map<String, Object> props = new HashMap<>();
+                if (userInfo != null && userInfo.contains(":")) {
+                    String[] parts = userInfo.split(":", 2);
+                    props.put("spring.datasource.username", parts[0]);
+                    props.put("spring.datasource.password", parts[1]);
+                }
+
+                String cleanJdbcUrl = "jdbc:postgresql://" + host + ":" + port + path + (query != null ? "?" + query : "");
+                props.put("spring.datasource.url", cleanJdbcUrl);
+
+                environment.getPropertySources().addFirst(new MapPropertySource("render-database-url", props));
+                log.info("Successfully adapted Render/Cloud DATABASE_URL to JDBC: {}", cleanJdbcUrl.replaceAll(":[^/@]+@", ":***@"));
+            } catch (Exception e) {
+                log.warn("Failed to parse DATABASE_URL environment variable: {}", e.getMessage());
+            }
+        }
+
+        // 2. Automatically fix missing jdbc: prefix if passed directly
+        String currentUrl = environment.getProperty("spring.datasource.url", "");
+        if (currentUrl.startsWith("postgresql://") && !currentUrl.startsWith("jdbc:postgresql://")) {
+            Map<String, Object> fixProps = new HashMap<>();
+            fixProps.put("spring.datasource.url", "jdbc:" + currentUrl);
+            environment.getPropertySources().addFirst(new MapPropertySource("jdbc-prefix-fix", fixProps));
+        }
+
+        // 3. Automatically adapt Render PORT environment variable
+        String portEnv = environment.getProperty("PORT");
+        if (portEnv != null && !portEnv.isBlank()) {
+            Map<String, Object> portProps = new HashMap<>();
+            portProps.put("server.port", portEnv);
+            environment.getPropertySources().addFirst(new MapPropertySource("render-port", portProps));
+        }
+
+        // 4. Skip validation during automated tests (test profile or when running H2 datasource)
         if (environment.acceptsProfiles(Profiles.of("test")) ||
                 environment.getProperty("spring.datasource.url", "").contains("h2:mem")) {
             return;

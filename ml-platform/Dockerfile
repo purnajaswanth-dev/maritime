@@ -16,6 +16,7 @@ COPY data/ ./data/
 COPY models/ ./models/
 
 ENV PORT=8000
+ENV ALLOW_CONTAINER_BIND=1
 EXPOSE 8000
 
 CMD ["python", "-m", "src.simulation.daemon"]

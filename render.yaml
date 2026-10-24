@@ -1,0 +1,82 @@
+# =============================================================================
+# Render Blueprint Specification for Where Is My Ferry?
+# Documentation: https://render.com/docs/blueprint-spec
+# To deploy: Go to Render Dashboard -> Blueprints -> New Blueprint Instance
+# =============================================================================
+
+databases:
+  - name: where-is-my-ferry-db
+    databaseName: where_is_my_ferry
+    user: ferry_user
+    plan: free
+    region: frankfurt
+
+services:
+  # ---------------------------------------------------------------------------
+  # 1. Python ML Simulation & Telemetry Daemon (Private Internal Service)
+  # ---------------------------------------------------------------------------
+  - type: pserv
+    name: where-is-my-ferry-ml
+    env: docker
+    dockerfilePath: ./ml-platform/Dockerfile
+    dockerContext: ./ml-platform
+    region: frankfurt
+    plan: starter
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: ALLOW_CONTAINER_BIND
+        value: "1"
+      - key: PYTHONUNBUFFERED
+        value: "1"
+
+  # ---------------------------------------------------------------------------
+  # 2. Spring Boot 3.4.3 Backend API Gateway
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: where-is-my-ferry-backend
+    env: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    region: frankfurt
+    plan: free
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DATABASE_URL
+        fromDatabase:
+          name: where-is-my-ferry-db
+          property: connectionString
+      - key: APP_JWT_SECRET
+        generateValue: true
+      - key: SIMULATION_DAEMON_URL
+        value: http://where-is-my-ferry-ml:8000
+      - key: FERRY_SIMULATION_DAEMON_URL
+        value: http://where-is-my-ferry-ml:8000
+      - key: APP_CORS_ALLOWED_ORIGINS
+        value: "*"
+      - key: APP_ADMIN_SEED_EMAIL
+        value: admin@example.com
+      - key: APP_ADMIN_SEED_PASSWORD
+        value: Admin@PennArBed2026
+
+  # ---------------------------------------------------------------------------
+  # 3. React 19 Frontend (Render Static Site with Global CDN - Free)
+  # ---------------------------------------------------------------------------
+  - type: web
+    name: where-is-my-ferry-frontend
+    env: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: where-is-my-ferry-backend
+          envVarKey: RENDER_EXTERNAL_URL
