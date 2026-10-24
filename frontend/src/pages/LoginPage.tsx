@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { LogIn, Ship } from 'lucide-react';
 import { Input } from '../components/common/Input';
 import { Button } from '../components/common/Button';
@@ -14,6 +14,8 @@ export const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectParam = searchParams.get('redirect');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,8 +23,13 @@ export const LoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/');
+      const user = await login(email, password);
+      const role = (user.role || '').toUpperCase();
+      if (role === 'ADMIN' || role === 'ROLE_ADMIN') {
+        navigate(redirectParam || '/admin');
+      } else {
+        navigate(redirectParam || '/account');
+      }
     } catch (err: any) {
       setError(err?.message || 'Invalid email or password. Please try again.');
     } finally {
@@ -31,27 +38,29 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="container" style={{ padding: '3rem 1rem', maxWidth: '440px' }}>
+    <div className="container" style={{ padding: '3.5rem 1rem', maxWidth: '440px' }}>
       <Card style={{ padding: '2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <div style={{
-            width: '48px',
-            height: '48px',
-            borderRadius: 'var(--radius-md)',
-            backgroundColor: 'var(--color-primary-light)',
-            color: 'var(--color-primary)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1rem auto',
-          }}>
+          <div
+            style={{
+              width: '48px',
+              height: '48px',
+              borderRadius: 'var(--radius-md)',
+              backgroundColor: 'rgba(20, 184, 166, 0.1)',
+              color: 'var(--color-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem auto',
+            }}
+          >
             <Ship size={24} />
           </div>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-navy)', marginBottom: '0.25rem' }}>
             Account Sign In
           </h1>
           <p style={{ color: 'var(--color-slate-light)', fontSize: '0.875rem' }}>
-            Access passenger bookings and live voyage tracking.
+            Access your bookings and live voyage tracking.
           </p>
         </div>
 
@@ -75,32 +84,49 @@ export const LoginPage: React.FC = () => {
             placeholder="passenger@whereismyferry.bzh"
           />
 
-          <Input
-            label="Password"
-            id="login-password"
-            type="password"
-            required
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
-          />
+          <div style={{ position: 'relative' }}>
+            <Input
+              label="Password"
+              id="login-password"
+              type="password"
+              required
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••••••"
+            />
+            <div style={{ textAlign: 'right', marginTop: '-0.25rem', marginBottom: '1rem' }}>
+              <Link
+                to="/forgot-password"
+                style={{ fontSize: '0.8125rem', color: 'var(--color-primary)', textDecoration: 'none' }}
+              >
+                Forgot password?
+              </Link>
+            </div>
+          </div>
 
           <Button
             type="submit"
             variant="primary"
             size="md"
             loading={loading}
-            style={{ width: '100%', marginTop: '0.5rem' }}
+            style={{ width: '100%', marginTop: '0.25rem' }}
           >
+            <LogIn size={16} style={{ marginRight: '0.5rem' }} />
             Sign In
           </Button>
         </form>
 
         <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem', color: 'var(--color-slate-medium)' }}>
           Don't have an account?{' '}
-          <Link to="/register" style={{ fontWeight: 600 }}>
-            Register here
+          <Link to="/register" style={{ color: 'var(--color-primary)', textDecoration: 'none', fontWeight: 500 }}>
+            Create one
+          </Link>
+        </div>
+
+        <div style={{ textAlign: 'center', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--color-slate-border)', fontSize: '0.8125rem' }}>
+          <Link to="/admin/login" style={{ color: 'var(--color-slate-light)', textDecoration: 'none' }}>
+            Ferry operator or staff? Admin sign in →
           </Link>
         </div>
       </Card>

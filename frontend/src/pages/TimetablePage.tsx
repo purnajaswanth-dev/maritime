@@ -19,8 +19,11 @@ import { Select } from '../components/common/Select';
 import { StatusChip } from '../components/common/StatusChip';
 import { Badge } from '../components/common/Badge';
 import { BookingModal } from '../components/booking/BookingModal';
+import { AnnouncementBanner } from '../components/common/AnnouncementBanner';
+import { SailingSearchForm, SearchFormData } from '../components/search/SailingSearchForm';
+import { SailingSearchResults, SearchResultData } from '../components/search/SailingSearchResults';
 import { apiClient } from '../api/client';
-import { Departure, Route } from '../types/catalog';
+import { Departure, Route, TimetableEntry } from '../types/catalog';
 
 const FALLBACK_DEPARTURES: Departure[] = [
   {
@@ -101,57 +104,58 @@ const FALLBACK_DEPARTURES: Departure[] = [
     status: 'SCHEDULED',
     liveTrackingAvailable: true,
   },
-  {
-    id: 4,
-    departureCode: 'DEP-20241024-LCQ-MOL-1130',
-    route: {
-      id: 'LCQ-MOL',
-      code: 'LCQ-MOL',
-      name: 'Le Conquet \u2192 \u00CEle-Mol\u00E8ne',
-      originPortId: 'LCQ',
-      originPortName: 'Le Conquet Gare Maritime',
-      destinationPortId: 'MOL',
-      destinationPortName: '\u00CEle-Mol\u00E8ne (Quai Nord)',
-      distanceNm: 8.2,
-      crossingDurationMinutes: 45,
-    },
-    vessel: {
-      id: 'ves-3',
-      name: 'Enez Eussa 3',
-      mmsi: 228198900,
-      passengerCapacity: 302,
-      serviceSpeedKnots: 16.0,
-    },
-    scheduledDepartureTime: '2026-10-24T11:30:00Z',
-    scheduledArrivalTime: '2026-10-24T12:15:00Z',
-    status: 'SCHEDULED',
-    liveTrackingAvailable: true,
-  },
 ];
 
 export const TimetablePage: React.FC = () => {
-  const [departures, setDepartures] = useState<Departure[]>([]);
+  const navigate = useNavigate();
+
+  // Search State
+  const [searchData, setSearchData] = useState<SearchResultData | null>(null);
+  const [searchLoading, setSearchLoading] = useState<boolean>(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [lastSearchParams, setLastSearchParams] = useState<SearchFormData | null>(null);
+
+  // Timetable State
+  const [departures, setDepartures] = useState<Departure[]>(FALLBACK_DEPARTURES);
   const [routes, setRoutes] = useState<Route[]>([]);
+  const [timetableEntries, setTimetableEntries] = useState<TimetableEntry[]>([]);
   const [selectedRoute, setSelectedRoute] = useState<string>('all');
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
   );
+  const [viewMode, setViewMode] = useState<'day' | 'weekly'>('day');
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedBookingDeparture, setSelectedBookingDeparture] = useState<Departure | null>(null);
-  const navigate = useNavigate();
+
+  const handleFromToSearch = async (params: SearchFormData) => {
+    setSearchLoading(true);
+    setSearchError(null);
+    setLastSearchParams(params);
+
+    try {
+      const url = `/api/v1/departures/search?from=${encodeURIComponent(params.from)}&to=${encodeURIComponent(params.to)}&date=${encodeURIComponent(params.date)}&passengers=${params.passengers}`;
+      const data = await apiClient.get<SearchResultData>(url);
+      setSearchData(data);
+    } catch (err: any) {
+      setSearchError(err?.message || 'Failed to search sailings.');
+    } finally {
+      setSearchLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setLoading(true);
     Promise.all([
-      apiClient<Departure[]>('/departures').catch(() => FALLBACK_DEPARTURES),
-      apiClient<Route[]>('/routes').catch(() => []),
+      apiClient.get<Departure[]>('/api/v1/departures').catch(() => []),
+      apiClient.get<Route[]>('/api/v1/routes').catch(() => []),
+      apiClient.get<TimetableEntry[]>('/api/v1/timetable').catch(() => []),
     ])
-      .then(([depData, routeData]) => {
-        setDepartures(depData && depData.length > 0 ? depData : FALLBACK_DEPARTURES);
-        setRoutes(routeData || []);
+      .then(([depData, routeData, ttData]) => {
+        if (Array.isArray(depData) && depData.length > 0) setDepartures(depData);
+        if (Array.isArray(routeData) && routeData.length > 0) setRoutes(routeData);
+        if (Array.isArray(ttData) && ttData.length > 0) setTimetableEntries(ttData);
       })
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
 
   const routeOptions = useMemo(() => {
@@ -159,7 +163,10 @@ export const TimetablePage: React.FC = () => {
     if (routes.length > 0) {
       return [
         ...defaultOpt,
-        ...routes.map((r) => ({ label: `${r.originPortName} \u2192 ${r.destinationPortName}`, value: r.code })),
+        ...routes.map((r) => ({
+          label: `${r.originPortName} \u2192 ${r.destinationPortName}`,
+          value: r.code || r.id,
+        })),
       ];
     }
     return [
@@ -173,12 +180,10 @@ export const TimetablePage: React.FC = () => {
 
   const filteredDepartures = useMemo(() => {
     return departures.filter((dep) => {
-      // Route filter
       if (selectedRoute !== 'all') {
         const routeCode = dep.route?.code || dep.route?.id;
         if (routeCode !== selectedRoute) return false;
       }
-      // Search query filter
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const origin = (dep.route?.originPortName || '').toLowerCase();
@@ -193,20 +198,30 @@ export const TimetablePage: React.FC = () => {
     });
   }, [departures, selectedRoute, searchQuery]);
 
+  const filteredWeeklyEntries = useMemo(() => {
+    if (selectedRoute === 'all') return timetableEntries;
+    return timetableEntries.filter((t) => t.routeId === selectedRoute);
+  }, [timetableEntries, selectedRoute]);
+
   const formatTime = (isoString?: string) => {
     if (!isoString) return '--:--';
     try {
       const date = new Date(isoString);
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString('fr-FR', {
+        timeZone: 'Europe/Paris',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
     } catch {
       return isoString;
     }
   };
 
   return (
-    <div className="container" style={{ padding: '2rem 1rem' }}>
+    <div className="container" style={{ padding: '2rem 1rem', maxWidth: '1100px', margin: '0 auto' }}>
       {/* Title & Introduction */}
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: '1.5rem' }}>
         <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--color-navy)', marginBottom: '0.25rem' }}>
           Daily Ferry Timetable &amp; Sailings
         </h1>
@@ -215,147 +230,224 @@ export const TimetablePage: React.FC = () => {
         </p>
       </div>
 
-      {/* Filter & Search Bar */}
-      <Card style={{ padding: '1.25rem', marginBottom: '2rem', backgroundColor: '#FFFFFF' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', alignItems: 'flex-end' }}>
-          <div>
-            <label htmlFor="timetable-date" style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-slate-medium)', display: 'block', marginBottom: '0.35rem' }}>
-              Travel Date
-            </label>
-            <Input
-              id="timetable-date"
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              style={{ marginBottom: 0 }}
-            />
-          </div>
+      <AnnouncementBanner scope="ALL" />
 
-          <div>
-            <Select
-              id="timetable-corridor"
-              label="Corridor / Route"
-              options={routeOptions}
-              value={selectedRoute}
-              onChange={(e) => setSelectedRoute(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="timetable-search" style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--color-slate-medium)', display: 'block', marginBottom: '0.35rem' }}>
-              Search Sailings
-            </label>
-            <Input
-              id="timetable-search"
-              placeholder="Search port, vessel, or code..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ marginBottom: 0 }}
-            />
-          </div>
-        </div>
-      </Card>
-
-      {/* Results Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--color-navy)', margin: 0 }}>
-          Scheduled Departures ({filteredDepartures.length})
-        </h2>
-        <span style={{ fontSize: '0.8125rem', color: 'var(--color-slate-light)' }}>
-          Timezone: Europe/Paris
-        </span>
+      {/* 1. From-To Search Form */}
+      <div style={{ marginBottom: '2.5rem' }}>
+        <SailingSearchForm
+          onSearch={handleFromToSearch}
+          loading={searchLoading}
+        />
+        <SailingSearchResults
+          data={searchData}
+          loading={searchLoading}
+          error={searchError}
+          onSelectDate={(newDate) => {
+            if (lastSearchParams) {
+              handleFromToSearch({ ...lastSearchParams, date: newDate });
+            }
+          }}
+          onRetry={() => {
+            if (lastSearchParams) {
+              handleFromToSearch(lastSearchParams);
+            }
+          }}
+        />
       </div>
 
-      {/* Departures List */}
-      {filteredDepartures.length === 0 ? (
-        <Card style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
-          <Compass size={36} style={{ color: 'var(--color-slate-light)', margin: '0 auto 1rem auto' }} />
-          <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--color-navy)', marginBottom: '0.5rem' }}>
-            No departures found
-          </h3>
-          <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-medium)', maxWidth: '420px', margin: '0 auto 1rem auto' }}>
-            No scheduled sailings matched your route or search criteria. Try selecting another corridor.
-          </p>
-          <Button variant="secondary" size="sm" onClick={() => { setSelectedRoute('all'); setSearchQuery(''); }}>
-            Reset Filters
-          </Button>
-        </Card>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {filteredDepartures.map((dep) => (
-            <Card key={dep.id} style={{ padding: '1.25rem 1.5rem', transition: 'box-shadow 0.2s ease' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.25rem' }}>
-                {/* Route & Times */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flexWrap: 'wrap' }}>
-                  {/* Time Block */}
-                  <div style={{ textAlign: 'center', minWidth: '90px' }}>
-                    <div style={{ fontSize: '1.35rem', fontWeight: 700, color: 'var(--color-navy)' }}>
-                      {formatTime(dep.scheduledDepartureTime)}
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--color-slate-light)' }}>
-                      Arr: {formatTime(dep.scheduledArrivalTime)}
-                    </div>
-                  </div>
-
-                  {/* Route & Vessel */}
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-                      <span style={{ fontWeight: 700, fontSize: '1.1rem', color: 'var(--color-navy)' }}>
-                        {dep.route?.originPortName || 'Mainland'} → {dep.route?.destinationPortName || 'Island'}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap', fontSize: '0.8125rem', color: 'var(--color-slate-medium)' }}>
-                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                        <Ship size={14} style={{ color: 'var(--color-primary)' }} />
-                        <strong>{dep.vessel?.name || 'Penn ar Bed Ferry'}</strong>
-                      </span>
-                      {dep.vessel?.passengerCapacity && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-slate-light)' }}>
-                          <Users size={12} />
-                          {dep.vessel.passengerCapacity} pax
-                        </span>
-                      )}
-                      {dep.route?.crossingDurationMinutes && (
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem', color: 'var(--color-slate-light)' }}>
-                          <Clock size={12} />
-                          {dep.route.crossingDurationMinutes} min
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Status & Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  <StatusChip status={dep.status || 'SCHEDULED'} />
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    icon={<Ticket size={14} />}
-                    onClick={() => setSelectedBookingDeparture(dep)}
-                  >
-                    Book Now
-                  </Button>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    icon={<Compass size={14} />}
-                    onClick={() => navigate('/tracking')}
-                  >
-                    Track Live
-                  </Button>
-                </div>
-              </div>
-            </Card>
-          ))}
+      {/* 2. Route & Weekly Timetable Browser */}
+      <div style={{ paddingTop: '1.5rem', borderTop: '2px solid var(--color-slate-dark)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+          <div>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-navy)', margin: 0 }}>
+              Route Timetable Schedule
+            </h2>
+            <span style={{ fontSize: '0.8125rem', color: 'var(--color-slate-light)' }}>
+              Standard operating timetable across Penn ar Bed maritime corridors
+            </span>
+          </div>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <Button
+              variant={viewMode === 'day' ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setViewMode('day')}
+            >
+              Today's Sailings
+            </Button>
+            <Button
+              variant={viewMode === 'weekly' ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setViewMode('weekly')}
+            >
+              Weekly Schedule
+            </Button>
+          </div>
         </div>
-      )}
 
+        {/* Filter & Search Bar */}
+        <Card style={{ padding: '1.25rem', marginBottom: '1.5rem', backgroundColor: '#FFFFFF' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', alignItems: 'flex-end' }}>
+            <div>
+              <Input
+                id="timetable-date"
+                label="Travel Date"
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                style={{ marginBottom: 0 }}
+              />
+            </div>
+
+            <div>
+              <Select
+                id="timetable-corridor"
+                label="Corridor / Route"
+                options={routeOptions}
+                value={selectedRoute}
+                onChange={(e) => setSelectedRoute(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <Input
+                id="timetable-search"
+                label="Search Sailings"
+                placeholder="Search port, vessel, or code..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ marginBottom: 0 }}
+              />
+            </div>
+
+            <div>
+              <Button
+                variant="secondary"
+                size="sm"
+                icon={<RefreshCw size={14} />}
+                onClick={() => { setSelectedRoute('all'); setSearchQuery(''); }}
+                style={{ width: '100%', height: '42px' }}
+              >
+                Reset Filters
+              </Button>
+            </div>
+          </div>
+        </Card>
+
+        {/* Content View: Day Cards vs Weekly Table */}
+        {viewMode === 'weekly' ? (
+          <div style={{ overflowX: 'auto', border: '1px solid var(--color-slate-dark)', borderRadius: '8px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#F8FAFC', borderBottom: '1px solid var(--color-slate-dark)' }}>
+                  <th style={{ padding: '0.75rem 1rem', fontWeight: 600, color: 'var(--color-slate-light)' }}>Route</th>
+                  <th style={{ padding: '0.75rem 1rem', fontWeight: 600, color: 'var(--color-slate-light)' }}>Dep. Time</th>
+                  <th style={{ padding: '0.75rem 1rem', fontWeight: 600, color: 'var(--color-slate-light)' }}>Arr. Time</th>
+                  <th style={{ padding: '0.75rem 1rem', fontWeight: 600, color: 'var(--color-slate-light)' }}>Operating Days</th>
+                  <th style={{ padding: '0.75rem 1rem', fontWeight: 600, color: 'var(--color-slate-light)' }}>Tracking</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredWeeklyEntries.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ padding: '2rem', textAlign: 'center', color: 'var(--color-slate-light)' }}>
+                      No weekly timetable entries found for this corridor.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredWeeklyEntries.map((t, idx) => (
+                    <tr key={t.tripId || idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      <td style={{ padding: '0.75rem 1rem', fontWeight: 600, color: 'var(--color-navy)' }}>
+                        {t.routeName || `${t.originPortName} \u2192 ${t.destinationPortName}`}
+                      </td>
+                      <td style={{ padding: '0.75rem 1rem', fontVariantNumeric: 'tabular-nums' }}>
+                        {typeof t.departureTime === 'string' ? t.departureTime.substring(0, 5) : '--:--'}
+                      </td>
+                      <td style={{ padding: '0.75rem 1rem', fontVariantNumeric: 'tabular-nums' }}>
+                        {typeof t.arrivalTime === 'string' ? t.arrivalTime.substring(0, 5) : '--:--'}
+                      </td>
+                      <td style={{ padding: '0.75rem 1rem', fontSize: '0.8125rem', color: 'var(--color-slate-light)' }}>
+                        Daily (Mon - Sun)
+                      </td>
+                      <td style={{ padding: '0.75rem 1rem' }}>
+                        {t.trackingSupported ? (
+                          <Badge variant="success">Live Tracking</Badge>
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Schedule only</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1rem' }}>
+            {filteredDepartures.length === 0 ? (
+              <div style={{ gridColumn: '1 / -1', padding: '3rem', textAlign: 'center', backgroundColor: '#F8FAFC', borderRadius: '8px' }}>
+                <p style={{ color: 'var(--color-slate-light)', margin: 0 }}>No sailings match the selected route or search criteria.</p>
+              </div>
+            ) : (
+              filteredDepartures.map((dep) => (
+                <Card key={dep.id} style={{ padding: '1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
+                    <div style={{ fontVariantNumeric: 'tabular-nums' }}>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-navy)' }}>
+                        {formatTime(dep.scheduledDepartureTime)}
+                      </span>
+                      <span style={{ fontSize: '0.875rem', color: 'var(--color-slate-light)', margin: '0 0.5rem' }}>&rarr;</span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--color-navy)' }}>
+                        {formatTime(dep.scheduledArrivalTime)}
+                      </span>
+                    </div>
+                    <StatusChip status={dep.status as any} />
+                  </div>
+
+                  <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-navy)', marginBottom: '0.25rem' }}>
+                    {dep.route?.originPortName} &rarr; {dep.route?.destinationPortName}
+                  </div>
+
+                  <div style={{ fontSize: '0.8125rem', color: 'var(--color-slate-light)', marginBottom: '1rem' }}>
+                    {dep.vessel?.name} &bull; {dep.departureCode}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      icon={<Ticket size={14} />}
+                      onClick={() => setSelectedBookingDeparture(dep)}
+                      style={{ flex: 1 }}
+                    >
+                      Book Now
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      icon={<Compass size={14} />}
+                      onClick={() => navigate(dep.liveTrackingAvailable ? `/track/departures/${dep.departureCode || dep.id}` : '/tracking')}
+                      style={{ flex: 1 }}
+                    >
+                      Track Live
+                    </Button>
+                  </div>
+                </Card>
+              ))
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Booking Modal */}
       {selectedBookingDeparture && (
         <BookingModal
-          isOpen={!!selectedBookingDeparture}
-          onClose={() => setSelectedBookingDeparture(null)}
+          isOpen={true}
           departure={selectedBookingDeparture}
+          onClose={() => setSelectedBookingDeparture(null)}
+          onBookingComplete={(booking) => {
+            setSelectedBookingDeparture(null);
+            navigate(`/bookings?ref=${booking.bookingReference}`);
+          }}
         />
       )}
     </div>

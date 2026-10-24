@@ -31,6 +31,7 @@ public class DatabaseSeederService {
     private final VesselRepository vesselRepository;
     private final RouteRepository routeRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ServiceEntityRepository serviceEntityRepository;
     private final FareRuleRepository fareRuleRepository;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -42,6 +43,7 @@ public class DatabaseSeederService {
             VesselRepository vesselRepository,
             RouteRepository routeRepository,
             ScheduleRepository scheduleRepository,
+            ServiceEntityRepository serviceEntityRepository,
             FareRuleRepository fareRuleRepository,
             RoleRepository roleRepository,
             UserRepository userRepository,
@@ -51,6 +53,7 @@ public class DatabaseSeederService {
         this.vesselRepository = vesselRepository;
         this.routeRepository = routeRepository;
         this.scheduleRepository = scheduleRepository;
+        this.serviceEntityRepository = serviceEntityRepository;
         this.fareRuleRepository = fareRuleRepository;
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
@@ -59,6 +62,7 @@ public class DatabaseSeederService {
     }
 
     @EventListener(ApplicationReadyEvent.class)
+    @org.springframework.core.annotation.Order(1)
     @Transactional
     public void seedInitialData() {
         log.info("Starting Where Is My Ferry catalog database seeding...");
@@ -80,6 +84,15 @@ public class DatabaseSeederService {
         }
     }
 
+    @org.springframework.beans.factory.annotation.Value("${app.admin.seed.enabled:true}")
+    private boolean adminSeedEnabled;
+
+    @org.springframework.beans.factory.annotation.Value("${app.admin.seed.email:admin@example.com}")
+    private String adminSeedEmail;
+
+    @org.springframework.beans.factory.annotation.Value("${app.admin.seed.password:AdminPass123!}")
+    private String adminSeedPassword;
+
     private void seedDefaultUsers() {
         Role rolePassenger = roleRepository.findByName("ROLE_PASSENGER").orElseThrow();
         Role roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElseThrow();
@@ -88,51 +101,87 @@ public class DatabaseSeederService {
         Role roleAuditor = roleRepository.findByName("ROLE_AUDITOR").orElseThrow();
         Role roleSupport = roleRepository.findByName("ROLE_SUPPORT").orElseThrow();
 
-        // 1. Admin
+        // 1. First Administrator (created once at first start if no admin exists)
+        if (adminSeedEnabled) {
+            String seedEmail = adminSeedEmail.trim().toLowerCase();
+            if (userRepository.findByEmailIgnoreCase(seedEmail).isEmpty()) {
+                User admin = new User();
+                admin.setEmail(seedEmail);
+                admin.setPasswordHash(passwordEncoder.encode(adminSeedPassword));
+                admin.setFullName("System Administrator");
+                admin.setFirstName("System");
+                admin.setLastName("Administrator");
+                admin.setRole(com.whereismyferry.backend.entity.UserRole.ADMIN);
+                admin.setStatus(com.whereismyferry.backend.entity.UserStatus.ACTIVE);
+                admin.setRoles(Set.of(roleAdmin, roleOperator, rolePassenger));
+                admin.setEnabled(true);
+                admin.setEmailVerified(true);
+                userRepository.save(admin);
+                log.info("First administrator account successfully seeded: {}", seedEmail);
+            }
+        }
+
+        // 2. Legacy admin account for backwards compatibility with tests
         if (userRepository.findByEmailIgnoreCase("admin@whereismyferry.bzh").isEmpty()) {
             User admin = new User();
             admin.setEmail("admin@whereismyferry.bzh");
             admin.setPasswordHash(passwordEncoder.encode("AdminPass123!"));
+            admin.setFullName("Admin Ferry");
             admin.setFirstName("Admin");
             admin.setLastName("Ferry");
+            admin.setRole(com.whereismyferry.backend.entity.UserRole.ADMIN);
+            admin.setStatus(com.whereismyferry.backend.entity.UserStatus.ACTIVE);
             admin.setRoles(Set.of(roleAdmin, roleOperator, rolePassenger));
             admin.setEnabled(true);
+            admin.setEmailVerified(true);
             userRepository.save(admin);
         }
 
-        // 2. Operator
+        // 3. Operator
         if (userRepository.findByEmailIgnoreCase("operator@whereismyferry.bzh").isEmpty()) {
             User operator = new User();
             operator.setEmail("operator@whereismyferry.bzh");
             operator.setPasswordHash(passwordEncoder.encode("OperatorPass123!"));
+            operator.setFullName("Operator Port");
             operator.setFirstName("Operator");
             operator.setLastName("Port");
+            operator.setRole(com.whereismyferry.backend.entity.UserRole.OPERATOR);
+            operator.setStatus(com.whereismyferry.backend.entity.UserStatus.ACTIVE);
             operator.setRoles(Set.of(roleOperator, rolePassenger));
             operator.setEnabled(true);
+            operator.setEmailVerified(true);
             userRepository.save(operator);
         }
 
-        // 3. Crew
+        // 4. Crew
         if (userRepository.findByEmailIgnoreCase("crew@whereismyferry.bzh").isEmpty()) {
             User crew = new User();
             crew.setEmail("crew@whereismyferry.bzh");
             crew.setPasswordHash(passwordEncoder.encode("CrewPass123!"));
+            crew.setFullName("Captain Fromveur");
             crew.setFirstName("Captain");
             crew.setLastName("Fromveur");
+            crew.setRole(com.whereismyferry.backend.entity.UserRole.CREW);
+            crew.setStatus(com.whereismyferry.backend.entity.UserStatus.ACTIVE);
             crew.setRoles(Set.of(roleCrew, rolePassenger));
             crew.setEnabled(true);
+            crew.setEmailVerified(true);
             userRepository.save(crew);
         }
 
-        // 4. Passenger
+        // 5. Passenger
         if (userRepository.findByEmailIgnoreCase("passenger@whereismyferry.bzh").isEmpty()) {
             User passenger = new User();
             passenger.setEmail("passenger@whereismyferry.bzh");
             passenger.setPasswordHash(passwordEncoder.encode("PassengerPass123!"));
+            passenger.setFullName("Yann Penn");
             passenger.setFirstName("Yann");
             passenger.setLastName("Penn");
+            passenger.setRole(com.whereismyferry.backend.entity.UserRole.PASSENGER);
+            passenger.setStatus(com.whereismyferry.backend.entity.UserStatus.ACTIVE);
             passenger.setRoles(Set.of(rolePassenger));
             passenger.setEnabled(true);
+            passenger.setEmailVerified(true);
             userRepository.save(passenger);
         }
 
@@ -267,10 +316,20 @@ public class DatabaseSeederService {
                             continue;
                         }
 
+                        final String corridor = node.path("corridor").asText(null);
                         Route route = routeRepository.findById(routeId).orElseGet(() -> {
                             Route r = new Route(routeId, routeId, origPort, destPort, routeName, 15.0, duration, trackingSupported);
+                            r.setEngineCorridorId(corridor);
+                            r.setTypicalDurationMin(duration);
+                            r.setDistanceKm(15.0 * 1.852);
                             return routeRepository.save(r);
                         });
+                        if (route.getEngineCorridorId() == null && corridor != null) {
+                            route.setEngineCorridorId(corridor);
+                            route.setTypicalDurationMin(duration);
+                            route.setDistanceKm(15.0 * 1.852);
+                            routeRepository.save(route);
+                        }
 
                         String tripId = node.path("trip_id").asText();
                         String serviceId = node.path("service_id").asText("DAILY_YEAR_ROUND");
@@ -293,6 +352,16 @@ public class DatabaseSeederService {
                         boolean fri = days.path("friday").asBoolean(true);
                         boolean sat = days.path("saturday").asBoolean(true);
                         boolean sun = days.path("sunday").asBoolean(true);
+
+                        List<String> dows = new ArrayList<>();
+                        if (mon) dows.add("1");
+                        if (tue) dows.add("2");
+                        if (wed) dows.add("3");
+                        if (thu) dows.add("4");
+                        if (fri) dows.add("5");
+                        if (sat) dows.add("6");
+                        if (sun) dows.add("7");
+                        String daysOfWeekStr = String.join(",", dows);
 
                         JsonNode season = node.path("season_validity");
                         DateTimeFormatter ymd = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -318,10 +387,26 @@ public class DatabaseSeederService {
                         schedule.setActive(true);
 
                         scheduleRepository.save(schedule);
+
+                        // Seed ServiceEntity for the new services table
+                        ServiceEntity serviceEntity = new ServiceEntity(
+                                route,
+                                vessel,
+                                depTime,
+                                duration,
+                                daysOfWeekStr,
+                                validFrom,
+                                validTo,
+                                BigDecimal.valueOf(25.00),
+                                vessel != null && vessel.getCapacity() != null ? vessel.getCapacity() : 300,
+                                true
+                        );
+                        serviceEntityRepository.save(serviceEntity);
                     }
                 }
             }
-            log.info("Loaded {} routes and {} schedules from services.json", routeRepository.count(), scheduleRepository.count());
+            log.info("Loaded {} routes, {} schedules, and {} service entities from services.json",
+                    routeRepository.count(), scheduleRepository.count(), serviceEntityRepository.count());
         } catch (Exception e) {
             log.error("Failed to seed services.json: {}", e.getMessage(), e);
         }

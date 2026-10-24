@@ -28,6 +28,8 @@ export interface BookingModalProps {
   onClose: () => void;
   departure: Departure;
   onBookingSuccess?: (booking: Booking) => void;
+  onBookingComplete?: (booking: any) => void;
+  passengerCount?: number;
 }
 
 const PASSENGER_PRICES: Record<string, number> = {
@@ -42,6 +44,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   onClose,
   departure,
   onBookingSuccess,
+  onBookingComplete,
+  passengerCount,
 }) => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [contactEmail, setContactEmail] = useState<string>('passenger@whereismyferry.bzh');

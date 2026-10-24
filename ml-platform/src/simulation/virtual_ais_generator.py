@@ -198,7 +198,7 @@ class VirtualAISGenerator:
 
         v.current_sog_knots = round(current_sog, 2)
 
-        # 2. Advance along route distance
+        # 2. Advance along route distance or turnaround after berth dwell
         if not v.is_arrived and not force_holding:
             speed_mps = current_sog * 0.514444
             distance_step_m = speed_mps * delta_seconds
@@ -207,6 +207,23 @@ class VirtualAISGenerator:
         if v.current_distance_traveled_m >= (v.total_route_distance_m - 50.0):
             v.is_arrived = True
             v.current_sog_knots = 0.1
+            # Berth dwell turnaround: after dwelling, depart on return voyage
+            v.dwell_steps = getattr(v, "dwell_steps", 0) + 1
+            if v.dwell_steps >= 12:
+                v.dwell_steps = 0
+                v.is_arrived = False
+                v.current_distance_traveled_m = 0.0
+                v.waypoints.reverse()
+                v.origin_terminal, v.dest_terminal = v.dest_terminal, v.origin_terminal
+                v.segment_lengths_m = [
+                    haversine_distance_m(v.waypoints[i][0], v.waypoints[i][1], v.waypoints[i + 1][0], v.waypoints[i + 1][1])
+                    for i in range(len(v.waypoints) - 1)
+                ]
+                v.current_lat = v.waypoints[0][0]
+                v.current_lon = v.waypoints[0][1]
+                v.current_sog_knots = 0.2
+                if len(v.waypoints) > 1:
+                    v.current_cog_degrees = calculate_bearing_deg(v.waypoints[0][0], v.waypoints[0][1], v.waypoints[1][0], v.waypoints[1][1])
 
         # 3. Interpolate position along waypoint segments
         traveled = v.current_distance_traveled_m

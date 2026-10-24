@@ -1,124 +1,184 @@
-# ==============================================================================
-# run_all.ps1
-# Master Single-Command Launcher for "Where Is My Ferry?"
-# Launches Python ML Daemon (8000), Spring Boot Backend (8080), and Vite UI (5173)
-# ==============================================================================
+<#
+.SYNOPSIS
+    Where Is My Ferry? - Unified Local Orchestrator and Service Runner
+
+.DESCRIPTION
+    Launches and monitors all three tiers of the Where Is My Ferry platform:
+      1. Python Virtual AIS & ML Simulation Engine (Port 8000)
+      2. Spring Boot REST & SSE API Gateway (Port 8080)
+      3. Vite React Modern Maritime Passenger Portal (Port 5173)
+
+.EXAMPLE
+    .\run_all.ps1
+#>
+
+[CmdletBinding()]
+param(
+    [switch]$SkipTests,
+    [string]$Profile = "test"
+)
+
 $ErrorActionPreference = "Stop"
+$ScriptRoot = $PSScriptRoot
 
-$RootDir = $PSScriptRoot
-$MlDir = Join-Path $RootDir "ml-platform"
-$BackendDir = Join-Path $RootDir "backend"
-$FrontendDir = Join-Path $RootDir "frontend"
+Write-Host "=================================================================" -ForegroundColor Cyan
+Write-Host "  WHERE IS MY FERRY? - THREE-TIER MARITIME PLATFORM LAUNCHER     " -ForegroundColor Cyan
+Write-Host "=================================================================" -ForegroundColor Cyan
+Write-Host ""
 
-Write-Host "==================================================================" -ForegroundColor Cyan
-Write-Host "        WHERE IS MY FERRY? - FULL-STACK PRODUCTION LAUNCHER       " -ForegroundColor Cyan
-Write-Host "   Iroise Sea Maritime Network (Brest - Molene - Ouessant)        " -ForegroundColor Cyan
-Write-Host "==================================================================" -ForegroundColor Cyan
+# -----------------------------------------------------------------------------
+# 1. PREREQUISITE CHECKS
+# -----------------------------------------------------------------------------
+Write-Host "[1/5] Verifying toolchain prerequisites..." -ForegroundColor Yellow
 
-# 1. Resolve Python Interpreter
-$PythonExe = Join-Path $MlDir ".venv\Scripts\python.exe"
-if (-not (Test-Path $PythonExe)) {
-    $PythonExe = "python"
+function Test-CommandAvailable {
+    param([string]$Command)
+    $null -ne (Get-Command $Command -ErrorAction SilentlyContinue)
 }
 
-# 2. Health check helper
-function Wait-For-Port {
-    param([string]$Url, [int]$TimeoutSec = 40, [string]$ServiceName)
-    Write-Host "Waiting for $ServiceName at $Url..." -NoNewline
+$prereqsMet = $true
+
+if (-not (Test-CommandAvailable "java")) {
+    Write-Host "  [-] Java 17+ not found in PATH." -ForegroundColor Red
+    $prereqsMet = $false
+} else {
+    $javaVer = java -version 2>&1 | Select-Object -First 1
+    Write-Host "  [+] Java: $javaVer" -ForegroundColor Green
+}
+
+if (-not (Test-CommandAvailable "mvn")) {
+    Write-Host "  [-] Apache Maven not found in PATH." -ForegroundColor Red
+    $prereqsMet = $false
+} else {
+    Write-Host "  [+] Maven: Available" -ForegroundColor Green
+}
+
+if (-not (Test-CommandAvailable "node")) {
+    Write-Host "  [-] Node.js not found in PATH." -ForegroundColor Red
+    $prereqsMet = $false
+} else {
+    $nodeVer = node --version
+    Write-Host "  [+] Node: $nodeVer" -ForegroundColor Green
+}
+
+$pythonExe = Join-Path $ScriptRoot "ml-platform\.venv\Scripts\python.exe"
+if (-not (Test-Path $pythonExe)) {
+    Write-Host "  [-] Python virtualenv not found at $pythonExe" -ForegroundColor Red
+    $prereqsMet = $false
+} else {
+    $pyVer = & $pythonExe --version
+    Write-Host "  [+] Python Virtualenv: $pyVer" -ForegroundColor Green
+}
+
+if (-not $prereqsMet) {
+    Write-Error "Prerequisite verification failed. Please install missing dependencies and try again."
+    exit 1
+}
+
+# -----------------------------------------------------------------------------
+# 2. HEALTH POLLING HELPER
+# -----------------------------------------------------------------------------
+function Wait-ForUrl {
+    param(
+        [string]$Url,
+        [string]$ServiceName,
+        [int]$TimeoutSeconds = 60
+    )
+    Write-Host "  Waiting for $ServiceName at $Url..." -NoNewline -ForegroundColor Gray
     $start = Get-Date
-    while (((Get-Date) - $start).TotalSeconds -lt $TimeoutSec) {
+    while ((Get-Date) - $start -lt [TimeSpan]::FromSeconds($TimeoutSeconds)) {
         try {
-            $resp = Invoke-WebRequest -Uri $Url -Method Get -TimeoutSec 2 -UseBasicParsing -ErrorAction SilentlyContinue
+            $resp = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 2 -ErrorAction SilentlyContinue
             if ($resp.StatusCode -ge 200 -and $resp.StatusCode -lt 400) {
                 Write-Host " [ONLINE]" -ForegroundColor Green
                 return $true
             }
-        } catch {}
-        Write-Host "." -NoNewline
+        } catch {
+            # retry
+        }
         Start-Sleep -Seconds 2
+        Write-Host "." -NoNewline -ForegroundColor Gray
     }
-    Write-Host " [TIMEOUT]" -ForegroundColor Red
+    Write-Host " [TIMED OUT]" -ForegroundColor Red
     return $false
 }
 
-$processes = @()
+# -----------------------------------------------------------------------------
+# 3. START SERVICES
+# -----------------------------------------------------------------------------
+Write-Host ""
+Write-Host "[2/5] Starting Tier 1: Python Simulation Engine (Port 8000)..." -ForegroundColor Yellow
+$pyProcess = Start-Process -FilePath $pythonExe `
+    -ArgumentList "-m", "src.simulation.daemon" `
+    -WorkingDirectory (Join-Path $ScriptRoot "ml-platform") `
+    -PassThru
 
+$pyHealthy = Wait-ForUrl -Url "http://127.0.0.1:8000/health" -ServiceName "ML Simulation Engine" -TimeoutSeconds 30
+if (-not $pyHealthy) {
+    Write-Warning "ML simulation engine did not report healthy in time. Check daemon logs."
+}
+
+Write-Host ""
+Write-Host "[3/5] Starting Tier 2: Spring Boot REST & SSE Gateway (Port 8080)..." -ForegroundColor Yellow
+$mvnArgs = "spring-boot:run -Dspring-boot.run.arguments=--spring.profiles.active=$Profile"
+$javaProcess = Start-Process -FilePath "mvn.cmd" `
+    -ArgumentList $mvnArgs `
+    -WorkingDirectory (Join-Path $ScriptRoot "backend") `
+    -PassThru
+
+$javaHealthy = Wait-ForUrl -Url "http://127.0.0.1:8080/actuator/health" -ServiceName "Spring Boot Gateway" -TimeoutSeconds 75
+if (-not $javaHealthy) {
+    Write-Warning "Spring Boot gateway did not report healthy in time."
+}
+
+Write-Host ""
+Write-Host "[4/5] Starting Tier 3: Vite React Passenger Portal (Port 5173)..." -ForegroundColor Yellow
+$npmProcess = Start-Process -FilePath "npm.cmd" `
+    -ArgumentList "run", "dev" `
+    -WorkingDirectory (Join-Path $ScriptRoot "frontend") `
+    -PassThru
+
+$frontendHealthy = Wait-ForUrl -Url "http://localhost:5173" -ServiceName "Vite Passenger Portal" -TimeoutSeconds 30
+
+# -----------------------------------------------------------------------------
+# 4. SYSTEM READY BANNER
+# -----------------------------------------------------------------------------
+Write-Host ""
+Write-Host "=================================================================" -ForegroundColor Green
+Write-Host "  ALL 3 SERVICES SUCCESSFULLY INITIALIZED AND READY!              " -ForegroundColor Green
+Write-Host "=================================================================" -ForegroundColor Green
+Write-Host "  Passenger Portal:    http://localhost:5173" -ForegroundColor Cyan
+Write-Host "  Admin Control Room:  http://localhost:5173/admin/login" -ForegroundColor Cyan
+Write-Host "    - Email:           admin@example.com" -ForegroundColor Gray
+Write-Host "    - Password:        AdminPass123!" -ForegroundColor Gray
+Write-Host "  Backend Swagger:     http://localhost:8080/swagger-ui.html" -ForegroundColor Cyan
+Write-Host "  Simulation API:      http://127.0.0.1:8000/docs" -ForegroundColor Cyan
+Write-Host "=================================================================" -ForegroundColor Green
+Write-Host "Press [Ctrl+C] to stop all services..." -ForegroundColor Yellow
+
+# -----------------------------------------------------------------------------
+# 5. PROCESS MONITORING & TEARDOWN
+# -----------------------------------------------------------------------------
 try {
-    # --------------------------------------------------------------------------
-    # Step 1: Launch Python Simulation & ML Daemon (Port 8000)
-    # --------------------------------------------------------------------------
-    Write-Host "`n[1/3] Starting Maritime Simulation Engine & ML Daemon on port 8000..." -ForegroundColor Yellow
-    $mlProc = Start-Process -FilePath $PythonExe -ArgumentList "-m", "src.simulation.daemon" -WorkingDirectory $MlDir -PassThru
-    $processes += $mlProc
-    Write-Host "      ML Engine Process ID: $($mlProc.Id)"
-
-    if (-not (Wait-For-Port -Url "http://127.0.0.1:8000/health" -TimeoutSec 20 -ServiceName "ML Daemon")) {
-        throw "Failed to start ML Daemon on port 8000"
-    }
-
-    # --------------------------------------------------------------------------
-    # Step 2: Launch Spring Boot Backend (Port 8080)
-    # --------------------------------------------------------------------------
-    Write-Host "`n[2/3] Starting Spring Boot 3 Java Backend on port 8080..." -ForegroundColor Yellow
-    $mvnCmd = if ($IsWindows -or $env:OS -like "*Windows*") { "mvn.cmd" } else { "mvn" }
-    $backendProc = Start-Process -FilePath $mvnCmd -ArgumentList "spring-boot:run" -WorkingDirectory $BackendDir -PassThru
-    $processes += $backendProc
-    Write-Host "      Backend Process ID: $($backendProc.Id)"
-
-    if (-not (Wait-For-Port -Url "http://localhost:8080/actuator/health" -TimeoutSec 60 -ServiceName "Spring Boot Backend")) {
-        throw "Failed to start Spring Boot Backend on port 8080"
-    }
-
-    # --------------------------------------------------------------------------
-    # Step 3: Launch Vite React Frontend (Port 5173)
-    # --------------------------------------------------------------------------
-    Write-Host "`n[3/3] Starting Vite React Frontend on port 5173..." -ForegroundColor Yellow
-    $npmCmd = if ($IsWindows -or $env:OS -like "*Windows*") { "npm.cmd" } else { "npm" }
-    $frontendProc = Start-Process -FilePath $npmCmd -ArgumentList "run", "dev" -WorkingDirectory $FrontendDir -PassThru
-    $processes += $frontendProc
-    Write-Host "      Frontend Process ID: $($frontendProc.Id)"
-
-    if (-not (Wait-For-Port -Url "http://localhost:5173" -TimeoutSec 25 -ServiceName "Frontend UI")) {
-        throw "Failed to start Frontend on port 5173"
-    }
-
-    # --------------------------------------------------------------------------
-    # Ready Banner
-    # --------------------------------------------------------------------------
-    Write-Host "`n==================================================================" -ForegroundColor Green
-    Write-Host " ALL SYSTEMS OPERATIONAL - WHERE IS MY FERRY IS READY!           " -ForegroundColor Green
-    Write-Host "==================================================================" -ForegroundColor Green
-    Write-Host " - Passenger Portal & Live Map : http://localhost:5173"
-    Write-Host " - Backend API & Actuator      : http://localhost:8080/actuator/health"
-    Write-Host " - ML Simulation Engine        : http://127.0.0.1:8000/health"
-    Write-Host "`n Demo Accounts:"
-    Write-Host "   * Passenger   : passenger / 123"
-    Write-Host "   * Dispatcher  : dispatcher / 123"
-    Write-Host "   * Captain     : captain / 123"
-    Write-Host "   * Admin       : admin / 123"
-    Write-Host "   * Auditor     : auditor / 123"
-    Write-Host "`nPress Ctrl+C to terminate all services gracefully." -ForegroundColor Yellow
-    Write-Host "==================================================================" -ForegroundColor Green
-
-    # Keep script alive until Ctrl+C
     while ($true) {
-        Start-Sleep -Seconds 2
-        # Check if any process terminated unexpectedly
-        foreach ($proc in $processes) {
-            if ($proc.HasExited) {
-                Write-Warning "Process $($proc.Id) terminated unexpectedly with exit code $($proc.ExitCode)."
-                exit 1
-            }
+        Start-Sleep -Seconds 5
+        if ($pyProcess.HasExited) {
+            Write-Warning "Python simulation engine exited unexpectedly (Code: $($pyProcess.ExitCode))"
+            break
+        }
+        if ($javaProcess.HasExited) {
+            Write-Warning "Spring Boot gateway exited unexpectedly (Code: $($javaProcess.ExitCode))"
+            break
+        }
+        if ($npmProcess.HasExited) {
+            Write-Warning "Vite frontend exited unexpectedly (Code: $($npmProcess.ExitCode))"
+            break
         }
     }
-
 } finally {
-    Write-Host "`nShutting down Where Is My Ferry services..." -ForegroundColor Yellow
-    foreach ($proc in $processes) {
-        if ($proc -and -not $proc.HasExited) {
-            Write-Host "Stopping process PID $($proc.Id)..."
-            Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
-        }
-    }
-    Write-Host "All processes cleanly stopped." -ForegroundColor Green
+    Write-Host "`nStopping all background service processes..." -ForegroundColor Yellow
+    if ($pyProcess -and -not $pyProcess.HasExited) { Stop-Process -Id $pyProcess.Id -Force -ErrorAction SilentlyContinue }
+    if ($javaProcess -and -not $javaProcess.HasExited) { Stop-Process -Id $javaProcess.Id -Force -ErrorAction SilentlyContinue }
+    if ($npmProcess -and -not $npmProcess.HasExited) { Stop-Process -Id $npmProcess.Id -Force -ErrorAction SilentlyContinue }
+    Write-Host "All Where Is My Ferry services stopped." -ForegroundColor Green
 }

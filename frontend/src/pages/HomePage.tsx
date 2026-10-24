@@ -1,12 +1,37 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Compass, Ship, Clock, ShieldCheck, MapPin, Radio, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Compass, Ship, Clock, Radio, ArrowRight } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
 import { Badge } from '../components/common/Badge';
+import { AnnouncementBanner } from '../components/common/AnnouncementBanner';
+import { SailingSearchForm, SearchFormData } from '../components/search/SailingSearchForm';
+import { SailingSearchResults, SearchResultData } from '../components/search/SailingSearchResults';
+import { apiClient } from '../api/client';
 
 export const HomePage: React.FC = () => {
   const navigate = useNavigate();
+
+  const [searchData, setSearchData] = useState<SearchResultData | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [lastSearchParams, setLastSearchParams] = useState<SearchFormData | null>(null);
+
+  const handleSearch = async (params: SearchFormData) => {
+    setLoading(true);
+    setSearchError(null);
+    setLastSearchParams(params);
+
+    try {
+      const url = `/api/v1/departures/search?from=${encodeURIComponent(params.from)}&to=${encodeURIComponent(params.to)}&date=${encodeURIComponent(params.date)}&passengers=${params.passengers}`;
+      const data = await apiClient.get<SearchResultData>(url);
+      setSearchData(data);
+    } catch (err: any) {
+      setSearchError(err?.message || 'Failed to search sailings. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const corridors = [
     {
@@ -31,7 +56,7 @@ export const HomePage: React.FC = () => {
       <section className="hero-section" style={{
         backgroundColor: 'var(--color-navy)',
         color: '#FFFFFF',
-        padding: '3.5rem 1rem',
+        padding: '3.5rem 1rem 4rem 1rem',
         borderBottom: '1px solid var(--color-slate-dark)',
       }}>
         <div className="container" style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
@@ -59,7 +84,7 @@ export const HomePage: React.FC = () => {
             margin: '0 auto 2rem auto',
             lineHeight: 1.6,
           }}>
-            Track Penn ar Bed vessels live between Brest, Le Conquet, Molène, Ouessant, Audierne, and Île de Sein.
+            Track Penn ar Bed vessels live between Brest, Le Conquet, Mol&egrave;ne, Ouessant, Audierne, and &Icirc;le de Sein.
             Powered by high-precision physics replay and ML arrival predictions.
           </p>
 
@@ -85,6 +110,32 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* From-To Search Form Section */}
+      <section style={{ transform: 'translateY(-2rem)', padding: '0 1rem', position: 'relative', zIndex: 10 }}>
+        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <AnnouncementBanner scope="ALL" />
+          <SailingSearchForm
+            onSearch={handleSearch}
+            loading={loading}
+          />
+          <SailingSearchResults
+            data={searchData}
+            loading={loading}
+            error={searchError}
+            onSelectDate={(newDate) => {
+              if (lastSearchParams) {
+                handleSearch({ ...lastSearchParams, date: newDate });
+              }
+            }}
+            onRetry={() => {
+              if (lastSearchParams) {
+                handleSearch(lastSearchParams);
+              }
+            }}
+          />
+        </div>
+      </section>
+
       {/* Corridor Cards Section */}
       <section style={{ padding: '3.5rem 1rem' }}>
         <div className="container" style={{ maxWidth: '1100px', margin: '0 auto' }}>
@@ -93,122 +144,56 @@ export const HomePage: React.FC = () => {
               Maritime Corridors
             </h2>
             <p style={{ color: 'var(--color-slate-light)', fontSize: '0.9375rem' }}>
-              Official ferry links connecting the Finistère mainland with the Ponant islands.
+              Official ferry links connecting the Finist&egrave;re mainland with the Ponant islands.
             </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-            {corridors.map((c) => (
-              <Card key={c.id} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                    <Badge variant="info">Penn ar Bed</Badge>
-                    <span style={{ fontSize: '0.8125rem', color: 'var(--color-slate-light)' }}>{c.frequency}</span>
+            {corridors.map((corridor) => (
+              <Card key={corridor.id} className="corridor-card">
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Ship size={20} color="var(--color-teal)" />
+                    <h3 style={{ fontSize: '1.0625rem', fontWeight: 700, color: 'var(--color-navy)', margin: 0 }}>
+                      {corridor.name}
+                    </h3>
                   </div>
-                  <h3 style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--color-navy)', marginBottom: '0.5rem' }}>
-                    {c.name}
-                  </h3>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-medium)', marginBottom: '1rem', lineHeight: 1.5 }}>
-                    {c.description}
-                  </p>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: '1.25rem' }}>
-                    {c.ports.map((p) => (
-                      <span
-                        key={p}
-                        style={{
-                          fontSize: '0.75rem',
-                          backgroundColor: 'var(--color-bg)',
-                          border: '1px solid var(--color-border)',
-                          padding: '0.2rem 0.5rem',
-                          borderRadius: 'var(--radius-sm)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.25rem',
-                        }}
-                      >
-                        <MapPin size={10} aria-hidden="true" />
-                        {p}
-                      </span>
-                    ))}
-                  </div>
+                  <Badge variant="info">{corridor.frequency}</Badge>
                 </div>
-                <div style={{ borderTop: '1px solid var(--color-border)', paddingTop: '1rem' }}>
-                  <Link
-                    to="/timetable"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.375rem',
-                      fontWeight: 600,
-                      fontSize: '0.875rem',
-                    }}
-                  >
-                    Check corridor departures <ArrowRight size={14} aria-hidden="true" />
-                  </Link>
+
+                <p style={{ color: 'var(--color-slate-light)', fontSize: '0.875rem', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                  {corridor.description}
+                </p>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.375rem', marginBottom: '1.5rem' }}>
+                  {corridor.ports.map((port) => (
+                    <span
+                      key={port}
+                      style={{
+                        fontSize: '0.75rem',
+                        padding: '0.25rem 0.5rem',
+                        backgroundColor: '#F1F5F9',
+                        borderRadius: '4px',
+                        color: 'var(--color-navy)',
+                        fontWeight: 500,
+                      }}
+                    >
+                      {port}
+                    </span>
+                  ))}
                 </div>
+
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  icon={<ArrowRight size={14} />}
+                  onClick={() => navigate('/timetable')}
+                  style={{ width: '100%' }}
+                >
+                  View Corridor Timetable
+                </Button>
               </Card>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Fleet & Accuracy Disclosure Section */}
-      <section style={{ backgroundColor: '#F1F5F9', padding: '3rem 1rem', borderTop: '1px solid var(--color-border)' }}>
-        <div className="container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '2rem' }}>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div style={{
-                backgroundColor: 'var(--color-primary-light)',
-                color: 'var(--color-primary)',
-                padding: '0.75rem',
-                borderRadius: 'var(--radius-md)',
-                height: 'fit-content',
-              }}>
-                <Ship size={24} aria-hidden="true" />
-              </div>
-              <div>
-                <h4 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.25rem' }}>Penn ar Bed Fleet</h4>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-medium)', lineHeight: 1.5 }}>
-                  Active tracking for Fromveur II (350 pax), Enez Eussa 3 (302 pax), and Enez Sun 3 (250 pax).
-                </p>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div style={{
-                backgroundColor: 'var(--color-secondary-light)',
-                color: 'var(--color-secondary)',
-                padding: '0.75rem',
-                borderRadius: 'var(--radius-md)',
-                height: 'fit-content',
-              }}>
-                <Compass size={24} aria-hidden="true" />
-              </div>
-              <div>
-                <h4 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.25rem' }}>Physics &amp; Tides</h4>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-medium)', lineHeight: 1.5 }}>
-                  High tidal currents (up to 9 knots in Fromveur) simulated with Shom marine data alignment.
-                </p>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <div style={{
-                backgroundColor: 'var(--color-success-light)',
-                color: 'var(--color-success)',
-                padding: '0.75rem',
-                borderRadius: 'var(--radius-md)',
-                height: 'fit-content',
-              }}>
-                <ShieldCheck size={24} aria-hidden="true" />
-              </div>
-              <div>
-                <h4 style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.25rem' }}>Predictive ML</h4>
-                <p style={{ fontSize: '0.875rem', color: 'var(--color-slate-medium)', lineHeight: 1.5 }}>
-                  Machine learning model estimating delay minutes and ETA updated in real time via SSE.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>

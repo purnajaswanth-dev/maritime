@@ -58,3 +58,19 @@ export interface FareRule {
   validFrom?: string;
   validTo?: string;
 }
+
+export interface TimetableEntry {
+  tripId?: string | number;
+  routeId?: string;
+  routeName?: string;
+  originPortName?: string;
+  destinationPortName?: string;
+  departureTime?: string;
+  arrivalTime?: string;
+  trackingSupported?: boolean;
+  status?: string;
+  baseFareEur?: number;
+  vesselName?: string;
+  [key: string]: any;
+}
+

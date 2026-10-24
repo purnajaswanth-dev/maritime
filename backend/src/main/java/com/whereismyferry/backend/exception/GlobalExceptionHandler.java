@@ -57,6 +57,15 @@ public class GlobalExceptionHandler {
         return problem;
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ProblemDetail handleConflict(ConflictException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
+        problem.setType(URI.create("https://whereismyferry.bzh/problems/conflict"));
+        problem.setTitle("Service Schedule Conflict");
+        problem.setProperty("timestamp", OffsetDateTime.now());
+        return problem;
+    }
+
     @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
     public ProblemDetail handleBadCredentials(org.springframework.security.authentication.BadCredentialsException ex) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, "Invalid email or password.");
@@ -113,6 +122,19 @@ public class GlobalExceptionHandler {
         );
         problem.setType(URI.create("https://whereismyferry.bzh/problems/unprocessable-entity"));
         problem.setTitle("Unprocessable Entity");
+        problem.setProperty("timestamp", OffsetDateTime.now());
+        return problem;
+    }
+
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ProblemDetail handleResponseStatusException(org.springframework.web.server.ResponseStatusException ex) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                ex.getStatusCode(),
+                ex.getReason() != null ? ex.getReason() : ex.getMessage()
+        );
+        String typeSlug = ex.getStatusCode().value() == 429 ? "too-many-requests" : "http-error";
+        problem.setType(URI.create("https://whereismyferry.bzh/problems/" + typeSlug));
+        problem.setTitle(ex.getStatusCode().value() == 429 ? "Too Many Requests" : "HTTP Error");
         problem.setProperty("timestamp", OffsetDateTime.now());
         return problem;
     }

@@ -7,6 +7,7 @@ export interface CardProps {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  onClick?: (e?: any) => void;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -16,9 +17,10 @@ export const Card: React.FC<CardProps> = ({
   children,
   className = '',
   style,
+  onClick,
 }) => {
   return (
-    <div className={`card ${className}`.trim()} style={style}>
+    <div className={`card ${className}`.trim()} style={style} onClick={onClick}>
       {(title || action) && (
         <div
           style={{

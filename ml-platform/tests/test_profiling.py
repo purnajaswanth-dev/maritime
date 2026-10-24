@@ -72,6 +72,8 @@ def test_ais_geopackage_metadata():
     gpkg_zip = "data/downloads/AISVesselTracks2026-03.zip"
     if not os.path.exists(gpkg_zip):
         pytest.skip("AIS GeoPackage archive not present")
+    if os.path.getsize(gpkg_zip) > 100 * 1024 * 1024 and not os.environ.get("RUN_HEAVY_GEO_TESTS"):
+        pytest.skip("Skipping 1.2GB GeoPackage decompression test in regression mode")
 
     profiler = AISGeoPackageProfiler(gpkg_zip)
     meta = profiler.get_layer_metadata()

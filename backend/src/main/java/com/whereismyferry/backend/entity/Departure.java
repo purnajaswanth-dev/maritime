@@ -43,6 +43,15 @@ public class Departure {
     @Column(name = "delay_minutes")
     private Integer delayMinutes = 0;
 
+    @Column(name = "cancel_reason", columnDefinition = "TEXT")
+    private String cancelReason;
+
+    @Column(name = "seats_available")
+    private Integer seatsAvailable = 250;
+
+    @Column(name = "service_id")
+    private Long serviceId;
+
     @Column(name = "created_at")
     private OffsetDateTime createdAt = OffsetDateTime.now();
 
@@ -58,6 +67,7 @@ public class Departure {
         this.scheduledDepartureTime = scheduledDepartureTime;
         this.scheduledArrivalTime = scheduledArrivalTime;
         this.status = status != null ? status : "SCHEDULED";
+        this.seatsAvailable = vessel != null && vessel.getCapacity() != null ? vessel.getCapacity() : 250;
         this.createdAt = OffsetDateTime.now();
         this.updatedAt = OffsetDateTime.now();
     }
@@ -91,6 +101,15 @@ public class Departure {
 
     public Integer getDelayMinutes() { return delayMinutes; }
     public void setDelayMinutes(Integer delayMinutes) { this.delayMinutes = delayMinutes; }
+
+    public String getCancelReason() { return cancelReason; }
+    public void setCancelReason(String cancelReason) { this.cancelReason = cancelReason; }
+
+    public Integer getSeatsAvailable() { return seatsAvailable; }
+    public void setSeatsAvailable(Integer seatsAvailable) { this.seatsAvailable = seatsAvailable; }
+
+    public Long getServiceId() { return serviceId; }
+    public void setServiceId(Long serviceId) { this.serviceId = serviceId; }
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }

@@ -211,6 +211,25 @@ public class RestClientSimulationClient implements SimulationClient {
     }
 
     @Override
+    public List<com.whereismyferry.backend.dto.VesselLiveDto> getFleetVessels() {
+        try {
+            Map<String, Object> resp = restClient.get()
+                    .uri("/internal/v1/fleet/snapshot")
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<Map<String, Object>>() {});
+            if (resp != null && resp.get("vessels") instanceof List<?> list) {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                return list.stream()
+                        .map(item -> mapper.convertValue(item, com.whereismyferry.backend.dto.VesselLiveDto.class))
+                        .toList();
+            }
+            return List.of();
+        } catch (Exception e) {
+            throw new SimulationEngineUnavailableException("Python simulation daemon is unreachable", e);
+        }
+    }
+
+    @Override
     public Map<String, Object> getPredictionProvenance(String vesselId) {
         try {
             return restClient.get()
@@ -219,6 +238,20 @@ public class RestClientSimulationClient implements SimulationClient {
                     .body(new ParameterizedTypeReference<Map<String, Object>>() {});
         } catch (Exception e) {
             return Map.of("vessel_id", vesselId, "status", "UNAVAILABLE");
+        }
+    }
+
+    @Override
+    public Map<String, Object> syncTimetable(List<Map<String, Object>> departures) {
+        try {
+            Map<String, Object> req = Map.of("departures", departures);
+            return restClient.post()
+                    .uri("/internal/v1/timetable/sync")
+                    .body(req)
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<Map<String, Object>>() {});
+        } catch (Exception e) {
+            return Map.of("status", "FAILED", "error", e.getMessage());
         }
     }
 }

@@ -1,22 +1,51 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { LiveTelemetry } from '../../types/tracking';
+import {
+  TileTierConfig,
+  TileErrorTracker,
+  getTileTiers,
+  OFFLINE_VECTOR_CONFIG,
+} from '../../map/tileProviders';
+
+// Fix Leaflet default marker icon paths in Vite bundler
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+});
 
 export interface PortLocation {
   code: string;
   name: string;
   lat: number;
   lon: number;
+  berthRadiusM: number;
 }
 
 export const PENN_AR_BED_PORTS: PortLocation[] = [
-  { code: 'BES', name: 'Brest Port de Commerce', lat: 48.3831, lon: -4.4842 },
-  { code: 'LCQ', name: 'Le Conquet Gare Maritime', lat: 48.3592, lon: -4.7794 },
-  { code: 'MOL', name: '\u00CEle-Mol\u00E8ne (Quai Nord)', lat: 48.3972, lon: -4.9531 },
-  { code: 'OUE', name: 'Ouessant (Port du Stiff)', lat: 48.4756, lon: -5.0567 },
-  { code: 'AUD', name: 'Audierne (Sainte-\u00C9vette)', lat: 48.0167, lon: -4.5417 },
-  { code: 'SEI', name: '\u00CEle de Sein', lat: 48.0375, lon: -4.8500 },
-  { code: 'CAM', name: 'Camaret-sur-Mer', lat: 48.2778, lon: -4.5956 },
+  { code: 'BES', name: 'Brest Port de Commerce', lat: 48.3831, lon: -4.4842, berthRadiusM: 800 },
+  { code: 'LCQ', name: 'Le Conquet Gare Maritime', lat: 48.3592, lon: -4.7794, berthRadiusM: 400 },
+  { code: 'MOL', name: 'Île-Molène (Quai Nord)', lat: 48.3972, lon: -4.9531, berthRadiusM: 400 },
+  { code: 'OUE', name: 'Ouessant (Port du Stiff)', lat: 48.4756, lon: -5.0567, berthRadiusM: 500 },
+  { code: 'AUD', name: 'Audierne (Sainte-Évette)', lat: 48.0167, lon: -4.5417, berthRadiusM: 500 },
+  { code: 'SEI', name: 'Île de Sein', lat: 48.0375, lon: -4.85, berthRadiusM: 350 },
+  { code: 'CAM', name: 'Camaret-sur-Mer', lat: 48.2778, lon: -4.5956, berthRadiusM: 450 },
+];
+
+export const CORRIDOR_TRACKS: [string, [number, number], [number, number]][] = [
+  ['Brest — Le Conquet', [48.3831, -4.4842], [48.3592, -4.7794]],
+  ['Le Conquet — Molène', [48.3592, -4.7794], [48.3972, -4.9531]],
+  ['Molène — Ouessant', [48.3972, -4.9531], [48.4756, -5.0567]],
+  ['Brest — Ouessant Direct', [48.3831, -4.4842], [48.4756, -5.0567]],
+  ['Audierne — Île de Sein', [48.0167, -4.5417], [48.0375, -4.85]],
+  ['Camaret — Brest', [48.2778, -4.5956], [48.3831, -4.4842]],
 ];
 
 export interface FerryMapProps {
@@ -24,25 +53,52 @@ export interface FerryMapProps {
   trackCoordinates?: [number, number][];
   className?: string;
   height?: string | number;
+  connectionStatus?: 'Live' | 'Reconnecting' | 'Stale';
+}
+
+function getLifecycleColor(state?: string): string {
+  switch (state?.toUpperCase()) {
+    case 'UNDERWAY':
+    case 'IN_TRANSIT':
+    case 'ESTIMATING':
+      return '#14B8A6'; // Electric Teal
+    case 'BOARDING':
+      return '#F59E0B'; // Amber
+    case 'ARRIVED':
+    case 'DWELLING':
+    case 'BERTHED':
+      return '#3B82F6'; // Ocean Blue
+    case 'DELAYED':
+      return '#EF4444'; // Red
+    default:
+      return '#64748B'; // Slate
+  }
 }
 
 export const FerryMap: React.FC<FerryMapProps> = ({
   telemetry,
   trackCoordinates = [],
   className = '',
-  height = '500px',
+  height = '520px',
+  connectionStatus = 'Live',
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const currentTileLayerRef = useRef<L.TileLayer | L.GeoJSON | null>(null);
   const vesselMarkerRef = useRef<L.Marker | null>(null);
   const trackPolylineRef = useRef<L.Polyline | null>(null);
+  const breadcrumbRef = useRef<L.Polyline | null>(null);
+  const breadcrumbCoords = useRef<[number, number][]>([]);
+
+  const [activeTier, setActiveTier] = useState<TileTierConfig>(() => getTileTiers()[0]);
+  const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
+  const trackerRef = useRef<TileErrorTracker | null>(null);
 
   // Initialize Map
   useEffect(() => {
     if (!mapContainerRef.current) return;
     if (mapInstanceRef.current) return;
 
-    // Check if running in headless test environment without full DOM metrics
     if (typeof window === 'undefined' || !mapContainerRef.current.getBoundingClientRect) {
       return;
     }
@@ -56,37 +112,97 @@ export const FerryMap: React.FC<FerryMapProps> = ({
         maxZoom: 16,
       });
 
-      // CartoDB Positron / OSM Maritime clean base tiles
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
-        subdomains: 'abcd',
-        maxZoom: 19,
-      }).addTo(map);
+      function switchTileLayer(m: L.Map, tierConfig: TileTierConfig) {
+        if (currentTileLayerRef.current) {
+          m.removeLayer(currentTileLayerRef.current);
+          currentTileLayerRef.current = null;
+        }
 
-      // Add Penn ar Bed port markers
+        if (!tierConfig.isOffline && tierConfig.url) {
+          const layer = L.tileLayer(tierConfig.url, {
+            attribution: tierConfig.attribution,
+            subdomains: tierConfig.subdomains || 'abc',
+            maxZoom: tierConfig.maxZoom || 19,
+          });
+
+          layer.on('tileerror', () => {
+            if (trackerRef.current) {
+              trackerRef.current.recordError();
+            }
+          });
+
+          layer.addTo(m);
+          currentTileLayerRef.current = layer;
+        } else {
+          // Local Offline GeoJSON Vector Layer
+          const offlineLayer = L.geoJSON(OFFLINE_VECTOR_CONFIG.geoJson as any, {
+            style: {
+              color: OFFLINE_VECTOR_CONFIG.landStrokeColor,
+              fillColor: OFFLINE_VECTOR_CONFIG.landFillColor,
+              weight: 1.5,
+              fillOpacity: 0.85,
+            },
+            attribution: OFFLINE_VECTOR_CONFIG.attribution,
+          }).addTo(m);
+          currentTileLayerRef.current = offlineLayer;
+        }
+      }
+
+      const initialTiers = getTileTiers();
+      const tracker = new TileErrorTracker(6, 5000, (newTier) => {
+        setActiveTier(newTier);
+        switchTileLayer(map, newTier);
+      });
+      trackerRef.current = tracker;
+
+      // Mount initial layer
+      switchTileLayer(map, initialTiers[0]);
+
+      // Draw corridor lines
+      CORRIDOR_TRACKS.forEach(([, from, to]) => {
+        L.polyline([from, to], {
+          color: '#14B8A6',
+          weight: 1.5,
+          opacity: 0.4,
+          dashArray: '4, 8',
+        }).addTo(map);
+      });
+
+      // Draw Penn ar Bed port markers with berth radius circles
       PENN_AR_BED_PORTS.forEach((port) => {
+        // Berth radius circle
+        L.circle([port.lat, port.lon], {
+          radius: port.berthRadiusM,
+          color: '#14B8A6',
+          fillColor: '#14B8A6',
+          fillOpacity: 0.12,
+          weight: 1,
+        }).addTo(map);
+
+        // Terminal div icon
         const portIcon = L.divIcon({
           className: 'port-map-marker',
           html: `
-            <div style="display:flex;align-items:center;justify-content:center;width:22px;height:22px;background:#0F172A;color:#FFFFFF;border-radius:50%;border:2px solid #FFFFFF;box-shadow:0 2px 4px rgba(0,0,0,0.3);font-size:10px;font-weight:700;">
+            <div style="display:flex;align-items:center;justify-content:center;width:24px;height:24px;background:#071B2B;color:#F4F8FB;border-radius:50%;border:2px solid #14B8A6;box-shadow:0 2px 6px rgba(0,0,0,0.4);font-size:10px;font-weight:700;">
               ${port.code.substring(0, 2)}
             </div>
           `,
-          iconSize: [22, 22],
-          iconAnchor: [11, 11],
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
         });
 
         const marker = L.marker([port.lat, port.lon], { icon: portIcon }).addTo(map);
         marker.bindPopup(`
-          <div style="font-family:sans-serif;padding:4px;">
-            <strong style="color:#0F172A;font-size:13px;">${port.name}</strong><br/>
-            <span style="font-size:11px;color:#64748B;">Code: ${port.code}</span><br/>
-            <span style="font-size:11px;color:#64748B;">${port.lat.toFixed(4)}\u00B0 N, ${Math.abs(port.lon).toFixed(4)}\u00B0 W</span>
+          <div style="font-family:Inter,sans-serif;padding:4px;color:#071B2B;">
+            <strong style="font-size:13px;">${port.name}</strong><br/>
+            <span style="font-size:11px;color:#64748B;">Code: ${port.code} • Berth Radius: ${port.berthRadiusM}m</span><br/>
+            <span style="font-size:11px;color:#64748B;">${port.lat.toFixed(4)}° N, ${Math.abs(port.lon).toFixed(4)}° W</span>
           </div>
         `);
       });
 
       mapInstanceRef.current = map;
+      setMapInstance(map);
     } catch {
       // Graceful fallback for test environments
     }
@@ -96,13 +212,16 @@ export const FerryMap: React.FC<FerryMapProps> = ({
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
       }
+      setMapInstance(null);
+      vesselMarkerRef.current = null;
+      breadcrumbRef.current = null;
+      trackPolylineRef.current = null;
     };
   }, []);
 
-  // Update Track Polyline
+  // Update Scheduled Voyage Track Polyline
   useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (!map) return;
+    if (!mapInstance) return;
 
     if (trackPolylineRef.current) {
       trackPolylineRef.current.remove();
@@ -112,50 +231,84 @@ export const FerryMap: React.FC<FerryMapProps> = ({
     if (trackCoordinates && trackCoordinates.length > 0) {
       try {
         const polyline = L.polyline(trackCoordinates, {
-          color: '#0284C7',
+          color: '#0D3045',
           weight: 3,
-          opacity: 0.8,
+          opacity: 0.85,
           dashArray: '6, 6',
-        }).addTo(map);
+        }).addTo(mapInstance);
         trackPolylineRef.current = polyline;
       } catch {
-        // Fallback
+        // Ignored in test environment
       }
     }
-  }, [trackCoordinates]);
+  }, [mapInstance, trackCoordinates]);
 
-  // Update Vessel Marker & Heading
+  // Update Vessel Marker, Heading, Breadcrumb & State Color
   useEffect(() => {
-    const map = mapInstanceRef.current;
-    if (!map || !telemetry) return;
+    if (!mapInstance || !telemetry) return;
 
-    const { latitude, longitude, headingDegrees = 0, speedKnots = 0, vesselName } = telemetry;
+    const {
+      latitude,
+      longitude,
+      headingDegrees = 0,
+      speedKnots = 0,
+      vesselName,
+      state,
+    } = telemetry;
+
     if (latitude == null || longitude == null) return;
 
+    const color = getLifecycleColor(state);
+    const speedText = speedKnots ? `${speedKnots.toFixed(1)} kts` : 'At berth';
+    const stateLabel = state || 'SCHEDULED';
+
+    // Maintain breadcrumb trail of last 20 coordinates
+    breadcrumbCoords.current.push([latitude, longitude]);
+    if (breadcrumbCoords.current.length > 20) {
+      breadcrumbCoords.current.shift();
+    }
+
     try {
+      if (breadcrumbRef.current) {
+        breadcrumbRef.current.setLatLngs(breadcrumbCoords.current);
+      } else {
+        breadcrumbRef.current = L.polyline(breadcrumbCoords.current, {
+          color,
+          weight: 2,
+          opacity: 0.6,
+          dashArray: '3, 6',
+        }).addTo(mapInstance);
+      }
+
       const vesselIcon = L.divIcon({
         className: 'vessel-live-marker',
         html: `
-          <div style="position:relative;width:40px;height:40px;display:flex;align-items:center;justify-content:center;">
-            <div style="position:absolute;width:34px;height:34px;border-radius:50%;background:rgba(20, 184, 166, 0.25);animation:pulse 2s infinite;"></div>
-            <div style="transform:rotate(${headingDegrees}deg);transition:transform 0.5s ease-out;width:28px;height:28px;background:#14B8A6;color:#FFFFFF;border-radius:50%;border:2px solid #FFFFFF;box-shadow:0 2px 6px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <div style="position:relative;display:flex;flex-direction:column;align-items:center;pointer-events:auto;">
+            <!-- Vessel SVG Arrow Rotated by Heading -->
+            <div style="transform:rotate(${headingDegrees}deg);transition:transform 0.4s ease-out;width:32px;height:32px;background:${color};color:#FFFFFF;border-radius:50%;border:2px solid #FFFFFF;box-shadow:0 3px 8px rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="12 2 19 21 12 17 5 21 12 2"></polygon>
               </svg>
             </div>
+            <!-- Text Label with Vessel Name and Speed -->
+            <div style="background:#071B2B;color:#F4F8FB;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;white-space:nowrap;margin-top:4px;box-shadow:0 1px 4px rgba(0,0,0,0.3);border:1px solid #14B8A6;display:flex;align-items:center;gap:4px;">
+              <span>${vesselName}</span>
+              <span style="color:#14B8A6;font-family:monospace;">${speedText}</span>
+            </div>
           </div>
         `,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20],
+        iconSize: [120, 60],
+        iconAnchor: [60, 16],
       });
 
       if (!vesselMarkerRef.current) {
-        const marker = L.marker([latitude, longitude], { icon: vesselIcon, zIndexOffset: 1000 }).addTo(map);
+        const marker = L.marker([latitude, longitude], { icon: vesselIcon, zIndexOffset: 1000 }).addTo(mapInstance);
         marker.bindPopup(`
-          <div style="font-family:sans-serif;padding:6px;">
-            <strong style="color:#0F172A;font-size:14px;">${vesselName}</strong><br/>
-            <span style="font-size:12px;color:#0284C7;font-weight:600;">Speed: ${speedKnots.toFixed(1)} kts</span><br/>
-            <span style="font-size:11px;color:#64748B;">Heading: ${Math.round(headingDegrees)}\u00B0</span>
+          <div style="font-family:Inter,sans-serif;padding:6px;color:#071B2B;">
+            <strong style="font-size:14px;">${vesselName}</strong><br/>
+            <span style="font-size:12px;color:${color};font-weight:700;">Status: ${stateLabel}</span><br/>
+            <span style="font-size:12px;color:#0D3045;">Speed: ${speedKnots.toFixed(1)} kts • Heading: ${Math.round(headingDegrees)}°</span><br/>
+            <span style="font-size:11px;color:#64748B;">GPS: ${latitude.toFixed(4)}° N, ${Math.abs(longitude).toFixed(4)}° W</span>
           </div>
         `);
         vesselMarkerRef.current = marker;
@@ -164,9 +317,16 @@ export const FerryMap: React.FC<FerryMapProps> = ({
         vesselMarkerRef.current.setIcon(vesselIcon);
       }
     } catch {
-      // Fallback
+      // Ignored in test environment
     }
-  }, [telemetry]);
+  }, [mapInstance, telemetry]);
+
+  const connectionBg =
+    connectionStatus === 'Live'
+      ? '#14B8A6'
+      : connectionStatus === 'Reconnecting'
+      ? '#F59E0B'
+      : '#EF4444';
 
   return (
     <div
@@ -175,10 +335,12 @@ export const FerryMap: React.FC<FerryMapProps> = ({
         position: 'relative',
         width: '100%',
         height,
-        borderRadius: 'var(--radius-lg)',
+        minHeight: '480px',
+        borderRadius: 'var(--radius-lg, 8px)',
         overflow: 'hidden',
-        border: '1px solid var(--color-border)',
-        boxShadow: 'var(--shadow-md)',
+        border: '1px solid var(--color-border, #D8E5ED)',
+        boxShadow: '0 4px 12px rgba(7, 27, 43, 0.08)',
+        backgroundColor: '#071B2B',
       }}
       data-testid="ferry-map-container"
     >
@@ -187,32 +349,82 @@ export const FerryMap: React.FC<FerryMapProps> = ({
         style={{ width: '100%', height: '100%' }}
         aria-label="Interactive Brittany and Iroise Sea maritime map"
       />
-      {/* Honesty badge overlay */}
+
+      {/* Top-Right: Connection Status Chip */}
       <div
         style={{
           position: 'absolute',
-          bottom: '12px',
-          left: '12px',
+          top: '12px',
+          right: '12px',
           zIndex: 1000,
-          backgroundColor: 'rgba(15, 23, 42, 0.85)',
-          backdropFilter: 'blur(4px)',
-          color: '#FFFFFF',
+          backgroundColor: '#071B2B',
+          color: '#F4F8FB',
           padding: '4px 10px',
-          borderRadius: 'var(--radius-full)',
+          borderRadius: '6px',
           fontSize: '11px',
           fontWeight: 600,
           display: 'flex',
           alignItems: 'center',
           gap: '6px',
-          pointerEvents: 'none',
+          boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+          border: '1px solid #1E3A52',
         }}
+        data-testid="connection-status-chip"
       >
         <span
           style={{
             width: '8px',
             height: '8px',
             borderRadius: '50%',
-            backgroundColor: 'var(--color-primary)',
+            backgroundColor: connectionBg,
+          }}
+        />
+        <span>{connectionStatus}</span>
+        {activeTier.isOffline && (
+          <span
+            data-testid="offline-map-badge"
+            style={{
+              marginLeft: '6px',
+              padding: '2px 6px',
+              backgroundColor: '#EF4444',
+              color: '#FFFFFF',
+              borderRadius: '4px',
+              fontSize: '10px',
+              fontWeight: 700,
+            }}
+          >
+            Offline map
+          </span>
+        )}
+      </div>
+
+      {/* Bottom-Left: Mandatory Honest Labelling Overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '12px',
+          left: '12px',
+          zIndex: 1000,
+          backgroundColor: 'rgba(7, 27, 43, 0.92)',
+          color: '#F4F8FB',
+          padding: '4px 10px',
+          borderRadius: '6px',
+          fontSize: '11px',
+          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          pointerEvents: 'none',
+          border: '1px solid #1E3A52',
+        }}
+        data-testid="honesty-badge"
+      >
+        <span
+          style={{
+            width: '8px',
+            height: '8px',
+            borderRadius: '50%',
+            backgroundColor: '#14B8A6',
           }}
         />
         Historical replay mode (simulated live)

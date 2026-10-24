@@ -1,0 +1,496 @@
+/* ==========================================================================
+   Where Is My Ferry? - Admin Portal Stylesheet & Comprehensive Theme
+   Professional Maritime Naval Command UI (Vanilla CSS - 100% Contrast & Layout)
+   ========================================================================== */
+
+/* Root Wrapper */
+.admin-portal-wrapper {
+  min-height: calc(100vh - 64px);
+  background: radial-gradient(circle at 10% 10%, rgba(20, 184, 166, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 90% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 40%),
+              linear-gradient(180deg, #05131F 0%, #081B2B 50%, #05111B 100%);
+  color: #F8FAFC !important;
+  padding: 2rem 1.5rem 5rem;
+  font-family: var(--font-sans, 'Inter', -apple-system, sans-serif);
+  line-height: 1.5;
+}
+
+.admin-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* Operational Header */
+.admin-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #1E3A52;
+  margin-bottom: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .admin-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.admin-header-title {
+  font-size: 1.875rem !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em;
+  color: #FFFFFF !important;
+  margin: 0.25rem 0 0 0 !important;
+}
+
+.admin-header-subtitle {
+  color: #94A3B8 !important;
+  font-size: 0.875rem !important;
+  margin-top: 0.35rem !important;
+  font-weight: 400;
+}
+
+/* Pulsing Telemetry Beacon */
+.telemetry-beacon {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: #10B981;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.telemetry-beacon::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.45);
+  animation: beacon-pulse 2s infinite ease-out;
+}
+
+@keyframes beacon-pulse {
+  0% { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* 8 Navigation Tabs Bar */
+.admin-tabs-nav {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.375rem;
+  background: #081A29;
+  border: 1px solid #1E3A52;
+  border-radius: 12px;
+  margin-bottom: 1.75rem;
+  scrollbar-width: none;
+}
+
+.admin-tabs-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.125rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: transparent;
+  color: #94A3B8;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.admin-tab-btn:hover {
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.admin-tab-btn.active {
+  background: rgba(20, 184, 166, 0.2);
+  color: #2DD4BF !important;
+  border: 1px solid #14B8A6;
+  box-shadow: 0 2px 10px rgba(20, 184, 166, 0.2);
+}
+
+/* Hero KPI Stat Cards */
+.admin-stat-card {
+  background: #0B1F30;
+  border: 1px solid #1E3E5C;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.admin-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #14B8A6, transparent);
+}
+
+.admin-stat-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #94A3B8 !important;
+}
+
+.admin-stat-value {
+  font-size: 1.875rem;
+  font-weight: 800;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.25rem;
+  color: #FFFFFF !important;
+}
+
+.admin-stat-subtext {
+  font-size: 0.75rem;
+  color: #64748B;
+  margin-top: 0.35rem;
+}
+
+/* Cards inside admin portal */
+.admin-portal-wrapper .card,
+.admin-card {
+  background: #0B1F30 !important;
+  border: 1px solid #1E3A52 !important;
+  border-radius: 12px !important;
+  color: #F8FAFC !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35) !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.25rem;
+}
+
+.admin-portal-wrapper .card h2,
+.admin-portal-wrapper .card h3,
+.admin-portal-wrapper .card h4 {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}
+
+.admin-portal-wrapper .card p {
+  color: #94A3B8 !important;
+}
+
+/* Background utilities */
+.bg-slate-900\/80,
+.bg-slate-900\/60,
+.bg-slate-900,
+.bg-slate-950\/60,
+.bg-slate-950 {
+  background-color: #0B1F30 !important;
+  border-color: #1E3A52 !important;
+}
+
+.border-slate-800,
+.border-slate-700 {
+  border-color: #1E3A52 !important;
+}
+
+/* High-Contrast Text Colors */
+.text-white { color: #FFFFFF !important; }
+.text-slate-100 { color: #F1F5F9 !important; }
+.text-slate-200 { color: #E2E8F0 !important; }
+.text-slate-300 { color: #CBD5E1 !important; }
+.text-slate-400 { color: #94A3B8 !important; }
+.text-slate-500 { color: #64748B !important; }
+
+.text-teal-300 { color: #5EEAD4 !important; }
+.text-teal-400 { color: #2DD4BF !important; }
+.text-emerald-400 { color: #34D399 !important; }
+.text-amber-300 { color: #FCD34D !important; }
+.text-amber-400 { color: #FBBF24 !important; }
+.text-rose-300 { color: #FDA4AF !important; }
+
+/* Font size & weight utilities */
+.font-bold { font-weight: 700 !important; }
+.font-extrabold { font-weight: 800 !important; }
+.font-semibold { font-weight: 600 !important; }
+.font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important; }
+
+.text-xs { font-size: 0.75rem !important; line-height: 1rem !important; }
+.text-sm { font-size: 0.875rem !important; line-height: 1.25rem !important; }
+.text-base { font-size: 1rem !important; line-height: 1.5rem !important; }
+.text-lg { font-size: 1.125rem !important; line-height: 1.75rem !important; }
+.text-xl { font-size: 1.25rem !important; line-height: 1.75rem !important; }
+.text-2xl { font-size: 1.5rem !important; line-height: 2rem !important; }
+.text-3xl { font-size: 1.875rem !important; line-height: 2.25rem !important; }
+.uppercase { text-transform: uppercase !important; }
+.tracking-wider { letter-spacing: 0.05em !important; }
+.tracking-tight { letter-spacing: -0.025em !important; }
+
+/* Spacing and Flex/Grid Layouts */
+.flex { display: flex !important; }
+.flex-col { flex-direction: column !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.items-center { align-items: center !important; }
+.items-start { align-items: flex-start !important; }
+.justify-between { justify-content: space-between !important; }
+.justify-end { justify-content: flex-end !important; }
+.justify-center { justify-content: center !important; }
+
+.gap-1 { gap: 0.25rem !important; }
+.gap-1\.5 { gap: 0.375rem !important; }
+.gap-2 { gap: 0.5rem !important; }
+.gap-3 { gap: 0.75rem !important; }
+.gap-4 { gap: 1rem !important; }
+.gap-6 { gap: 1.5rem !important; }
+
+.space-y-6 > * + * { margin-top: 1.5rem !important; }
+.space-y-4 > * + * { margin-top: 1rem !important; }
+.space-y-2 > * + * { margin-top: 0.5rem !important; }
+
+.grid { display: grid !important; }
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)) !important; }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+.grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+.grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+
+@media (min-width: 640px) {
+  .sm\:flex-row { flex-direction: row !important; }
+  .sm\:items-center { align-items: center !important; }
+}
+
+@media (min-width: 768px) {
+  .md\:flex-row { flex-direction: row !important; }
+  .md\:items-center { align-items: center !important; }
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .md\:grid-cols-5 { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+}
+
+/* Padding & Margin Utilities */
+.p-2 { padding: 0.5rem !important; }
+.p-2\.5 { padding: 0.625rem !important; }
+.p-3 { padding: 0.75rem !important; }
+.p-4 { padding: 1rem !important; }
+.p-6 { padding: 1.5rem !important; }
+.px-3 { padding-left: 0.75rem !important; padding-right: 0.75rem !important; }
+.py-2 { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+.py-2\.5 { padding-top: 0.625rem !important; padding-bottom: 0.625rem !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mt-2 { margin-top: 0.5rem !important; }
+.mt-4 { margin-top: 1rem !important; }
+.mt-6 { margin-top: 1.5rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-4 { margin-bottom: 1rem !important; }
+.pb-2 { padding-bottom: 0.5rem !important; }
+.pb-6 { padding-bottom: 1.5rem !important; }
+.pt-4 { padding-top: 1rem !important; }
+.mr-1\.5 { margin-right: 0.375rem !important; }
+.mx-auto { margin-left: auto !important; margin-right: auto !important; }
+
+.w-full { width: 100% !important; }
+.w-4 { width: 1rem !important; height: 1rem !important; }
+.w-5 { width: 1.25rem !important; height: 1.25rem !important; }
+.w-8 { width: 2rem !important; height: 2rem !important; }
+.h-4 { height: 1rem !important; }
+.h-5 { height: 1.25rem !important; }
+.h-8 { height: 2rem !important; }
+.rounded { border-radius: 6px !important; }
+.rounded-lg { border-radius: 8px !important; }
+.rounded-xl { border-radius: 12px !important; }
+.overflow-x-auto { overflow-x: auto !important; }
+.whitespace-nowrap { white-space: nowrap !important; }
+
+/* Professional Buttons in Admin Portal */
+.admin-portal-wrapper .btn,
+.admin-portal-wrapper button {
+  font-family: var(--font-sans, sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 0.45rem 0.875rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  transition: all 0.15s ease-in-out;
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+/* Primary Button */
+.admin-portal-wrapper .btn-primary {
+  background-color: #0D9488 !important;
+  border-color: #14B8A6 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 2px 8px rgba(20, 184, 166, 0.25);
+}
+
+.admin-portal-wrapper .btn-primary:hover {
+  background-color: #0F766E !important;
+  border-color: #2DD4BF !important;
+}
+
+/* Outline / Secondary Button */
+.admin-portal-wrapper .btn-secondary,
+.admin-portal-wrapper .btn-outline {
+  background-color: #0E2438 !important;
+  border-color: #234360 !important;
+  color: #E2E8F0 !important;
+}
+
+.admin-portal-wrapper .btn-secondary:hover,
+.admin-portal-wrapper .btn-outline:hover {
+  background-color: #163654 !important;
+  border-color: #38BDF8 !important;
+  color: #FFFFFF !important;
+}
+
+/* Delay Action Button (Amber) */
+.admin-portal-wrapper button.border-amber-500\/40,
+.admin-portal-wrapper button.border-amber-500 {
+  background-color: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid #F59E0B !important;
+  color: #FCD34D !important;
+  padding: 0.25rem 0.65rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+}
+
+.admin-portal-wrapper button.border-amber-500\/40:hover,
+.admin-portal-wrapper button.border-amber-500:hover {
+  background-color: rgba(245, 158, 11, 0.28) !important;
+  color: #FFFFFF !important;
+}
+
+/* Cancel Action Button (Rose/Red) */
+.admin-portal-wrapper button.border-rose-500\/40,
+.admin-portal-wrapper button.border-rose-500 {
+  background-color: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid #EF4444 !important;
+  color: #FECACA !important;
+  padding: 0.25rem 0.65rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+}
+
+.admin-portal-wrapper button.border-rose-500\/40:hover,
+.admin-portal-wrapper button.border-rose-500:hover {
+  background-color: rgba(239, 68, 68, 0.28) !important;
+  color: #FFFFFF !important;
+}
+
+/* Button Sizing */
+.admin-portal-wrapper .btn-xs,
+.admin-portal-wrapper button[size="xs"] {
+  padding: 0.25rem 0.5rem !important;
+  font-size: 0.75rem !important;
+}
+
+.admin-portal-wrapper .btn-sm {
+  padding: 0.35rem 0.75rem !important;
+  font-size: 0.8125rem !important;
+}
+
+/* Professional Data Tables */
+.admin-portal-wrapper table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  text-align: left !important;
+  font-size: 0.875rem !important;
+  background-color: #081A2A !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.admin-portal-wrapper thead th {
+  background-color: #06131F !important;
+  color: #94A3B8 !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  padding: 0.75rem 1rem !important;
+  border-bottom: 1px solid #1E3A52 !important;
+}
+
+.admin-portal-wrapper tbody td {
+  padding: 0.875rem 1rem !important;
+  color: #F1F5F9 !important;
+  border-bottom: 1px solid #102538 !important;
+  vertical-align: middle !important;
+}
+
+.admin-portal-wrapper tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+.admin-portal-wrapper tbody tr:hover {
+  background-color: #0E2B44 !important;
+}
+
+.divide-y > * + * {
+  border-top: 1px solid #102538 !important;
+}
+
+/* Form Controls & Inputs */
+.admin-portal-wrapper input,
+.admin-portal-wrapper select,
+.admin-portal-wrapper textarea {
+  background-color: #061421 !important;
+  border: 1px solid #234360 !important;
+  color: #FFFFFF !important;
+  border-radius: 6px !important;
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  outline: none !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.admin-portal-wrapper input:focus,
+.admin-portal-wrapper select:focus,
+.admin-portal-wrapper textarea:focus {
+  border-color: #14B8A6 !important;
+  box-shadow: 0 0 0 2px rgba(20, 184, 166, 0.3) !important;
+}
+
+.admin-portal-wrapper input::placeholder {
+  color: #64748B !important;
+}
+
+/* Modals */
+.modal-backdrop,
+div[role="dialog"] {
+  color: #F1F5F9 !important;
+}
+
+div[role="dialog"] .modal-content,
+div[role="dialog"] > div {
+  background-color: #0B1F30 !important;
+  border: 1px solid #1E3E5C !important;
+  color: #F8FAFC !important;
+}
+
+div[role="dialog"] h2,
+div[role="dialog"] h3 {
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+}

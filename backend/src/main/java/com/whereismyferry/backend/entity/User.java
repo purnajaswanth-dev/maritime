@@ -20,6 +20,9 @@ public class User {
     @Column(name = "password_hash", length = 256, nullable = false)
     private String passwordHash;
 
+    @Column(name = "full_name", length = 128)
+    private String fullName;
+
     @Column(name = "first_name", length = 64)
     private String firstName;
 
@@ -28,6 +31,26 @@ public class User {
 
     @Column(name = "phone", length = 32)
     private String phone;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", length = 32, nullable = false)
+    private UserRole role = UserRole.PASSENGER;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 32, nullable = false)
+    private UserStatus status = UserStatus.ACTIVE;
+
+    @Column(name = "email_verified", nullable = false)
+    private Boolean emailVerified = true;
+
+    @Column(name = "failed_attempts", nullable = false)
+    private Integer failedAttempts = 0;
+
+    @Column(name = "locked_until")
+    private OffsetDateTime lockedUntil;
+
+    @Column(name = "last_login_at")
+    private OffsetDateTime lastLoginAt;
 
     @Column(name = "enabled", nullable = false)
     private Boolean enabled = true;
@@ -57,6 +80,15 @@ public class User {
     public String getPasswordHash() { return passwordHash; }
     public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
 
+    public String getFullName() {
+        if (fullName != null && !fullName.isBlank()) {
+            return fullName;
+        }
+        String combined = ((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "")).trim();
+        return combined.isEmpty() ? email : combined;
+    }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
@@ -66,7 +98,25 @@ public class User {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
-    public Boolean getEnabled() { return enabled; }
+    public UserRole getRole() { return role; }
+    public void setRole(UserRole role) { this.role = role; }
+
+    public UserStatus getStatus() { return status; }
+    public void setStatus(UserStatus status) { this.status = status; }
+
+    public Boolean getEmailVerified() { return emailVerified; }
+    public void setEmailVerified(Boolean emailVerified) { this.emailVerified = emailVerified; }
+
+    public Integer getFailedAttempts() { return failedAttempts != null ? failedAttempts : 0; }
+    public void setFailedAttempts(Integer failedAttempts) { this.failedAttempts = failedAttempts; }
+
+    public OffsetDateTime getLockedUntil() { return lockedUntil; }
+    public void setLockedUntil(OffsetDateTime lockedUntil) { this.lockedUntil = lockedUntil; }
+
+    public OffsetDateTime getLastLoginAt() { return lastLoginAt; }
+    public void setLastLoginAt(OffsetDateTime lastLoginAt) { this.lastLoginAt = lastLoginAt; }
+
+    public Boolean getEnabled() { return enabled && status == UserStatus.ACTIVE; }
     public void setEnabled(Boolean enabled) { this.enabled = enabled; }
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
@@ -77,6 +127,10 @@ public class User {
 
     public Set<Role> getRoles() { return roles; }
     public void setRoles(Set<Role> roles) { this.roles = roles; }
+
+    public boolean isAccountLocked() {
+        return lockedUntil != null && lockedUntil.isAfter(OffsetDateTime.now());
+    }
 
     @PreUpdate
     public void onUpdate() {

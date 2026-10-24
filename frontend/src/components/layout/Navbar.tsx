@@ -40,16 +40,17 @@ export const Navbar: React.FC<NavbarProps> = ({ user: propUser, onLogout: propLo
   } : undefined);
 
 
-  const isAdmin = user?.roles?.includes('ROLE_ADMIN');
-  const isAuditor = user?.roles?.includes('ROLE_AUDITOR');
-  const isOperator = user?.roles?.includes('ROLE_OPERATOR');
+  const roleStr = (user?.roles?.[0] || '').toUpperCase();
+  const isAdmin = roleStr === 'ADMIN' || roleStr === 'ROLE_ADMIN';
+  const isAuditor = roleStr === 'AUDITOR' || roleStr === 'ROLE_AUDITOR';
+  const isOperator = roleStr === 'OPERATOR' || roleStr === 'ROLE_OPERATOR';
 
   const navLinks = [
     { label: 'Live Tracking', path: '/tracking' },
     { label: 'Timetable', path: '/timetable' },
     { label: 'Ports', path: '/ports' },
     { label: 'Fares', path: '/fares' },
-    ...(user ? [{ label: 'My Bookings', path: '/bookings' }] : []),
+    ...(user ? [{ label: 'My Account', path: '/account' }] : []),
     ...(isAdmin || isAuditor ? [{ label: 'Admin Portal', path: '/admin' }] : []),
   ];
 

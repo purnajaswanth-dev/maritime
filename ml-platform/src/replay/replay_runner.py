@@ -506,3 +506,92 @@ class ReplayRunner:
     def get_accuracy_records(self) -> List[Dict[str, Any]]:
         """Returns all completed arrival accuracy records."""
         return self.accuracy_records
+
+    def sync_timetable(self, departures_list: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Synchronizes departures dynamically pushed from the backend database.
+
+        Replays one real historical voyage on the same corridor for each supported departure
+        (seeded, sampled delay, time-shifted to scheduled time) and updates operational state.
+        """
+        synced_count = 0
+        supported_count = 0
+
+        for item in departures_list:
+            dep_id = str(item.get("departure_id") or item.get("id") or item.get("departureCode") or "")
+            if not dep_id:
+                continue
+
+            corridor = item.get("corridor") or item.get("routeCode") or item.get("route_id", "BREST_LE_CONQUET")
+            orig = item.get("origin_terminal_id") or item.get("originPort") or "BREST"
+            dest = item.get("dest_terminal_id") or item.get("destinationPort") or "LE_CONQUET"
+            vessel_id = item.get("vessel_id") or item.get("vesselId")
+            vessel_name = item.get("vessel_name") or item.get("vesselName")
+            tracking_supported = bool(item.get("tracking_supported", item.get("liveTrackingAvailable", False)))
+
+            sched_dep_utc = item.get("scheduled_departure_utc") or item.get("scheduledDepartureTime") or "2026-10-24T08:30:00Z"
+            sched_arr_utc = item.get("scheduled_arrival_utc") or item.get("scheduledArrivalTime") or "2026-10-24T09:30:00Z"
+
+            try:
+                dt_dep = datetime.datetime.fromisoformat(sched_dep_utc.replace("Z", "+00:00"))
+                sched_dep_epoch = dt_dep.timestamp()
+            except Exception:
+                sched_dep_epoch = self.current_sim_time.timestamp()
+
+            try:
+                dt_arr = datetime.datetime.fromisoformat(sched_arr_utc.replace("Z", "+00:00"))
+                sched_arr_epoch = dt_arr.timestamp()
+            except Exception:
+                sched_arr_epoch = sched_dep_epoch + 3600.0
+
+            duration_min = float(item.get("duration_minutes", (sched_arr_epoch - sched_dep_epoch) / 60.0))
+            if duration_min <= 0:
+                duration_min = 60.0
+
+            service_date = item.get("service_date") or dt_dep.strftime("%Y-%m-%d")
+            sched_dep_time = dt_dep.astimezone(PARIS_TZ).strftime("%H:%M:%S")
+            sched_arr_time = dt_arr.astimezone(PARIS_TZ).strftime("%H:%M:%S")
+
+            dep = Departure(
+                departure_id=dep_id,
+                trip_id=str(item.get("trip_id", dep_id)),
+                route_id=str(item.get("route_id", corridor)),
+                corridor=corridor,
+                origin_terminal_id=orig,
+                dest_terminal_id=dest,
+                vessel_id=vessel_id,
+                vessel_name=vessel_name,
+                tracking_supported=tracking_supported,
+                service_date=service_date,
+                scheduled_departure_time=sched_dep_time,
+                scheduled_arrival_time=sched_arr_time,
+                scheduled_departure_utc=sched_dep_utc,
+                scheduled_arrival_utc=sched_arr_utc,
+                scheduled_departure_epoch_s=sched_dep_epoch,
+                scheduled_arrival_epoch_s=sched_arr_epoch,
+                duration_minutes=duration_min,
+                status=item.get("status", "SCHEDULED"),
+            )
+
+            self.departures[dep_id] = dep
+            synced_count += 1
+
+            if tracking_supported and dep_id not in self.completed_departures:
+                supported_count += 1
+                if dep_id not in self.departure_assignments:
+                    voyage = self.voyage_library.get_random_voyage(
+                        corridor=dep.corridor,
+                        split_preference=self.split_preference,
+                        rng=self.rng,
+                    )
+                    if voyage:
+                        delay_min = self.voyage_library.sample_delay(dep.corridor, rng=self.rng)
+                        act_dep_epoch = dep.scheduled_departure_epoch_s + (delay_min * 60.0)
+                        self.departure_assignments[dep_id] = (voyage, delay_min, act_dep_epoch)
+
+        return {
+            "status": "SYNCED",
+            "synced_count": synced_count,
+            "supported_count": supported_count,
+            "sim_date": self.sim_date.strftime("%Y-%m-%d"),
+        }
+

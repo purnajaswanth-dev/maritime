@@ -38,6 +38,15 @@ public class Vessel {
     @Column(name = "status", length = 32, nullable = false)
     private String status = "ACTIVE";
 
+    @Column(name = "engine_vessel_id", length = 64)
+    private String engineVesselId;
+
+    @Column(name = "home_port_id", length = 64)
+    private String homePortId;
+
+    @Column(name = "capacity")
+    private Integer capacity = 300;
+
     public Vessel() {}
 
     public Vessel(String id, String code, String name, String mmsi, String imo, Integer capacityPassengers, Integer capacityVehicles, Double speedKnots, String trackingVesselId, String status) {
@@ -50,7 +59,9 @@ public class Vessel {
         this.capacityVehicles = capacityVehicles != null ? capacityVehicles : 0;
         this.speedKnots = speedKnots;
         this.trackingVesselId = trackingVesselId;
+        this.engineVesselId = trackingVesselId;
         this.status = status != null ? status : "ACTIVE";
+        this.capacity = capacityPassengers != null ? capacityPassengers : 300;
     }
 
     public String getId() { return id; }
@@ -82,6 +93,15 @@ public class Vessel {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getEngineVesselId() { return engineVesselId != null ? engineVesselId : trackingVesselId; }
+    public void setEngineVesselId(String engineVesselId) { this.engineVesselId = engineVesselId; }
+
+    public String getHomePortId() { return homePortId; }
+    public void setHomePortId(String homePortId) { this.homePortId = homePortId; }
+
+    public Integer getCapacity() { return capacity != null ? capacity : capacityPassengers; }
+    public void setCapacity(Integer capacity) { this.capacity = capacity; }
 
     @Override
     public boolean equals(Object o) {

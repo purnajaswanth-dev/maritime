@@ -19,5 +19,7 @@ public interface SimulationClient {
     Map<String, Object> triggerScenario(String scenarioId);
     Map<String, Object> getModelHealth();
     List<Map<String, Object>> getFleetSnapshot();
+    List<com.whereismyferry.backend.dto.VesselLiveDto> getFleetVessels();
     Map<String, Object> getPredictionProvenance(String vesselId);
+    Map<String, Object> syncTimetable(List<Map<String, Object>> departures);
 }

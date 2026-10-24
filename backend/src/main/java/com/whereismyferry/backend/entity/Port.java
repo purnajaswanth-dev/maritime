@@ -32,6 +32,27 @@ public class Port {
     @Column(name = "berth_count", nullable = false)
     private Integer berthCount = 1;
 
+    @Column(name = "berth_radius_m")
+    private Integer berthRadiusM = 800;
+
+    @Column(name = "status", length = 32, nullable = false)
+    private String status = "OPEN";
+
+    @Column(name = "address", columnDefinition = "TEXT")
+    private String address;
+
+    @Column(name = "phone", length = 64)
+    private String phone;
+
+    @Column(name = "email", length = 128)
+    private String email;
+
+    @Column(name = "facilities", columnDefinition = "TEXT")
+    private String facilities;
+
+    @Column(name = "notes", columnDefinition = "TEXT")
+    private String notes;
+
     public Port() {}
 
     public Port(String id, String code, String name, Double latitude, Double longitude, String timezone, String amenities, Integer berthCount) {
@@ -43,6 +64,8 @@ public class Port {
         this.timezone = timezone != null ? timezone : "Europe/Paris";
         this.amenities = amenities;
         this.berthCount = berthCount != null ? berthCount : 1;
+        this.berthRadiusM = 800;
+        this.status = "OPEN";
     }
 
     public String getId() { return id; }
@@ -68,6 +91,27 @@ public class Port {
 
     public Integer getBerthCount() { return berthCount; }
     public void setBerthCount(Integer berthCount) { this.berthCount = berthCount; }
+
+    public Integer getBerthRadiusM() { return berthRadiusM; }
+    public void setBerthRadiusM(Integer berthRadiusM) { this.berthRadiusM = berthRadiusM; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getFacilities() { return facilities; }
+    public void setFacilities(String facilities) { this.facilities = facilities; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 
     @Override
     public boolean equals(Object o) {

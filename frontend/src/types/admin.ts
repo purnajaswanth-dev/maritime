@@ -110,5 +110,88 @@ export interface SystemConfig {
   maintenanceReason?: string;
   maintenanceActivatedAt?: string;
   maintenanceActivatedBy?: string;
-  featureFlags: Record<string, boolean>;
+  featureFlags?: Record<string, boolean>;
+}
+
+export interface AdminDashboard {
+  sailingsTodayByStatus: Record<string, number>;
+  shipsInTransit: number;
+  passengersBookedToday: number;
+  activeAnnouncements: number;
+  engineStatus: string;
+  delayedOrCancelledSailings: any[];
+}
+
+export interface AdminServiceItem {
+  id?: number;
+  routeId: string;
+  routeName?: string;
+  originPortId?: string;
+  originPortName?: string;
+  destinationPortId?: string;
+  destinationPortName?: string;
+  vesselId: string;
+  vesselName?: string;
+  departureTime: string;
+  durationMinutes: number;
+  daysOfWeek: string;
+  validFrom: string;
+  validTo: string;
+  baseFareEur: number;
+  capacity: number;
+  active: boolean;
+  trackingSupported?: boolean;
+}
+
+export interface AdminShipItem {
+  id: string;
+  name: string;
+  capacity: number;
+  homePortId: string;
+  homePortName?: string;
+  status: string;
+  engineVesselId?: string;
+  sailingsTodayCount: number;
+  liveTrackingAvailable: boolean;
+  latitude?: number;
+  longitude?: number;
+  speedKnots?: number;
+  cogDegrees?: number;
+  etaLifecycleState?: string;
+}
+
+export interface AdminPortItem {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+  status: string;
+  berthRadiusMeters: number;
+  closedReason?: string;
+}
+
+export interface AdminPassengerItem {
+  id: number;
+  fullName: string;
+  email: string;
+  phone?: string;
+  status: string;
+  bookingsCount: number;
+  lastLoginAt?: string;
+  createdAt: string;
+  hasUpcomingTrips: boolean;
+  bookings?: any[];
+}
+
+export interface AdminAnnouncementItem {
+  id?: number;
+  title: string;
+  body: string;
+  severity: string;
+  scope: string;
+  targetId?: string;
+  startsAt?: string;
+  endsAt?: string;
+  createdBy?: string;
+  createdAt?: string;
 }

@@ -31,11 +31,15 @@ public class AuditService {
     public AuditLog recordAction(User user, String action, String entityType, String entityId, String details, String ipAddress) {
         AuditLog auditLog = new AuditLog();
         auditLog.setUser(user);
+        auditLog.setActor(user != null && user.getEmail() != null ? user.getEmail() : "SYSTEM");
+        auditLog.setTarget(entityType != null ? (entityType + ":" + entityId) : "SYSTEM");
         auditLog.setAction(action);
         auditLog.setEntityType(entityType);
         auditLog.setEntityId(entityId);
         auditLog.setDetails(details);
+        auditLog.setIp(ipAddress != null ? ipAddress : "127.0.0.1");
         auditLog.setIpAddress(ipAddress != null ? ipAddress : "127.0.0.1");
+        auditLog.setTimestamp(OffsetDateTime.now());
         auditLog.setCreatedAt(OffsetDateTime.now());
 
         AuditLog saved = auditLogRepository.save(auditLog);

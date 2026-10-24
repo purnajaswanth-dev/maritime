@@ -175,7 +175,7 @@ class MaritimeServiceContainer:
         for v_id in self.generator.get_vessel_ids():
             self.runner.step_vessel(v_id)
 
-        # Auto-start runner loop when daemon server is launched
+        # Auto-start runner loop when daemon server is launched with AUTO_START_SIMULATION=1
         if os.getenv("AUTO_START_SIMULATION", "0") == "1":
             self.runner.start(speed_multiplier=2.0)
 
@@ -593,6 +593,23 @@ def post_scenario_trigger(scenario_id: str):
 # Timetable & Historical Replay Endpoints (Phase 02)
 # -----------------------------------------------------------------------------
 
+@app.post(
+    "/internal/v1/timetable/sync",
+    tags=["Timetable"],
+    summary="Synchronize daily departures from backend database",
+)
+def sync_timetable(payload: Dict[str, Any]):
+    """Receives today's departures from PostgreSQL backend and provisions replay voyages."""
+    if not container.replay_runner:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Historical replay runner is not initialized",
+        )
+    departures = payload.get("departures", [])
+    result = container.replay_runner.sync_timetable(departures)
+    return result
+
+
 @app.get(
     "/internal/v1/timetable/today",
     tags=["Timetable"],
@@ -644,10 +661,10 @@ def get_departure_live(departure_id: str):
             detail="Historical replay runner is not initialized",
         )
     res = container.replay_runner.get_departure_live(departure_id)
-    if not res:
+    if not res or not res.get("tracking_supported", False):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Departure '{departure_id}' not found",
+            detail=f"Live tracking not available for departure '{departure_id}'",
         )
     return res
 

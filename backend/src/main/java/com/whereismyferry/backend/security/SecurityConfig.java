@@ -1,11 +1,11 @@
 package com.whereismyferry.backend.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -31,6 +32,9 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final DelegatedAuthenticationEntryPoint authenticationEntryPoint;
     private final DelegatedAccessDeniedHandler accessDeniedHandler;
+
+    @Value("${app.cors.allowed-origins:http://localhost:5173}")
+    private String allowedOrigins;
 
     public SecurityConfig(
             JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -64,7 +68,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(List.of("*"));
+        List<String> origins = Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+        configuration.setAllowedOrigins(origins.isEmpty() ? List.of("http://localhost:5173") : origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
@@ -92,33 +100,33 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Public Endpoints
                         .requestMatchers(
-                                "/api/v1/auth/**",
+                                "/api/v1/auth/register",
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/refresh",
+                                "/api/v1/auth/logout",
+                                "/api/v1/auth/forgot-password",
+                                "/api/v1/auth/reset-password",
                                 "/api/v1/ports/**",
                                 "/api/v1/routes/**",
                                 "/api/v1/departures/**",
                                 "/api/v1/timetable/**",
                                 "/api/v1/fares/**",
                                 "/api/v1/vessels/**",
+                                "/api/v1/stream/**",
                                 "/api/v1/track/**",
+                                "/api/v1/tracking/**",
+                                "/api/v1/announcements/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/v3/api-docs/**",
                                 "/api-docs/**",
                                 "/actuator/**"
                         ).permitAll()
-                        // Role-Based Endpoints
-                        // Auditor is read-only everywhere across /api/v1/admin/**
-                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/admin/**").hasAnyRole("ADMIN", "AUDITOR")
-                        // Support can access support/finance endpoints
-                        .requestMatchers("/api/v1/admin/support/**", "/api/v1/admin/finance/**").hasAnyRole("ADMIN", "SUPPORT")
-                        // Simulation and user governance: ADMIN only (Auditor and Support strictly forbidden)
-                        .requestMatchers("/api/v1/admin/simulation/**", "/api/v1/admin/users/**", "/api/v1/admin/system/**").hasRole("ADMIN")
-                        // All other admin operations
+                        // Admin Endpoints: Read-only for Auditor/Operator, Mutations for Admin only
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/v1/admin/**").hasAnyRole("ADMIN", "AUDITOR", "OPERATOR")
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/operator/**", "/api/v1/disruptions/**").hasAnyRole("ADMIN", "OPERATOR")
-                        .requestMatchers("/api/v1/crew/**").hasAnyRole("ADMIN", "OPERATOR", "CREW")
-                        // Authenticated User Endpoints
-                        .requestMatchers("/api/v1/users/me", "/api/v1/bookings/**").authenticated()
+                        // Authenticated Passenger Endpoints
+                        .requestMatchers("/api/v1/auth/me", "/api/v1/auth/change-password", "/api/v1/users/me", "/api/v1/bookings/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

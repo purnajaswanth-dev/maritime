@@ -35,6 +35,12 @@ public class CatalogController {
         return ResponseEntity.ok(catalogService.getPortDetail(id));
     }
 
+    @GetMapping("/ports/{id}/destinations")
+    @Operation(summary = "Get reachable destination ports from a given origin port")
+    public ResponseEntity<List<PortDto>> getReachableDestinations(@PathVariable String id) {
+        return ResponseEntity.ok(catalogService.getReachableDestinations(id));
+    }
+
     @GetMapping("/routes")
     @Operation(summary = "List all network routes")
     public ResponseEntity<List<RouteDto>> getRoutes() {
@@ -55,6 +61,18 @@ public class CatalogController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false) Integer passengers) {
         return ResponseEntity.ok(catalogService.searchDepartures(from, to, date, passengers));
+    }
+
+    @GetMapping("/departures/search")
+    @Operation(summary = "Phase D1 From-To Sailing Search with filters and empty-state next sailing")
+    public ResponseEntity<DepartureSearchResultDto> searchSailings(
+            @RequestParam String from,
+            @RequestParam String to,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false, defaultValue = "1") Integer passengers,
+            @RequestParam(required = false) String timeOfDay,
+            @RequestParam(required = false) String status) {
+        return ResponseEntity.ok(catalogService.searchSailings(from, to, date, passengers, timeOfDay, status));
     }
 
     @GetMapping("/departures/{id}")
@@ -80,5 +98,13 @@ public class CatalogController {
     @Operation(summary = "Get fare rules and pricing structure by route")
     public ResponseEntity<List<FareRuleDto>> getFares(@RequestParam(required = false) String route) {
         return ResponseEntity.ok(catalogService.getFareRules(route));
+    }
+
+    @GetMapping("/announcements")
+    @Operation(summary = "Get active announcements with optional scope and target filtering")
+    public ResponseEntity<List<AnnouncementDto>> getAnnouncements(
+            @RequestParam(required = false) String scope,
+            @RequestParam(required = false) String targetId) {
+        return ResponseEntity.ok(catalogService.getActiveAnnouncements(scope, targetId));
     }
 }

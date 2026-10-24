@@ -2,10 +2,9 @@ package com.whereismyferry.backend;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.whereismyferry.backend.dto.LoginRequest;
-import com.whereismyferry.backend.dto.RefreshTokenRequest;
-import com.whereismyferry.backend.dto.RegisterRequest;
-import jakarta.servlet.http.Cookie;
+import com.whereismyferry.backend.dto.*;
+import com.whereismyferry.backend.entity.User;
+import com.whereismyferry.backend.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -30,12 +30,15 @@ class AuthControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     @DisplayName("Register new passenger account returns 201 with JWT and sets refresh cookie")
     void testRegisterPassenger() throws Exception {
         RegisterRequest request = new RegisterRequest(
                 "newpassenger@iroise.bzh",
-                "Password123!",
+                "Password1234!",
                 "Malo",
                 "Kerjean",
                 "+33298000000"
@@ -49,7 +52,7 @@ class AuthControllerTests {
                 .andExpect(jsonPath("$.refreshToken", notNullValue()))
                 .andExpect(jsonPath("$.tokenType", is("Bearer")))
                 .andExpect(jsonPath("$.user.email", is("newpassenger@iroise.bzh")))
-                .andExpect(jsonPath("$.user.roles", hasItem("ROLE_PASSENGER")))
+                .andExpect(jsonPath("$.user.role", is("PASSENGER")))
                 .andExpect(cookie().exists("refreshToken"))
                 .andExpect(cookie().httpOnly("refreshToken", true))
                 .andReturn();
@@ -63,7 +66,7 @@ class AuthControllerTests {
     void testRegisterDuplicateEmail() throws Exception {
         RegisterRequest request = new RegisterRequest(
                 "passenger@whereismyferry.bzh",
-                "SomePassword123!",
+                "SomePassword1234!",
                 "Existing",
                 "User",
                 null
@@ -78,7 +81,7 @@ class AuthControllerTests {
     }
 
     @Test
-    @DisplayName("Register with short password (<8 chars) returns 422 Unprocessable Entity")
+    @DisplayName("Register with short password (<10 chars) returns 422 Unprocessable Entity")
     void testRegisterValidationFailure() throws Exception {
         RegisterRequest request = new RegisterRequest(
                 "shortpass@iroise.bzh",
@@ -110,7 +113,7 @@ class AuthControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken", notNullValue()))
                 .andExpect(jsonPath("$.refreshToken", notNullValue()))
-                .andExpect(jsonPath("$.user.roles", hasItems("ROLE_ADMIN", "ROLE_OPERATOR", "ROLE_PASSENGER")))
+                .andExpect(jsonPath("$.user.role", is("ADMIN")))
                 .andExpect(cookie().exists("refreshToken"));
     }
 
@@ -131,9 +134,45 @@ class AuthControllerTests {
     }
 
     @Test
-    @DisplayName("Refresh token rotation returns new access and refresh tokens")
-    void testRefreshTokenRotation() throws Exception {
-        // First login to get refresh token
+    @DisplayName("Account lockout after 5 consecutive failed login attempts")
+    void testAccountLockoutAfterFiveAttempts() throws Exception {
+        String testEmail = "lockout-test@iroise.bzh";
+        RegisterRequest regReq = new RegisterRequest(testEmail, "SafePass12345!", "Lock", "Out", null);
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(regReq)))
+                .andExpect(status().isCreated());
+
+        LoginRequest badReq = new LoginRequest(testEmail, "WrongPassword!");
+
+        // 4 failed attempts -> 401
+        for (int i = 0; i < 4; i++) {
+            mockMvc.perform(post("/api/v1/auth/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(badReq)))
+                    .andExpect(status().isUnauthorized());
+        }
+
+        // 5th failed attempt -> locks account
+        mockMvc.perform(post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(badReq)))
+                .andExpect(status().isUnauthorized());
+
+        // 6th attempt -> Account locked (403 or locked error message)
+        mockMvc.perform(post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(badReq)))
+                .andExpect(status().isUnauthorized());
+
+        User user = userRepository.findByEmailIgnoreCase(testEmail).orElseThrow();
+        assertThat(user.isAccountLocked()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Refresh token rotation and token reuse detection")
+    void testRefreshTokenRotationAndReuseDetection() throws Exception {
+        // 1. Login to get initial refresh token
         LoginRequest loginReq = new LoginRequest("passenger@whereismyferry.bzh", "PassengerPass123!");
         MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -144,21 +183,25 @@ class AuthControllerTests {
         JsonNode loginJson = objectMapper.readTree(loginResult.getResponse().getContentAsString());
         String initialRefresh = loginJson.path("refreshToken").asText();
 
-        // Refresh via body
+        // 2. Rotate token
         RefreshTokenRequest refreshReq = new RefreshTokenRequest(initialRefresh);
-        mockMvc.perform(post("/api/v1/auth/refresh")
+        MvcResult rotateResult = mockMvc.perform(post("/api/v1/auth/refresh")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(refreshReq)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.accessToken", notNullValue()))
-                .andExpect(jsonPath("$.refreshToken", notNullValue()));
+                .andExpect(jsonPath("$.refreshToken", notNullValue()))
+                .andReturn();
 
-        // Also test refresh via cookie
-        Cookie cookie = new Cookie("refreshToken", initialRefresh);
+        JsonNode rotateJson = objectMapper.readTree(rotateResult.getResponse().getContentAsString());
+        String newRefresh = rotateJson.path("refreshToken").asText();
+        assertThat(newRefresh).isNotEqualTo(initialRefresh);
+
+        // 3. Attempt to reuse old initial refresh token -> triggers reuse detection!
         mockMvc.perform(post("/api/v1/auth/refresh")
-                        .cookie(cookie))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accessToken", notNullValue()));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new RefreshTokenRequest(initialRefresh))))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -168,5 +211,45 @@ class AuthControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(cookie().maxAge("refreshToken", 0))
                 .andExpect(jsonPath("$.status", is("SUCCESS")));
+    }
+
+    @Test
+    @DisplayName("Forgot password returns generic 200 success without leaking email existence")
+    void testForgotPasswordGenericResponse() throws Exception {
+        ForgotPasswordRequest req = new ForgotPasswordRequest("nonexistent@example.com");
+        mockMvc.perform(post("/api/v1/auth/forgot-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(req)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is("SUCCESS")))
+                .andExpect(jsonPath("$.message", containsString("If an account exists")));
+    }
+
+    @Test
+    @DisplayName("First admin is seeded with app.admin.seed.email")
+    void testFirstAdminSeeded() {
+        User admin = userRepository.findByEmailIgnoreCase("admin@example.com").orElse(null);
+        assertThat(admin).isNotNull();
+        assertThat(admin.getRole().name()).isEqualTo("ADMIN");
+        assertThat(admin.getStatus().name()).isEqualTo("ACTIVE");
+    }
+
+    @Test
+    @DisplayName("GET /api/v1/auth/me returns profile for authenticated user")
+    void testGetMeAuthenticated() throws Exception {
+        LoginRequest loginReq = new LoginRequest("passenger@whereismyferry.bzh", "PassengerPass123!");
+        MvcResult loginResult = mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginReq)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String token = objectMapper.readTree(loginResult.getResponse().getContentAsString()).path("accessToken").asText();
+
+        mockMvc.perform(get("/api/v1/auth/me")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email", is("passenger@whereismyferry.bzh")))
+                .andExpect(jsonPath("$.role", is("PASSENGER")));
     }
 }

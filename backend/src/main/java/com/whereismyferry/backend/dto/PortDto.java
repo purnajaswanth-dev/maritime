@@ -11,6 +11,13 @@ public class PortDto {
     private String timezone;
     private String amenities;
     private Integer berthCount;
+    private Integer berthRadiusM;
+    private String status;
+    private String address;
+    private String phone;
+    private String email;
+    private String facilities;
+    private String notes;
 
     public PortDto() {}
 
@@ -41,4 +48,18 @@ public class PortDto {
     public void setAmenities(String amenities) { this.amenities = amenities; }
     public Integer getBerthCount() { return berthCount; }
     public void setBerthCount(Integer berthCount) { this.berthCount = berthCount; }
+    public Integer getBerthRadiusM() { return berthRadiusM; }
+    public void setBerthRadiusM(Integer berthRadiusM) { this.berthRadiusM = berthRadiusM; }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getFacilities() { return facilities; }
+    public void setFacilities(String facilities) { this.facilities = facilities; }
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
 }

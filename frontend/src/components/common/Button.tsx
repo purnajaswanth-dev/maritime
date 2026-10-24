@@ -1,12 +1,13 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'text' | 'destructive';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonVariant = 'primary' | 'secondary' | 'text' | 'destructive' | 'outline' | 'danger' | 'warning';
+export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   loading?: boolean;
+  isLoading?: boolean;
   icon?: React.ReactNode;
   children?: React.ReactNode;
 }
@@ -15,22 +16,24 @@ export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   size = 'md',
   loading = false,
+  isLoading,
   icon,
   children,
   className = '',
   disabled,
   ...props
 }) => {
+  const isSpinnerActive = Boolean(loading || isLoading);
   const variantClass = `btn-${variant}`;
   const sizeClass = `btn-${size}`;
 
   return (
     <button
       className={`btn ${variantClass} ${sizeClass} ${className}`.trim()}
-      disabled={disabled || loading}
+      disabled={disabled || isSpinnerActive}
       {...props}
     >
-      {loading ? (
+      {isSpinnerActive ? (
         <span
           className="btn-spinner"
           role="status"

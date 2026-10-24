@@ -34,6 +34,15 @@ public class Route {
     @Column(name = "tracking_supported", nullable = false)
     private Boolean trackingSupported = false;
 
+    @Column(name = "distance_km")
+    private Double distanceKm;
+
+    @Column(name = "typical_duration_min")
+    private Double typicalDurationMin;
+
+    @Column(name = "engine_corridor_id", length = 64)
+    private String engineCorridorId;
+
     public Route() {}
 
     public Route(String id, String code, Port originPort, Port destinationPort, String name, Double distanceNm, Double crossingDurationMinutes, Boolean trackingSupported) {
@@ -45,6 +54,8 @@ public class Route {
         this.distanceNm = distanceNm;
         this.crossingDurationMinutes = crossingDurationMinutes;
         this.trackingSupported = trackingSupported != null ? trackingSupported : false;
+        this.distanceKm = distanceNm != null ? distanceNm * 1.852 : null;
+        this.typicalDurationMin = crossingDurationMinutes;
     }
 
     public String getId() { return id; }
@@ -70,6 +81,15 @@ public class Route {
 
     public Boolean getTrackingSupported() { return trackingSupported; }
     public void setTrackingSupported(Boolean trackingSupported) { this.trackingSupported = trackingSupported; }
+
+    public Double getDistanceKm() { return distanceKm != null ? distanceKm : (distanceNm != null ? distanceNm * 1.852 : null); }
+    public void setDistanceKm(Double distanceKm) { this.distanceKm = distanceKm; }
+
+    public Double getTypicalDurationMin() { return typicalDurationMin != null ? typicalDurationMin : crossingDurationMinutes; }
+    public void setTypicalDurationMin(Double typicalDurationMin) { this.typicalDurationMin = typicalDurationMin; }
+
+    public String getEngineCorridorId() { return engineCorridorId; }
+    public void setEngineCorridorId(String engineCorridorId) { this.engineCorridorId = engineCorridorId; }
 
     @Override
     public boolean equals(Object o) {

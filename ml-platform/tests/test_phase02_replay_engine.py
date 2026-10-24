@@ -220,3 +220,59 @@ def test_full_simulated_day_at_60x():
         assert comp.actual_arrival_utc is not None
         assert comp.snapshots_count > 0
         assert comp.actual_duration_minutes > 0
+
+
+def test_timetable_sync_endpoint_and_replay(client):
+    """Verify POST /internal/v1/timetable/sync loads departures dynamically and provisions replays."""
+    payload = {
+        "departures": [
+            {
+                "departure_id": "DEP-TEST-SYNC-01",
+                "corridor": "BREST_LE_CONQUET",
+                "origin_terminal_id": "BREST",
+                "dest_terminal_id": "LE_CONQUET",
+                "vessel_id": "V-FROMVEUR-SIM",
+                "vessel_name": "FROMVEUR II",
+                "tracking_supported": True,
+                "scheduled_departure_utc": "2026-10-24T09:30:00Z",
+                "scheduled_arrival_utc": "2026-10-24T10:45:00Z",
+                "duration_minutes": 75.0,
+                "status": "SCHEDULED",
+            },
+            {
+                "departure_id": "DEP-TEST-UNSUPPORTED-02",
+                "corridor": "CAMARET_MOLENE",
+                "origin_terminal_id": "CAMARET",
+                "dest_terminal_id": "MOLENE",
+                "vessel_id": None,
+                "vessel_name": None,
+                "tracking_supported": False,
+                "scheduled_departure_utc": "2026-10-24T14:00:00Z",
+                "scheduled_arrival_utc": "2026-10-24T15:00:00Z",
+                "duration_minutes": 60.0,
+                "status": "SCHEDULED",
+            },
+        ]
+    }
+
+    resp = client.post("/internal/v1/timetable/sync", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "SYNCED"
+    assert data["synced_count"] == 2
+    assert data["supported_count"] == 1
+
+    # Supported departure has live endpoint
+    resp_live = client.get("/internal/v1/departures/DEP-TEST-SYNC-01/live")
+    assert resp_live.status_code == 200
+    live_data = resp_live.json()
+    assert live_data["departure_id"] == "DEP-TEST-SYNC-01"
+    assert live_data["tracking_supported"] is True
+    assert live_data["data_source"] == "HISTORICAL_REPLAY"
+    assert "eta" in live_data
+    assert "lifecycle" in live_data
+
+    # Unsupported departure returns 404 (honest tracking rule)
+    resp_unsupported = client.get("/internal/v1/departures/DEP-TEST-UNSUPPORTED-02/live")
+    assert resp_unsupported.status_code == 404
+

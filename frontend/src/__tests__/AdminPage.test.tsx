@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { AdminPage } from '../pages/AdminPage';
 
 describe('AdminPage Component', () => {
-  it('renders admin portal header, health tiles, and overview KPIs', async () => {
+  it('renders admin portal header, health tiles, and overview operational KPIs', async () => {
     render(
       <MemoryRouter>
         <AdminPage />
@@ -18,19 +18,95 @@ describe('AdminPage Component', () => {
       expect(screen.getByText(/ml & ais engine/i)).toBeInTheDocument();
       expect(screen.getByText(/backend gateway/i)).toBeInTheDocument();
       expect(screen.getByText(/database tier/i)).toBeInTheDocument();
+      expect(screen.getByText(/today's sailings/i)).toBeInTheDocument();
+      expect(screen.getByText(/ships in transit/i)).toBeInTheDocument();
       expect(screen.getByText(/total bookings/i)).toBeInTheDocument();
       expect(screen.getByText(/confirmed revenue/i)).toBeInTheDocument();
     });
   });
 
-  it('switches to Simulation Controls tab and displays control buttons and scenario library', async () => {
+  it('switches to Timetable tab and displays operating services and dated departures', async () => {
     render(
       <MemoryRouter>
         <AdminPage />
       </MemoryRouter>
     );
 
-    const simTab = screen.getByRole('button', { name: /simulation controls/i });
+    const timetableTab = screen.getByRole('button', { name: /^timetable$/i });
+    fireEvent.click(timetableTab);
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /operating services/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /dated departures/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /add service/i })).toBeInTheDocument();
+    });
+
+    // Switch to dated departures
+    const departuresSubTab = screen.getByRole('button', { name: /dated departures/i });
+    fireEvent.click(departuresSubTab);
+
+    await waitFor(() => {
+      expect(screen.getByText(/seats/i)).toBeInTheDocument();
+    });
+  });
+
+  it('switches to Ports tab and displays port authority management', async () => {
+    render(
+      <MemoryRouter>
+        <AdminPage />
+      </MemoryRouter>
+    );
+
+    const portsTab = screen.getByRole('button', { name: /ports/i });
+    fireEvent.click(portsTab);
+
+    await waitFor(() => {
+      expect(screen.getByText(/port code/i)).toBeInTheDocument();
+      expect(screen.getByText(/berth radius/i)).toBeInTheDocument();
+    });
+  });
+
+  it('switches to Ships tab and displays fleet status', async () => {
+    render(
+      <MemoryRouter>
+        <AdminPage />
+      </MemoryRouter>
+    );
+
+    const shipsTab = screen.getByRole('button', { name: /ships/i });
+    fireEvent.click(shipsTab);
+
+    await waitFor(() => {
+      expect(screen.getByText(/ship name/i)).toBeInTheDocument();
+      expect(screen.getByText(/home port/i)).toBeInTheDocument();
+      expect(screen.getByText(/live ais/i)).toBeInTheDocument();
+    });
+  });
+
+  it('switches to Passengers tab and displays manifest directory and CSV export', async () => {
+    render(
+      <MemoryRouter>
+        <AdminPage />
+      </MemoryRouter>
+    );
+
+    const paxTab = screen.getByRole('button', { name: /passengers/i });
+    fireEvent.click(paxTab);
+
+    await waitFor(() => {
+      expect(screen.getByPlaceholderText(/search passenger by name\/email/i)).toBeInTheDocument();
+      expect(screen.getByText(/export all passengers csv/i)).toBeInTheDocument();
+    });
+  });
+
+  it('switches to Live engine tab and displays simulation controls and ML diagnostics', async () => {
+    render(
+      <MemoryRouter>
+        <AdminPage />
+      </MemoryRouter>
+    );
+
+    const simTab = screen.getByRole('button', { name: /live engine/i });
     fireEvent.click(simTab);
 
     await waitFor(() => {
@@ -39,9 +115,15 @@ describe('AdminPage Component', () => {
       expect(screen.getByRole('button', { name: /^pause$/i })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: /^reset docks$/i })).toBeInTheDocument();
       expect(screen.getByText(/simulation speed multiplier/i)).toBeInTheDocument();
+      expect(screen.getByText(/VectorizedRidgeETAModel/i)).toBeInTheDocument();
+      expect(screen.getByText(/integrity pass/i)).toBeInTheDocument();
+      expect(screen.getByText(/mean absolute error/i)).toBeInTheDocument();
+      expect(screen.getByText(/5.2 min/i)).toBeInTheDocument();
+      expect(screen.getByText(/3.56 min/i)).toBeInTheDocument();
+      expect(screen.getByText(/7.47 min/i)).toBeInTheDocument();
     });
 
-    // Verify scenario library item and trigger modal
+    // Verify scenario library trigger modal
     const triggerButtons = screen.getAllByRole('button', { name: /trigger scenario/i });
     expect(triggerButtons.length).toBeGreaterThan(0);
     fireEvent.click(triggerButtons[0]);
@@ -52,67 +134,30 @@ describe('AdminPage Component', () => {
     });
   });
 
-  it('switches to ML Diagnostics tab and displays model integrity and test benchmark metrics', async () => {
+  it('switches to Admins tab and opens maintenance mode lockdown modal', async () => {
     render(
       <MemoryRouter>
         <AdminPage />
       </MemoryRouter>
     );
 
-    const mlTab = screen.getByRole('button', { name: /ml diagnostics/i });
-    fireEvent.click(mlTab);
-
-    await waitFor(() => {
-      expect(screen.getByText(/VectorizedRidgeETAModel/i)).toBeInTheDocument();
-      expect(screen.getByText(/integrity pass/i)).toBeInTheDocument();
-      expect(screen.getByText(/mean absolute error/i)).toBeInTheDocument();
-      expect(screen.getByText(/5.2 min/i)).toBeInTheDocument();
-      expect(screen.getByText(/3.56 min/i)).toBeInTheDocument();
-      expect(screen.getByText(/7.47 min/i)).toBeInTheDocument();
-      expect(screen.getByText(/physical kinematic sog/i)).toBeInTheDocument();
-    });
-  });
-
-  it('switches to Users & Operators tab and renders governance table', async () => {
-    render(
-      <MemoryRouter>
-        <AdminPage />
-      </MemoryRouter>
-    );
-
-    const usersTab = screen.getByRole('button', { name: /users & operators/i });
-    fireEvent.click(usersTab);
+    const adminsTab = screen.getByRole('button', { name: /admins/i });
+    fireEvent.click(adminsTab);
 
     await waitFor(() => {
       expect(screen.getByText(/system users & operator governance/i)).toBeInTheDocument();
-      expect(screen.getByText(/admin@whereismyferry.bzh/i)).toBeInTheDocument();
-      expect(screen.getByText(/auditor@whereismyferry.bzh/i)).toBeInTheDocument();
-    });
-  });
-
-  it('switches to Audit Trail tab and opens maintenance mode lockdown modal', async () => {
-    render(
-      <MemoryRouter>
-        <AdminPage />
-      </MemoryRouter>
-    );
-
-    const auditTab = screen.getByRole('button', { name: /audit trail & security/i });
-    fireEvent.click(auditTab);
-
-    await waitFor(() => {
-      expect(screen.getByText(/immutable system audit log/i)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/filter by action/i)).toBeInTheDocument();
+      expect(screen.getByText(/immutable system audit trail/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /create admin/i })).toBeInTheDocument();
     });
 
-    // Test maintenance mode modal opening
-    const maintenanceBtn = screen.getByRole('button', { name: /enable maintenance/i });
+    // Test maintenance mode modal opening from header button
+    const maintenanceBtn = screen.getByRole('button', { name: /maintenance/i });
     fireEvent.click(maintenanceBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/activate maintenance mode/i)).toBeInTheDocument();
-      expect(screen.getByText(/enabling maintenance mode blocks all passenger booking requests/i)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /confirm maintenance lockdown/i })).toBeInTheDocument();
+      expect(screen.getByText(/enable maintenance lockdown/i)).toBeInTheDocument();
+      expect(screen.getByText(/enabling maintenance mode blocks all passenger bookings with http 503/i)).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /confirm lockdown/i })).toBeInTheDocument();
     });
   });
 });

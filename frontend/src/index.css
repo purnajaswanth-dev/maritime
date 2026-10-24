@@ -174,19 +174,39 @@ a:hover {
   color: var(--color-secondary-hover);
 }
 
-/* 4. Destructive Red */
-.btn-destructive {
+/* 4. Destructive Red / Danger */
+.btn-destructive,
+.btn-danger {
   background-color: var(--color-destructive);
   color: #FFFFFF;
   border-color: var(--color-destructive);
 }
 
-.btn-destructive:hover:not(:disabled) {
+.btn-destructive:hover:not(:disabled),
+.btn-danger:hover:not(:disabled) {
   background-color: var(--color-destructive-hover);
   border-color: var(--color-destructive-hover);
 }
 
+/* 5. Outline */
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-slate-medium);
+  border-color: var(--color-border-hover);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-slate-light);
+  color: var(--color-navy);
+}
+
 /* Button Sizing */
+.btn-xs {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.75rem;
+}
+
 .btn-sm {
   padding: 0.35rem 0.65rem;
   font-size: 0.8125rem;

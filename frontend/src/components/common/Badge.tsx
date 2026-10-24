@@ -4,6 +4,7 @@ export type BadgeVariant = 'neutral' | 'success' | 'info' | 'warning' | 'danger'
 
 export interface BadgeProps {
   variant?: BadgeVariant;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | string;
   children: React.ReactNode;
   className?: string;
 }

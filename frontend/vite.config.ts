@@ -10,6 +10,9 @@ export default defineConfig({
       '/api': {
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
+        headers: {
+          Connection: 'keep-alive',
+        },
       },
     },
   },
@@ -18,5 +21,6 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
     css: true,
+    exclude: ['**/node_modules/**', '**/dist/**', '**/e2e/**'],
   },
 });

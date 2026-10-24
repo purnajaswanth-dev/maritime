@@ -43,6 +43,12 @@ public class TrackingController {
         return trackingService.subscribeLiveStream(id);
     }
 
+    @GetMapping(value = "/stream/vessels", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @Operation(summary = "Subscribe to fleet-wide real-time Server-Sent Events (SSE) vessel stream")
+    public SseEmitter streamFleetVessels() {
+        return trackingService.subscribeFleetVesselsStream();
+    }
+
     @PostMapping("/departures/{id}/share")
     @Operation(summary = "Generate a secure, expiring shareable link for public voyage tracking")
     public ResponseEntity<ShareLinkResponseDto> createShareLink(
