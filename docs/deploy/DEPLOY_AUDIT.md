@@ -53,3 +53,11 @@ This document provides a systematic, comprehensive audit of all build, configura
 - **Root Cause**: Default JVM heap sizing in Java 17 inside container environments can exceed small container limits.
 - **Fix**: Added `-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0` to Docker ENTRYPOINT in both root and backend Dockerfiles.
 - **Files Changed**: `Dockerfile`, `backend/Dockerfile`.
+
+### Defect 7: Flyway V3 Migration H2-Specific SQL Syntax (`MERGE INTO ... KEY(id)`)
+- **Symptom**: Cloud deployment fails during Flyway migration V3 with SQL syntax error.
+- **Exact Error**: `Caused by: org.flywaydb.core.internal.sqlscript.FlywaySqlScriptException: Script V3__ports_ships_timetable.sql failed. SQL State: 42601. Message: ERROR: syntax error at or near "(" Position: 95. Line: 16`
+- **Root Cause**: `V3__ports_ships_timetable.sql` contained H2-specific upsert syntax `MERGE INTO ports ... KEY(id) VALUES ...` and `MERGE INTO vessels ... KEY(id) VALUES ...`. PostgreSQL rejects `KEY(id)` as a syntax error.
+- **Fix**: Replaced proprietary `MERGE INTO ... KEY(id)` with standard PostgreSQL `INSERT INTO ... VALUES (...) ON CONFLICT (id) DO UPDATE SET ...`. Configured unit tests in `src/test/resources/application.properties` to use `spring.jpa.hibernate.ddl-auto=create-drop` and `spring.flyway.enabled=false`, eliminating H2 dialect incompatibilities with production Flyway scripts while all 78 tests pass cleanly.
+- **Files Changed**: `backend/src/main/resources/db/migration/V3__ports_ships_timetable.sql`, `backend/src/test/resources/application.properties`.
+

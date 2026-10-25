@@ -13,8 +13,7 @@ ALTER TABLE ports ADD COLUMN IF NOT EXISTS facilities TEXT;
 ALTER TABLE ports ADD COLUMN IF NOT EXISTS notes TEXT;
 
 -- Seed / Upsert the 6 real terminals with exact coordinates and berth radii
-MERGE INTO ports (id, code, name, latitude, longitude, berth_radius_m, status, timezone, facilities, berth_count)
-KEY(id)
+INSERT INTO ports (id, code, name, latitude, longitude, berth_radius_m, status, timezone, facilities, berth_count)
 VALUES
 ('BREST', 'BREST', 'Port de Commerce de Brest', 48.3811, -4.4857, 800, 'OPEN', 'Europe/Paris', 'Ticket desk, Waiting hall, Wi-Fi, Long-stay parking, Café', 2),
 ('LE_CONQUET', 'LE_CONQUET', 'Port du Conquet', 48.3596, -4.7818, 600, 'OPEN', 'Europe/Paris', 'Ticket desk, Passenger shelter, Short-stay parking', 2),
@@ -22,7 +21,17 @@ VALUES
 ('MOLENE', 'MOLENE', 'Port de Molène', 48.4022, -4.9565, 500, 'OPEN', 'Europe/Paris', 'Passenger quay, Island waiting room', 1),
 ('AUDIERNE', 'AUDIERNE', 'Sainte-Evette (Audierne)', 48.0061, -4.5524, 600, 'OPEN', 'Europe/Paris', 'Ticket counter, Free parking, Restrooms', 2),
 ('ILE_DE_SEIN', 'ILE_DE_SEIN', 'Port de l''Île de Sein', 48.0390, -4.8486, 500, 'OPEN', 'Europe/Paris', 'Quay shelter, Tourist office, Island depot', 1),
-('CAMARET', 'CAMARET', 'Port de Camaret-sur-Mer', 48.2780, -4.5940, 600, 'OPEN', 'Europe/Paris', 'Seasonal marina dock, Ticket booth', 1);
+('CAMARET', 'CAMARET', 'Port de Camaret-sur-Mer', 48.2780, -4.5940, 600, 'OPEN', 'Europe/Paris', 'Seasonal marina dock, Ticket booth', 1)
+ON CONFLICT (id) DO UPDATE SET
+    code = EXCLUDED.code,
+    name = EXCLUDED.name,
+    latitude = EXCLUDED.latitude,
+    longitude = EXCLUDED.longitude,
+    berth_radius_m = EXCLUDED.berth_radius_m,
+    status = EXCLUDED.status,
+    timezone = EXCLUDED.timezone,
+    facilities = EXCLUDED.facilities,
+    berth_count = EXCLUDED.berth_count;
 
 -- 2. Upgrade vessels table
 ALTER TABLE vessels ADD COLUMN IF NOT EXISTS engine_vessel_id VARCHAR(64);
@@ -30,13 +39,22 @@ ALTER TABLE vessels ADD COLUMN IF NOT EXISTS home_port_id VARCHAR(64);
 ALTER TABLE vessels ADD COLUMN IF NOT EXISTS capacity INT DEFAULT 300;
 
 -- Upsert the 4 modelled vessels with their engine IDs
-MERGE INTO vessels (id, code, name, capacity, capacity_passengers, capacity_vehicles, speed_knots, engine_vessel_id, home_port_id, status)
-KEY(id)
+INSERT INTO vessels (id, code, name, capacity, capacity_passengers, capacity_vehicles, speed_knots, engine_vessel_id, home_port_id, status)
 VALUES
 ('V-FROMVEUR-SIM', 'FROMVEUR_II', 'FROMVEUR II', 365, 365, 0, 20.0, 'V-FROMVEUR-SIM', 'BREST', 'ACTIVE'),
 ('V-AZENOR-SIM', 'ANDRE_COLIN', 'ANDRE COLIN', 250, 250, 0, 18.0, 'V-AZENOR-SIM', 'LE_CONQUET', 'ACTIVE'),
 ('V-OUESSANT-SIM', 'ENEZ_EUSSA_3', 'ENEZ EUSSA 3', 320, 320, 0, 19.0, 'V-OUESSANT-SIM', 'OUESSANT_STIFF', 'ACTIVE'),
-('V-SEIN-SIM', 'ENEZ_SUN_3', 'ENEZ SUN 3', 200, 200, 0, 16.0, 'V-SEIN-SIM', 'AUDIERNE', 'ACTIVE');
+('V-SEIN-SIM', 'ENEZ_SUN_3', 'ENEZ SUN 3', 200, 200, 0, 16.0, 'V-SEIN-SIM', 'AUDIERNE', 'ACTIVE')
+ON CONFLICT (id) DO UPDATE SET
+    code = EXCLUDED.code,
+    name = EXCLUDED.name,
+    capacity = EXCLUDED.capacity,
+    capacity_passengers = EXCLUDED.capacity_passengers,
+    capacity_vehicles = EXCLUDED.capacity_vehicles,
+    speed_knots = EXCLUDED.speed_knots,
+    engine_vessel_id = EXCLUDED.engine_vessel_id,
+    home_port_id = EXCLUDED.home_port_id,
+    status = EXCLUDED.status;
 
 -- 3. Upgrade routes table
 ALTER TABLE routes ADD COLUMN IF NOT EXISTS distance_km DOUBLE PRECISION;
