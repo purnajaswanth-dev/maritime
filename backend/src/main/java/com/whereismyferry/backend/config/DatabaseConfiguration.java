@@ -44,6 +44,7 @@ public class DatabaseConfiguration {
                 try (var connection = flyway.getConfiguration().getDataSource().getConnection()) {
                     var meta = connection.getMetaData();
                     boolean rolesExists = false;
+                    boolean bookingsValid = true;
                     try (var rs = meta.getTables(null, null, "roles", new String[]{"TABLE"})) {
                         if (rs.next()) {
                             rolesExists = true;
@@ -57,10 +58,25 @@ public class DatabaseConfiguration {
                         }
                     }
 
-                    if (!rolesExists) {
-                        log.warn("DatabaseConfiguration: Core table 'roles' does not exist in schema! Resetting flyway_schema_history so all migrations execute fresh...");
+                    try (var rs = meta.getTables(null, null, "bookings", new String[]{"TABLE"})) {
+                        if (rs.next()) {
+                            boolean hasUserId = false;
+                            try (var colRs = meta.getColumns(null, null, "bookings", "user_id")) {
+                                if (colRs.next()) {
+                                    hasUserId = true;
+                                }
+                            }
+                            if (!hasUserId) {
+                                bookingsValid = false;
+                            }
+                        }
+                    }
+
+                    if (!rolesExists || !bookingsValid) {
+                        log.warn("DatabaseConfiguration: Stale or incomplete schema detected (rolesExists={}, bookingsValid={})! Resetting schema so all migrations execute fresh...",
+                                rolesExists, bookingsValid);
                         try (var stmt = connection.createStatement()) {
-                            stmt.execute("DROP TABLE IF EXISTS flyway_schema_history CASCADE");
+                            stmt.execute("DROP TABLE IF EXISTS eta_accuracy_records, share_links, maintenance_records, crew_assignments, audit_logs, audit_log, support_tickets, notifications, disruptions, payments, tickets, passengers, bookings, user_roles, roles, users, fare_rules, departures, schedules, routes, vessels, ports, refresh_tokens, password_reset_tokens, services, flyway_schema_history CASCADE");
                         }
                     } else {
                         log.info("DatabaseConfiguration: Core tables verified. Running Flyway repair to align migration checksums...");

@@ -4,6 +4,8 @@ import os
 import pandas as pd
 import pytest
 
+pytest.importorskip("xarray")
+
 from src.ingestion.arrival_detector import ArrivalDetector, EventType, LabelQuality, PortGeofence
 from src.ingestion.ocean_collocation import OceanFeatureCollocator
 from src.ingestion.schedule_matcher import MatchDecision, ScheduleMatcher

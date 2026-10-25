@@ -2,7 +2,10 @@
 
 from typing import Any, Dict, Optional, Tuple
 import numpy as np
-import xarray as xr
+try:
+    import xarray as xr
+except ImportError:
+    xr = None
 
 
 class OceanFeatureCollocator:

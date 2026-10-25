@@ -4,7 +4,14 @@ import os
 from pathlib import Path
 import warnings
 import pytest
-from starlette.exceptions import StarletteDeprecationWarning
+
+try:
+    from starlette.exceptions import StarletteDeprecationWarning
+except ImportError:
+    try:
+        from starlette.warnings import StarletteDeprecationWarning
+    except ImportError:
+        StarletteDeprecationWarning = DeprecationWarning
 
 with warnings.catch_warnings():
     warnings.filterwarnings(

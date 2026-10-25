@@ -9,6 +9,7 @@ from src.profiling.gtfs_profiler import GTFSProfiler
 
 
 def test_copernicus_netcdf_metadata():
+    pytest.importorskip("xarray")
     nc_path = "data/downloads/cmems_mod_glo_phy_my_0.083deg_P1D-m_1792083299167.nc"
     if not os.path.exists(nc_path):
         pytest.skip("Copernicus NetCDF file not present")

@@ -1,0 +1,23 @@
+# Set default behavior to automatically normalize line endings
+* text=auto
+
+# Explicitly declare shell scripts to use LF
+*.sh text eol=lf
+*.bash text eol=lf
+mvnw text eol=lf
+
+# Explicitly declare Windows batch and PowerShell to use CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary or hash-sensitive files that must not have line ending modifications
+*.json -text
+*.parquet binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.webp binary
+*.jar binary
+*.zip binary

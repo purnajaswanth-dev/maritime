@@ -139,6 +139,9 @@ CREATE TABLE IF NOT EXISTS bookings (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS user_id BIGINT REFERENCES users(id);
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS departure_id BIGINT REFERENCES departures(id);
+
 CREATE INDEX IF NOT EXISTS idx_bookings_user ON bookings(user_id);
 CREATE INDEX IF NOT EXISTS idx_bookings_dep ON bookings(departure_id);
 
@@ -152,6 +155,8 @@ CREATE TABLE IF NOT EXISTS passengers (
     vehicle_type VARCHAR(32),
     vehicle_registration VARCHAR(32)
 );
+
+ALTER TABLE passengers ADD COLUMN IF NOT EXISTS booking_id BIGINT REFERENCES bookings(id) ON DELETE CASCADE;
 
 CREATE INDEX IF NOT EXISTS idx_passengers_booking ON passengers(booking_id);
 

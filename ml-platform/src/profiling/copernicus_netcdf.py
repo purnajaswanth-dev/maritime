@@ -2,7 +2,10 @@
 
 import os
 from typing import Any, Dict, List, Optional
-import xarray as xr
+try:
+    import xarray as xr
+except ImportError:
+    xr = None
 
 
 class CopernicusNetCDFProfiler:
