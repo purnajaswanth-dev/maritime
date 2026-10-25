@@ -104,10 +104,11 @@ public class DatabaseSeederService {
         Role roleAuditor = roleRepository.findByName("ROLE_AUDITOR").orElseThrow();
         Role roleSupport = roleRepository.findByName("ROLE_SUPPORT").orElseThrow();
 
-        // 1. First Administrator (created once at first start if no admin exists)
+        // 1. First Administrator (created once at first start, unlocked and synchronized on start)
         if (adminSeedEnabled) {
             String seedEmail = adminSeedEmail.trim().toLowerCase();
-            if (userRepository.findByEmailIgnoreCase(seedEmail).isEmpty()) {
+            Optional<User> existing = userRepository.findByEmailIgnoreCase(seedEmail);
+            if (existing.isEmpty()) {
                 User admin = new User();
                 admin.setEmail(seedEmail);
                 admin.setPasswordHash(passwordEncoder.encode(adminSeedPassword));
@@ -119,15 +120,30 @@ public class DatabaseSeederService {
                 admin.setRoles(Set.of(roleAdmin, roleOperator, rolePassenger));
                 admin.setEnabled(true);
                 admin.setEmailVerified(true);
+                admin.setFailedAttempts(0);
+                admin.setLockedUntil(null);
                 userRepository.save(admin);
                 log.info("First administrator account successfully seeded: {}", seedEmail);
+            } else {
+                User admin = existing.get();
+                admin.setFailedAttempts(0);
+                admin.setLockedUntil(null);
+                admin.setStatus(com.whereismyferry.backend.entity.UserStatus.ACTIVE);
+                admin.setEnabled(true);
+                if (adminSeedPassword != null && !adminSeedPassword.isBlank()) {
+                    admin.setPasswordHash(passwordEncoder.encode(adminSeedPassword));
+                }
+                userRepository.save(admin);
+                log.info("Administrator account unlocked and synchronized: {}", seedEmail);
             }
         }
 
         // 2. Legacy admin account for backwards compatibility with tests
-        if (userRepository.findByEmailIgnoreCase("admin@whereismyferry.bzh").isEmpty()) {
+        String legacyAdminEmail = "admin@whereismyferry.bzh";
+        Optional<User> existingLegacy = userRepository.findByEmailIgnoreCase(legacyAdminEmail);
+        if (existingLegacy.isEmpty()) {
             User admin = new User();
-            admin.setEmail("admin@whereismyferry.bzh");
+            admin.setEmail(legacyAdminEmail);
             admin.setPasswordHash(passwordEncoder.encode("AdminPass123!"));
             admin.setFullName("Admin Ferry");
             admin.setFirstName("Admin");
@@ -137,6 +153,16 @@ public class DatabaseSeederService {
             admin.setRoles(Set.of(roleAdmin, roleOperator, rolePassenger));
             admin.setEnabled(true);
             admin.setEmailVerified(true);
+            admin.setFailedAttempts(0);
+            admin.setLockedUntil(null);
+            userRepository.save(admin);
+        } else {
+            User admin = existingLegacy.get();
+            admin.setFailedAttempts(0);
+            admin.setLockedUntil(null);
+            admin.setStatus(com.whereismyferry.backend.entity.UserStatus.ACTIVE);
+            admin.setEnabled(true);
+            admin.setPasswordHash(passwordEncoder.encode("AdminPass123!"));
             userRepository.save(admin);
         }
 
