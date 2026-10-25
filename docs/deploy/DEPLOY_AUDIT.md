@@ -61,3 +61,10 @@ This document provides a systematic, comprehensive audit of all build, configura
 - **Fix**: Replaced proprietary `MERGE INTO ... KEY(id)` with standard PostgreSQL `INSERT INTO ... VALUES (...) ON CONFLICT (id) DO UPDATE SET ...`. Configured unit tests in `src/test/resources/application.properties` to use `spring.jpa.hibernate.ddl-auto=create-drop` and `spring.flyway.enabled=false`, eliminating H2 dialect incompatibilities with production Flyway scripts while all 78 tests pass cleanly.
 - **Files Changed**: `backend/src/main/resources/db/migration/V3__ports_ships_timetable.sql`, `backend/src/test/resources/application.properties`.
 
+### Defect 8: Missing Root Controller and Unhandled NoResourceFoundException
+- **Symptom**: Accessing backend root URL `GET /` returns HTTP 500 ProblemDetail `{"type":"https://whereismyferry.bzh/problems/internal-server-error","status":500,"detail":"An unexpected internal error occurred.","instance":"/"}`.
+- **Root Cause**: All API controllers were mapped under `/api/v1/*`, leaving `GET /` unmapped. In Spring Boot 3.4 (Spring 6), unmapped static/root requests throw `NoResourceFoundException`. Because `GlobalExceptionHandler` lacked an explicit handler for `NoResourceFoundException`, it fell into `@ExceptionHandler(Exception.class)` which masked the missing endpoint as a 500 Internal Server Error.
+- **Fix**: Created `HomeController` with `GET /` returning 200 OK service metadata and links, added `GET /health` responding `{"status":"UP"}`, added explicit `NoResourceFoundException` handler returning 404 ProblemDetail, and added error logging to `handleGenericException`.
+- **Files Changed**: `backend/src/main/java/com/whereismyferry/backend/controller/HomeController.java`, `backend/src/main/java/com/whereismyferry/backend/exception/GlobalExceptionHandler.java`, `backend/src/test/java/com/whereismyferry/backend/HomeControllerTests.java`.
+
+
