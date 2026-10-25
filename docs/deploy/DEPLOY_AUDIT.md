@@ -67,4 +67,11 @@ This document provides a systematic, comprehensive audit of all build, configura
 - **Fix**: Created `HomeController` with `GET /` returning 200 OK service metadata and links, added `GET /health` responding `{"status":"UP"}`, added explicit `NoResourceFoundException` handler returning 404 ProblemDetail, and added error logging to `handleGenericException`.
 - **Files Changed**: `backend/src/main/java/com/whereismyferry/backend/controller/HomeController.java`, `backend/src/main/java/com/whereismyferry/backend/exception/GlobalExceptionHandler.java`, `backend/src/test/java/com/whereismyferry/backend/HomeControllerTests.java`.
 
+### Defect 9: Backend-Only Deployment Lacked Frontend Web UI Bundling
+- **Symptom**: Accessing deployed cloud URL opened API JSON or raw backend instead of the "Where Is My Ferry?" web UI.
+- **Root Cause**: The repository's root Dockerfile was exclusively compiling the Java Spring Boot service and ignored the `frontend/` React codebase. Furthermore, client-side routing (`/timetable`, `/ports`, `/fares`, `/tracking`, `/admin`) had no server-side SPA forwarding mechanism.
+- **Fix**: Upgraded root `Dockerfile` to a unified multi-stage build (`node:20-alpine` builds React 19 frontend into `frontend/dist`, and `maven` copies the assets into Spring Boot's `src/main/resources/static/`). Created `SpaWebController` to forward all web UI paths to `/index.html` for React Router HTML5 pushState support, and permitted static assets in `SecurityConfig`.
+- **Files Changed**: `Dockerfile`, `backend/src/main/resources/static/`, `backend/src/main/java/com/whereismyferry/backend/controller/SpaWebController.java`, `backend/src/main/java/com/whereismyferry/backend/security/SecurityConfig.java`, `backend/src/main/java/com/whereismyferry/backend/controller/HomeController.java`.
+
+
 

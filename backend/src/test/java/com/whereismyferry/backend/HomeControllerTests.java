@@ -9,8 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.forwardedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,9 +22,25 @@ class HomeControllerTests {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("GET / returns 200 OK and application metadata")
-    void testRootEndpoint() throws Exception {
+    @DisplayName("GET / forwards to index.html to load React SPA")
+    void testRootEndpointForwardsToSpa() throws Exception {
         mockMvc.perform(get("/"))
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl("/index.html"));
+    }
+
+    @Test
+    @DisplayName("GET /timetable forwards to index.html for client-side routing")
+    void testTimetableRouteForwardsToSpa() throws Exception {
+        mockMvc.perform(get("/timetable"))
+                .andExpect(status().isOk())
+                .andExpect(forwardedUrl("/index.html"));
+    }
+
+    @Test
+    @DisplayName("GET /api returns 200 OK and application metadata")
+    void testApiMetadataEndpoint() throws Exception {
+        mockMvc.perform(get("/api"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is("UP")))
                 .andExpect(jsonPath("$.application", is("Where Is My Ferry? API")))

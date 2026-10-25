@@ -10,7 +10,7 @@ import java.util.Map;
 @RestController
 public class HomeController {
 
-    @GetMapping("/")
+    @GetMapping({"/api", "/api/info"})
     public ResponseEntity<Map<String, Object>> root() {
         return ResponseEntity.ok(Map.of(
                 "application", "Where Is My Ferry? API",
