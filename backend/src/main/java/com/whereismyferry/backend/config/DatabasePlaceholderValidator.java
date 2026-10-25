@@ -19,7 +19,8 @@ public class DatabasePlaceholderValidator implements EnvironmentPostProcessor, O
 
     @Override
     public int getOrder() {
-        return Ordered.HIGHEST_PRECEDENCE;
+        // Run after ConfigDataEnvironmentPostProcessor so application.properties is loaded
+        return Ordered.LOWEST_PRECEDENCE;
     }
 
     @Override
@@ -97,7 +98,7 @@ public class DatabasePlaceholderValidator implements EnvironmentPostProcessor, O
             String cleanJdbcUrl = "jdbc:postgresql://" + host + ":" + port + (path != null ? path : "");
             if (query != null && !query.isBlank()) {
                 cleanJdbcUrl += "?" + query;
-            } else if (host != null && !host.equals("localhost") && !host.equals("127.0.0.1") && !host.equals("postgres")) {
+            } else if (host != null && !host.equals("localhost") && !host.equals("127.0.0.1") && !host.equals("postgres") && !host.startsWith("dpg-")) {
                 cleanJdbcUrl += "?sslmode=require";
             }
 
