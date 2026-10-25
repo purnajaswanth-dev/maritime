@@ -9,7 +9,6 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.Profiles;
 
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class DatabasePlaceholderValidator implements EnvironmentPostProcessor, O
 
         // 2. Check spring.datasource.url if provided as a raw postgresql:// URI
         String currentUrl = environment.getProperty("spring.datasource.url", "");
-        if (currentUrl.contains("@") || (currentUrl.startsWith("postgresql://") && !currentUrl.startsWith("jdbc:postgresql://"))) {
+        if (currentUrl.contains("@") || (currentUrl.startsWith("postgresql://") && !currentUrl.startsWith("jdbc:postgresql://")) || currentUrl.startsWith("postgres://")) {
             parseAndApplyUrl(currentUrl, environment, "spring-datasource-url-fix");
         }
 
@@ -72,39 +71,24 @@ public class DatabasePlaceholderValidator implements EnvironmentPostProcessor, O
 
     private void parseAndApplyUrl(String rawUrl, ConfigurableEnvironment environment, String sourceName) {
         try {
-            String normalized = rawUrl.trim();
-            if (normalized.startsWith("jdbc:postgresql://")) {
-                normalized = "postgresql://" + normalized.substring("jdbc:postgresql://".length());
-            } else if (normalized.startsWith("postgres://")) {
-                normalized = "postgresql://" + normalized.substring("postgres://".length());
-            } else if (!normalized.startsWith("postgresql://")) {
+            DatabaseUrlParser.ParsedDbConfig parsed = DatabaseUrlParser.parse(rawUrl);
+            if (parsed == null || parsed.jdbcUrl() == null) {
                 return;
             }
 
-            URI uri = new URI(normalized);
-            String userInfo = uri.getUserInfo();
-            String host = uri.getHost();
-            int port = uri.getPort() == -1 ? 5432 : uri.getPort();
-            String path = uri.getPath();
-            String query = uri.getQuery();
-
             Map<String, Object> props = new HashMap<>();
-            if (userInfo != null && userInfo.contains(":")) {
-                String[] parts = userInfo.split(":", 2);
-                props.put("spring.datasource.username", parts[0]);
-                props.put("spring.datasource.password", parts[1]);
+            props.put("spring.datasource.url", parsed.jdbcUrl());
+            if (parsed.username() != null && !parsed.username().isBlank()) {
+                props.put("spring.datasource.username", parsed.username());
             }
-
-            String cleanJdbcUrl = "jdbc:postgresql://" + host + ":" + port + (path != null ? path : "");
-            if (query != null && !query.isBlank()) {
-                cleanJdbcUrl += "?" + query;
-            } else if (host != null && !host.equals("localhost") && !host.equals("127.0.0.1") && !host.equals("postgres") && !host.startsWith("dpg-")) {
-                cleanJdbcUrl += "?sslmode=require";
+            if (parsed.password() != null && !parsed.password().isBlank()) {
+                props.put("spring.datasource.password", parsed.password());
             }
+            props.put("spring.datasource.driver-class-name", "org.postgresql.Driver");
 
-            props.put("spring.datasource.url", cleanJdbcUrl);
             environment.getPropertySources().addFirst(new MapPropertySource(sourceName, props));
-            log.info("Successfully configured datasource from {}: {}", sourceName, cleanJdbcUrl.replaceAll(":[^/@]+@", ":***@"));
+            log.info("DatabasePlaceholderValidator: Successfully configured datasource from {}: {}",
+                    sourceName, parsed.jdbcUrl().replaceAll(":[^/@]+@", ":***@"));
         } catch (Exception e) {
             log.warn("Failed to parse datasource URL: {}", e.getMessage());
         }
