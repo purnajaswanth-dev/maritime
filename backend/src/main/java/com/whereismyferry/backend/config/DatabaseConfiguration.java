@@ -41,13 +41,39 @@ public class DatabaseConfiguration {
     public FlywayMigrationStrategy flywayMigrationStrategy() {
         return flyway -> {
             try {
-                log.info("DatabaseConfiguration: Executing Flyway repair to align migration checksums with local scripts...");
-                flyway.repair();
-                log.info("DatabaseConfiguration: Flyway repair completed successfully.");
+                try (var connection = flyway.getConfiguration().getDataSource().getConnection()) {
+                    var meta = connection.getMetaData();
+                    boolean rolesExists = false;
+                    try (var rs = meta.getTables(null, null, "roles", new String[]{"TABLE"})) {
+                        if (rs.next()) {
+                            rolesExists = true;
+                        }
+                    }
+                    if (!rolesExists) {
+                        try (var rs = meta.getTables(null, null, "ROLES", new String[]{"TABLE"})) {
+                            if (rs.next()) {
+                                rolesExists = true;
+                            }
+                        }
+                    }
+
+                    if (!rolesExists) {
+                        log.warn("DatabaseConfiguration: Core table 'roles' does not exist in schema! Resetting flyway_schema_history so all migrations execute fresh...");
+                        try (var stmt = connection.createStatement()) {
+                            stmt.execute("DROP TABLE IF EXISTS flyway_schema_history CASCADE");
+                        }
+                    } else {
+                        log.info("DatabaseConfiguration: Core tables verified. Running Flyway repair to align migration checksums...");
+                        flyway.repair();
+                    }
+                }
             } catch (Exception e) {
-                log.warn("DatabaseConfiguration: Flyway repair warning (continuing with migrate): {}", e.getMessage());
+                log.warn("DatabaseConfiguration: Schema inspection / repair error: {}", e.getMessage());
             }
+
+            log.info("DatabaseConfiguration: Running Flyway migrations...");
             flyway.migrate();
+            log.info("DatabaseConfiguration: Flyway migrations completed successfully.");
         };
     }
 

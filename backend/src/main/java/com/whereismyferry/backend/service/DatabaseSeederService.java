@@ -63,16 +63,19 @@ public class DatabaseSeederService {
 
     @EventListener(ApplicationReadyEvent.class)
     @org.springframework.core.annotation.Order(1)
-    @Transactional
     public void seedInitialData() {
-        log.info("Starting Where Is My Ferry catalog database seeding...");
-        seedRoles();
-        seedDefaultUsers();
-        seedPorts();
-        seedVessels();
-        seedRoutesAndSchedules();
-        seedFareRules();
-        log.info("Database seeding successfully completed.");
+        try {
+            log.info("Starting Where Is My Ferry catalog database seeding...");
+            seedRoles();
+            seedDefaultUsers();
+            seedPorts();
+            seedVessels();
+            seedRoutesAndSchedules();
+            seedFareRules();
+            log.info("Database seeding successfully completed.");
+        } catch (Exception e) {
+            log.error("Database seeding encountered a non-fatal error during startup: {}", e.getMessage(), e);
+        }
     }
 
     private void seedRoles() {
