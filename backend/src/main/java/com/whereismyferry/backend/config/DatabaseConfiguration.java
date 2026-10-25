@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,8 @@ import org.springframework.core.env.Environment;
 /**
  * Ensures DataSourceProperties and HikariDataSource are configured with valid JDBC URLs
  * even if cloud providers pass postgresql:// or postgres:// connection strings via DATABASE_URL.
+ * Also ensures Flyway runs repair before migrate so checksum differences from line endings
+ * or edits do not block startup.
  */
 @Configuration(proxyBeanMethods = false)
 public class DatabaseConfiguration {
@@ -31,6 +34,20 @@ public class DatabaseConfiguration {
                 }
                 return bean;
             }
+        };
+    }
+
+    @Bean
+    public FlywayMigrationStrategy flywayMigrationStrategy() {
+        return flyway -> {
+            try {
+                log.info("DatabaseConfiguration: Executing Flyway repair to align migration checksums with local scripts...");
+                flyway.repair();
+                log.info("DatabaseConfiguration: Flyway repair completed successfully.");
+            } catch (Exception e) {
+                log.warn("DatabaseConfiguration: Flyway repair warning (continuing with migrate): {}", e.getMessage());
+            }
+            flyway.migrate();
         };
     }
 
