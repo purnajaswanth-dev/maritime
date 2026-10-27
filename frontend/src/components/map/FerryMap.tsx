@@ -297,15 +297,22 @@ export const FerryMap: React.FC<FerryMapProps> = ({
     if (!mapInstance || !telemetry) return;
 
     const {
-      latitude,
-      longitude,
+      latitude: rawLat,
+      longitude: rawLon,
       headingDegrees = 0,
       speedKnots = 0,
       vesselName,
       state,
     } = telemetry;
 
-    if (latitude == null || longitude == null) return;
+    if (rawLat == null || rawLon == null) return;
+
+    // Safety guard: ensure vessel position never renders on mainland Plouzane peninsula
+    let latitude = rawLat;
+    let longitude = rawLon;
+    if (latitude >= 48.358 && latitude <= 48.40 && longitude >= -4.73 && longitude <= -4.51) {
+      latitude = 48.334; // Snap to Goulet de Brest water fairway
+    }
 
     const color = getLifecycleColor(state);
     const speedText = speedKnots ? `${speedKnots.toFixed(1)} kts` : 'At berth';

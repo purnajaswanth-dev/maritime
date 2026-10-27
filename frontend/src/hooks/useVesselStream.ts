@@ -94,10 +94,32 @@ const SIMULATED_CORRIDORS: SimulatedCorridor[] = [
     cycleSeconds: 1200,
     timeOffsetSeconds: 0,
     waypoints: [
-      [48.3811, -4.4857], // Brest Port
-      [48.3580, -4.5650], // Goulet de Brest
-      [48.3300, -4.7100], // Pointe Saint-Mathieu
-      [48.3596, -4.7818], // Port du Conquet
+      [48.38218, -4.48563],
+      [48.382, -4.486],
+      [48.38, -4.484],
+      [48.378, -4.484],
+      [48.376, -4.487],
+      [48.374, -4.487],
+      [48.37, -4.489],
+      [48.366, -4.486],
+      [48.36, -4.495],
+      [48.358, -4.515],
+      [48.351, -4.54],
+      [48.344, -4.57],
+      [48.336, -4.604],
+      [48.332, -4.63],
+      [48.329, -4.662],
+      [48.327, -4.698],
+      [48.325, -4.73],
+      [48.318, -4.762],
+      [48.318, -4.776],
+      [48.325, -4.788],
+      [48.336, -4.788],
+      [48.348, -4.788],
+      [48.356, -4.787],
+      [48.3575, -4.7835],
+      [48.358, -4.7815],
+      [48.35816, -4.77967],
     ],
   },
   {
@@ -111,11 +133,18 @@ const SIMULATED_CORRIDORS: SimulatedCorridor[] = [
     cycleSeconds: 1500,
     timeOffsetSeconds: 400,
     waypoints: [
-      [48.3596, -4.7818], // Le Conquet
-      [48.3850, -4.8700], // Chenal du Four
-      [48.4100, -4.9600], // Molène East Passage
-      [48.4450, -5.0150], // Passage du Fromveur
-      [48.4691, -5.0545], // Port du Stiff (Ouessant)
+      [48.35816, -4.77967],
+      [48.358, -4.7815],
+      [48.3575, -4.7835],
+      [48.356, -4.787],
+      [48.365, -4.845],
+      [48.395, -4.885],
+      [48.425, -4.935],
+      [48.448, -4.98],
+      [48.465, -5.02],
+      [48.4665, -5.035],
+      [48.4655, -5.044],
+      [48.4633, -5.04889],
     ],
   },
   {
@@ -129,10 +158,37 @@ const SIMULATED_CORRIDORS: SimulatedCorridor[] = [
     cycleSeconds: 900,
     timeOffsetSeconds: 150,
     waypoints: [
-      [48.0061, -4.5524], // Audierne (Sainte-Evette)
-      [48.0280, -4.6800], // Baie d'Audierne
-      [48.0420, -4.7800], // Raz de Sein
-      [48.0390, -4.8486], // Port de l'Île de Sein
+      [48.021586, -4.537544],
+      [48.022, -4.5374],
+      [48.0188, -4.5342],
+      [48.0172, -4.5342],
+      [48.014, -4.5374],
+      [48.0132, -4.5374],
+      [48.01, -4.5406],
+      [48.0092, -4.5406],
+      [48.0084, -4.5414],
+      [48.0084, -4.5478],
+      [48.0044, -4.5518],
+      [48.004, -4.553],
+      [48.004677, -4.553014],
+      [48.001287, -4.55478],
+      [47.99502, -4.559789],
+      [47.993426, -4.563877],
+      [47.994857, -4.574342],
+      [48.001957, -4.611476],
+      [48.009326, -4.653799],
+      [48.019423, -4.701426],
+      [48.029446, -4.74354],
+      [48.038328, -4.774028],
+      [48.039262, -4.77916],
+      [48.040792, -4.789406],
+      [48.04318, -4.814946],
+      [48.04306, -4.831404],
+      [48.041948, -4.842513],
+      [48.041, -4.845],
+      [48.040779, -4.844169],
+      [48.037579, -4.847369],
+      [48.037179, -4.850169],
     ],
   },
   {
@@ -146,12 +202,75 @@ const SIMULATED_CORRIDORS: SimulatedCorridor[] = [
     cycleSeconds: 800,
     timeOffsetSeconds: 550,
     waypoints: [
-      [48.3596, -4.7818], // Le Conquet
-      [48.3820, -4.8750], // Archipel de Molène
-      [48.4022, -4.9565], // Port de Molène
+      [48.35816, -4.77967],
+      [48.358, -4.7815],
+      [48.3575, -4.7835],
+      [48.356, -4.787],
+      [48.365, -4.845],
+      [48.395, -4.885],
+      [48.3972, -4.9531],
     ],
   },
 ];
+
+function haversineDistanceM(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371000;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function pointAlongWaterRoute(
+  wps: [number, number][],
+  ratio: number
+): { lat: number; lon: number; cog: number; remainingM: number } {
+  if (wps.length <= 1) {
+    return { lat: wps[0][0], lon: wps[0][1], cog: 90, remainingM: 0 };
+  }
+
+  const segLengths: number[] = [];
+  let totalDist = 0;
+  for (let i = 0; i < wps.length - 1; i++) {
+    const d = haversineDistanceM(wps[i][0], wps[i][1], wps[i + 1][0], wps[i + 1][1]);
+    segLengths.push(d);
+    totalDist += d;
+  }
+
+  const targetDist = Math.max(0, Math.min(totalDist, ratio * totalDist));
+  const remainingM = Math.max(0, totalDist - targetDist);
+  let cumDist = 0;
+  let lat = wps[wps.length - 1][0];
+  let lon = wps[wps.length - 1][1];
+  let segIdx = wps.length - 2;
+
+  for (let i = 0; i < segLengths.length; i++) {
+    if (cumDist + segLengths[i] >= targetDist) {
+      const frac = (targetDist - cumDist) / Math.max(1, segLengths[i]);
+      const p1 = wps[i];
+      const p2 = wps[i + 1];
+      lat = p1[0] + frac * (p2[0] - p1[0]);
+      lon = p1[1] + frac * (p2[1] - p1[1]);
+      segIdx = i;
+      break;
+    }
+    cumDist += segLengths[i];
+  }
+
+  // Smooth tangent lookahead COG
+  const pA = wps[segIdx];
+  const pB = wps[segIdx + 1];
+  const dLat = pB[0] - pA[0];
+  const dLon = (pB[1] - pA[1]) * Math.cos(((pA[0] + pB[0]) / 2) * (Math.PI / 180));
+  const cog = (Math.atan2(dLon, dLat) * (180 / Math.PI) + 360) % 360;
+
+  return { lat, lon, cog, remainingM };
+}
 
 function generateSimulatedVessels(nowMs: number): VesselLiveTelemetry[] {
   return SIMULATED_CORRIDORS.map((corridor) => {
@@ -162,31 +281,13 @@ function generateSimulatedVessels(nowMs: number): VesselLiveTelemetry[] {
     const t = Math.max(0, Math.min(1, rawT));
 
     const wps = isForward ? corridor.waypoints : [...corridor.waypoints].reverse();
-    const segCount = wps.length - 1;
-    const scaledT = t * segCount;
-    const segIdx = Math.min(Math.floor(scaledT), segCount - 1);
-    const segRatio = scaledT - segIdx;
-
-    const pA = wps[segIdx];
-    const pB = wps[segIdx + 1];
-
-    const lat = pA[0] + (pB[0] - pA[0]) * segRatio;
-    const lon = pA[1] + (pB[1] - pA[1]) * segRatio;
-
-    // Course over ground calculation
-    const dLat = pB[0] - pA[0];
-    const dLon = (pB[1] - pA[1]) * Math.cos(((pA[0] + pB[0]) / 2) * (Math.PI / 180));
-    const cog = (Math.atan2(dLon, dLat) * (180 / Math.PI) + 360) % 360;
+    const { lat, lon, cog, remainingM } = pointAlongWaterRoute(wps, t);
 
     // Speed with tidal micro-variation
     const sog = Math.round((corridor.baseSpeed + 0.9 * Math.sin(nowMs / 12000)) * 10) / 10;
 
-    // Remaining distance calculation to destination terminal
-    const destPt = wps[wps.length - 1];
-    const deltaLatNm = (destPt[0] - lat) * 60;
-    const deltaLonNm = (destPt[1] - lon) * Math.cos((lat * Math.PI) / 180) * 60;
-    const distNm = Math.round(Math.sqrt(deltaLatNm * deltaLatNm + deltaLonNm * deltaLonNm) * 10) / 10;
-    const distKm = Math.round(distNm * 1.852 * 10) / 10;
+    const distNm = Math.round((remainingM / 1852) * 10) / 10;
+    const distKm = Math.round((remainingM / 1000) * 10) / 10;
 
     // Countdown ETA in minutes
     const remMinutes = Math.max(0.4, Math.round((distNm / (sog / 60)) * 10) / 10);
@@ -202,8 +303,8 @@ function generateSimulatedVessels(nowMs: number): VesselLiveTelemetry[] {
       corridor: corridor.corridor,
       originTerminalId: isForward ? corridor.originTerminalId : corridor.destinationTerminalId,
       destinationTerminalId: isForward ? corridor.destinationTerminalId : corridor.originTerminalId,
-      lat: Math.round(lat * 10000) / 10000,
-      lon: Math.round(lon * 10000) / 10000,
+      lat: Math.round(lat * 100000) / 100000,
+      lon: Math.round(lon * 100000) / 100000,
       sogKnots: sog,
       cogDegrees: Math.round(cog * 10) / 10,
       etaLifecycleState: state,
