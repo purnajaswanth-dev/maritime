@@ -55,6 +55,23 @@ public class TrackingService {
         return simulationClient.getDepartureTrack(depCode);
     }
 
+    private volatile java.util.List<RouteGeometryDto> cachedRoutes = null;
+
+    public void clearRouteGeometriesCache() {
+        this.cachedRoutes = null;
+    }
+
+    public java.util.List<RouteGeometryDto> getRouteGeometries() {
+        if (cachedRoutes != null && !cachedRoutes.isEmpty()) {
+            return cachedRoutes;
+        }
+        java.util.List<RouteGeometryDto> routes = simulationClient.getRouteGeometries();
+        if (routes != null && !routes.isEmpty()) {
+            cachedRoutes = routes;
+        }
+        return routes;
+    }
+
     public SseEmitter subscribeFleetVesselsStream() {
         if (!simulationClient.isAvailable()) {
             throw new com.whereismyferry.backend.exception.SimulationEngineUnavailableException(

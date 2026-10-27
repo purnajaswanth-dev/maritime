@@ -72,6 +72,17 @@ class StatusResponse(BaseModel):
     active_scenario_id: Optional[str] = None
     mode: Optional[str] = None
     provenance: str = "SIMULATED_LOCAL_MARITIME_ENGINE"
+    geofence_corrections: int = 0
+
+
+class RouteCorridorGeometry(BaseModel):
+    id: str
+    name: str
+    origin_terminal_id: str
+    destination_terminal_id: str
+    polyline: List[List[float]]
+    length_km: Optional[float] = None
+    great_circle_km: Optional[float] = None
 
 
 class VesselTelemetrySnapshot(BaseModel):
@@ -95,6 +106,7 @@ class VesselTelemetrySnapshot(BaseModel):
     is_stale: bool
     is_arrived: bool
     data_provenance: str = "SIMULATED_SYNTHETIC"
+    position_valid: bool = True
 
 
 class FleetSnapshotResponse(BaseModel):
@@ -272,6 +284,7 @@ def get_status():
         active_scenario_id=status_obj.active_scenario_id,
         mode=status_obj.mode,
         provenance="SIMULATED_LOCAL_MARITIME_ENGINE",
+        geofence_corrections=getattr(status_obj, "geofence_corrections", 0),
     )
 
 
@@ -339,6 +352,7 @@ def get_fleet_snapshot():
                 is_stale=is_stale,
                 is_arrived=is_arrived,
                 data_provenance="SIMULATED_SYNTHETIC",
+                position_valid=getattr(v, "position_valid", True),
             )
         )
 
@@ -347,6 +361,56 @@ def get_fleet_snapshot():
         timestamp_utc=now_iso,
         vessels=vessels_list,
     )
+
+
+@app.get(
+    "/internal/v1/routes",
+    response_model=List[RouteCorridorGeometry],
+    tags=["Routes"],
+    summary="Official water navigation route geometries for all active corridors",
+)
+def get_routes_geometry():
+    """Returns official water route polylines and metadata for all active corridors."""
+    routes_path = repo_root / "data" / "geo" / "routes.json"
+    if not routes_path.exists():
+        results: List[RouteCorridorGeometry] = []
+        if container.generator:
+            for vid, v in container.generator.vessels.items():
+                results.append(
+                    RouteCorridorGeometry(
+                        id=v.corridor,
+                        name=f"{v.origin_terminal} — {v.dest_terminal}",
+                        origin_terminal_id=v.origin_terminal,
+                        destination_terminal_id=v.dest_terminal,
+                        polyline=[[p[0], p[1]] for p in v.waypoints],
+                    )
+                )
+        return results
+
+    try:
+        with open(routes_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        corridors = data.get("corridors", {})
+        results: List[RouteCorridorGeometry] = []
+        for c_id, c_data in corridors.items():
+            metrics = c_data.get("metrics", {})
+            results.append(
+                RouteCorridorGeometry(
+                    id=c_id,
+                    name=c_data.get("name", c_id),
+                    origin_terminal_id=c_data.get("origin_terminal", ""),
+                    destination_terminal_id=c_data.get("dest_terminal", ""),
+                    polyline=c_data.get("waypoints", []),
+                    length_km=metrics.get("route_distance_km"),
+                    great_circle_km=metrics.get("great_circle_km"),
+                )
+            )
+        return results
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to load route geometries: {e}",
+        )
 
 
 @app.get(

@@ -8,6 +8,7 @@ import {
   getTileTiers,
   OFFLINE_VECTOR_CONFIG,
 } from '../../map/tileProviders';
+import { apiClient } from '../../api/client';
 
 // Fix Leaflet default marker icon paths in Vite bundler
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
@@ -38,6 +39,16 @@ export const PENN_AR_BED_PORTS: PortLocation[] = [
   { code: 'SEI', name: 'Île de Sein', lat: 48.0375, lon: -4.85, berthRadiusM: 350 },
   { code: 'CAM', name: 'Camaret-sur-Mer', lat: 48.2778, lon: -4.5956, berthRadiusM: 450 },
 ];
+
+export interface RouteGeometry {
+  id: string;
+  name: string;
+  origin_terminal_id: string;
+  destination_terminal_id: string;
+  polyline: [number, number][];
+  length_km?: number;
+  great_circle_km?: number;
+}
 
 export const CORRIDOR_TRACKS: [string, [number, number], [number, number]][] = [
   ['Brest — Le Conquet', [48.3831, -4.4842], [48.3592, -4.7794]],
@@ -87,6 +98,7 @@ export const FerryMap: React.FC<FerryMapProps> = ({
   const currentTileLayerRef = useRef<L.TileLayer | L.GeoJSON | null>(null);
   const vesselMarkerRef = useRef<L.Marker | null>(null);
   const trackPolylineRef = useRef<L.Polyline | null>(null);
+  const corridorPolylinesRef = useRef<L.Polyline[]>([]);
   const breadcrumbRef = useRef<L.Polyline | null>(null);
   const breadcrumbCoords = useRef<[number, number][]>([]);
 
@@ -158,16 +170,6 @@ export const FerryMap: React.FC<FerryMapProps> = ({
       // Mount initial layer
       switchTileLayer(map, initialTiers[0]);
 
-      // Draw corridor lines
-      CORRIDOR_TRACKS.forEach(([, from, to]) => {
-        L.polyline([from, to], {
-          color: '#14B8A6',
-          weight: 1.5,
-          opacity: 0.4,
-          dashArray: '4, 8',
-        }).addTo(map);
-      });
-
       // Draw Penn ar Bed port markers with berth radius circles
       PENN_AR_BED_PORTS.forEach((port) => {
         // Berth radius circle
@@ -216,8 +218,55 @@ export const FerryMap: React.FC<FerryMapProps> = ({
       vesselMarkerRef.current = null;
       breadcrumbRef.current = null;
       trackPolylineRef.current = null;
+      corridorPolylinesRef.current.forEach((line) => line.remove());
+      corridorPolylinesRef.current = [];
     };
   }, []);
+
+  // Fetch official water corridor polylines from /api/v1/routes/geometry
+  useEffect(() => {
+    if (!mapInstance) return;
+
+    let isMounted = true;
+    apiClient
+      .get<RouteGeometry[]>('/routes/geometry')
+      .then((routes) => {
+        if (!isMounted || !mapInstance) return;
+        corridorPolylinesRef.current.forEach((line) => line.remove());
+        corridorPolylinesRef.current = [];
+
+        if (Array.isArray(routes)) {
+          routes.forEach((route) => {
+            if (route.polyline && route.polyline.length > 1) {
+              try {
+                const poly = L.polyline(route.polyline, {
+                  color: '#14B8A6',
+                  weight: 1.5,
+                  opacity: 0.4,
+                  dashArray: '4, 8',
+                }).addTo(mapInstance);
+                corridorPolylinesRef.current.push(poly);
+              } catch {
+                // Leaflet polyline safe catch
+              }
+            }
+          });
+        }
+      })
+      .catch(() => {
+        // If the request fails, draw NO corridor line (never a straight line over land)
+        if (isMounted) {
+          corridorPolylinesRef.current.forEach((line) => line.remove());
+          corridorPolylinesRef.current = [];
+        }
+      });
+
+    return () => {
+      isMounted = false;
+      corridorPolylinesRef.current.forEach((line) => line.remove());
+      corridorPolylinesRef.current = [];
+    };
+  }, [mapInstance]);
 
   // Update Scheduled Voyage Track Polyline
   useEffect(() => {
@@ -262,7 +311,29 @@ export const FerryMap: React.FC<FerryMapProps> = ({
     const speedText = speedKnots ? `${speedKnots.toFixed(1)} kts` : 'At berth';
     const stateLabel = state || 'SCHEDULED';
 
-    // Maintain breadcrumb trail of last 20 coordinates
+    // Haversine distance in meters to enforce 300m straight-line interpolation restriction
+    const distanceMeters = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+      const R = 6371000;
+      const dLat = ((lat2 - lat1) * Math.PI) / 180;
+      const dLon = ((lon2 - lon1) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((lat1 * Math.PI) / 180) *
+          Math.cos((lat2 * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    // Maintain breadcrumb trail of last 20 coordinates, respecting 300m limit
+    const lastCoord = breadcrumbCoords.current[breadcrumbCoords.current.length - 1];
+    if (lastCoord) {
+      const dist = distanceMeters(lastCoord[0], lastCoord[1], latitude, longitude);
+      if (dist > 300) {
+        // Discontinuity > 300m: break trail so we never interpolate across land
+        breadcrumbCoords.current = [];
+      }
+    }
     breadcrumbCoords.current.push([latitude, longitude]);
     if (breadcrumbCoords.current.length > 20) {
       breadcrumbCoords.current.shift();

@@ -37,6 +37,12 @@ public class TrackingController {
         return ResponseEntity.ok(trackingService.getVoyageTrack(id));
     }
 
+    @GetMapping("/routes/geometry")
+    @Operation(summary = "Get official water navigation route geometries for all active corridors")
+    public ResponseEntity<java.util.List<com.whereismyferry.backend.dto.RouteGeometryDto>> getRouteGeometries() {
+        return ResponseEntity.ok(trackingService.getRouteGeometries());
+    }
+
     @GetMapping(value = "/departures/{id}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @Operation(summary = "Subscribe to live 1 Hz Server-Sent Events (SSE) telemetry stream")
     public SseEmitter streamTracking(@PathVariable String id) {

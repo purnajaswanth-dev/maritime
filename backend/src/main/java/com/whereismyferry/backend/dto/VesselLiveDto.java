@@ -1,7 +1,9 @@
 package com.whereismyferry.backend.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VesselLiveDto {
 
     @JsonProperty("vessel_id")
@@ -79,6 +81,9 @@ public class VesselLiveDto {
     @JsonProperty("model_weights_sha256")
     private String modelWeightsSha256;
 
+    @JsonProperty("position_valid")
+    private Boolean positionValid;
+
     public VesselLiveDto() {}
 
     public String getVesselId() { return vesselId; }
@@ -155,4 +160,7 @@ public class VesselLiveDto {
 
     public String getModelWeightsSha256() { return modelWeightsSha256; }
     public void setModelWeightsSha256(String modelWeightsSha256) { this.modelWeightsSha256 = modelWeightsSha256; }
+
+    public Boolean getPositionValid() { return positionValid; }
+    public void setPositionValid(Boolean positionValid) { this.positionValid = positionValid; }
 }

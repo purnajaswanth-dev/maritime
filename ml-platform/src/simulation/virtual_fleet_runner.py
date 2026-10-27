@@ -39,6 +39,7 @@ class SimulationStatus:
     active_vessels_count: int
     active_scenario_id: Optional[str] = None
     mode: str = "DEMO"
+    geofence_corrections: int = 0
 
 
 class VirtualFleetRunner:
@@ -221,6 +222,7 @@ class VirtualFleetRunner:
                 active_vessels_count=len(self.generator.get_vessel_ids()),
                 active_scenario_id=self.active_scenario_id,
                 mode=self._compute_mode(),
+                geofence_corrections=self.generator.get_total_geofence_corrections() if hasattr(self.generator, "get_total_geofence_corrections") else 0,
             )
 
     def step_vessel(

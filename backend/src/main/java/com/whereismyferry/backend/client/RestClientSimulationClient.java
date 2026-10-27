@@ -254,4 +254,17 @@ public class RestClientSimulationClient implements SimulationClient {
             return Map.of("status", "FAILED", "error", e.getMessage());
         }
     }
+
+    @Override
+    public List<com.whereismyferry.backend.dto.RouteGeometryDto> getRouteGeometries() {
+        try {
+            List<com.whereismyferry.backend.dto.RouteGeometryDto> resp = restClient.get()
+                    .uri("/internal/v1/routes")
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<List<com.whereismyferry.backend.dto.RouteGeometryDto>>() {});
+            return resp != null ? resp : List.of();
+        } catch (Exception e) {
+            throw new SimulationEngineUnavailableException("Python simulation daemon is unreachable", e);
+        }
+    }
 }

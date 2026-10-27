@@ -8,6 +8,7 @@ Enforces Rule 1 (Zero mock data), Rule 4 (Arrival latching), and Rule 6 (Honest 
 from dataclasses import asdict, dataclass, field
 import datetime
 import json
+import os
 from pathlib import Path
 import random
 from typing import Any, Dict, List, Optional, Tuple
@@ -106,6 +107,15 @@ class ReplayRunner:
         self.active_replays: Dict[str, ActiveReplayState] = {}
         self.completed_departures: Dict[str, CompletedDepartureRecord] = {}
         self.accuracy_records: List[Dict[str, Any]] = []
+
+        self.geofence_enabled = os.environ.get("GEOFENCE_ENABLED", "true").lower() in ("true", "1", "yes")
+        self.land_mask = None
+        if self.geofence_enabled:
+            try:
+                from src.geo.land_mask import LandMask
+                self.land_mask = LandMask()
+            except Exception:
+                self.land_mask = None
 
         self._load_day_departures()
 
@@ -232,6 +242,10 @@ class ReplayRunner:
                     curr_lon = p_prev["lon"] + ratio * (p_next["lon"] - p_prev["lon"])
                     curr_sog = p_prev["sog_knots"] + ratio * (p_next["sog_knots"] - p_prev["sog_knots"])
                     curr_cog = p_prev["cog_degrees"]
+
+            if self.geofence_enabled and self.land_mask and self.land_mask.is_loaded:
+                if self.land_mask.is_on_land(curr_lat, curr_lon, check_port_exemption=True):
+                    curr_lat, curr_lon = self.land_mask.nearest_water_point(curr_lat, curr_lon)
 
             active.latest_lat = curr_lat
             active.latest_lon = curr_lon

@@ -118,31 +118,30 @@ export const TrackingPage: React.FC = () => {
     };
   }, [selectedVessel, selectedDeparture, departureIdParam]);
 
-  // Selected route track line coordinates
+  const [routeGeometries, setRouteGeometries] = useState<any[]>([]);
+
+  useEffect(() => {
+    apiClient
+      .get<any[]>('/routes/geometry')
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setRouteGeometries(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Selected route track line coordinates from verified water route geometries
   const trackCoordinates: [number, number][] = useMemo(() => {
-    if (selectedDeparture.id === '3' || selectedVessel?.corridor?.includes('SEIN')) {
-      return [
-        [48.0167, -4.5417],
-        [48.028, -4.7],
-        [48.0375, -4.85],
-      ];
-    } else if (selectedDeparture.id === '2' || selectedVessel?.corridor?.includes('OUESSANT')) {
-      return [
-        [48.3831, -4.4842],
-        [48.365, -4.58],
-        [48.4, -4.85],
-        [48.4756, -5.0567],
-      ];
-    } else {
-      // Brest - Le Conquet corridor
-      return [
-        [48.3831, -4.4842],
-        [48.365, -4.58],
-        [48.375, -4.62],
-        [48.3592, -4.7794],
-      ];
+    const corridorKey = selectedVessel?.corridor || selectedDeparture.corridorKey;
+    const match = routeGeometries.find(
+      (r) => r.id === corridorKey || (r.id && corridorKey && (r.id.includes(corridorKey) || corridorKey.includes(r.id)))
+    );
+    if (match && match.polyline && match.polyline.length > 1) {
+      return match.polyline;
     }
-  }, [selectedDeparture, selectedVessel]);
+    return [];
+  }, [routeGeometries, selectedDeparture, selectedVessel]);
 
   return (
     <div style={{ maxWidth: '1240px', margin: '0 auto', padding: '1.5rem 1rem' }}>

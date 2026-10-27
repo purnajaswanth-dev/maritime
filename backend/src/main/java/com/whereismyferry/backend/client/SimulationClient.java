@@ -22,4 +22,5 @@ public interface SimulationClient {
     List<com.whereismyferry.backend.dto.VesselLiveDto> getFleetVessels();
     Map<String, Object> getPredictionProvenance(String vesselId);
     Map<String, Object> syncTimetable(List<Map<String, Object>> departures);
+    List<com.whereismyferry.backend.dto.RouteGeometryDto> getRouteGeometries();
 }
